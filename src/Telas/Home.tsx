@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { GeraRefreshToken } from '../services/auth/tokenService';
 import api from "../services/api/apiConnect";
 import type { ContaResponse } from '../models/ContasUsuarios/GetContasUsuarios';
-
+import { Global } from '../models/Autenticação/global';
+import { useNavigate } from "react-router-dom";
+import type { UsuarioResponse } from '../models/Usuario/UsuarioResponse';
 
 export const Home: React.FC = () => {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [contasObtidas, setcontasObtidas] = useState<ContaResponse | null>(null);
+   const [usuario, setUsuario] = useState<UsuarioResponse | null>(null);
 
   const buscaContas = async () => {
     let resposta = await api<ContaResponse>(
@@ -18,10 +22,39 @@ export const Home: React.FC = () => {
 
     console.log(resposta);
 
-    if (resposta.sucesso && resposta.dados) {
+    if (resposta.sucesso && resposta.dados) {                                 
       setcontasObtidas(resposta.dados);
     }
   };
+
+   const buscarUsuario = async () => {
+    let resposta = await api<UsuarioResponse>(
+      "/Usuarios/me",
+      "GET",
+      undefined,
+      true
+    );
+
+    console.log(resposta);
+
+    if (resposta.sucesso && resposta.dados) {                                 
+      setUsuario(resposta.dados);
+    }
+  };
+  const deslogar = async () => {
+    let resposta = await api<ContaResponse>(
+      "/Autenticacao/revoke",
+      "POST",
+      undefined,
+      true
+    );
+
+    if(resposta.sucesso)
+      Global.BEARER_TOKEN = null;
+
+    navigate('/', { replace: true });
+    
+  }
 
  useEffect(() => {
   const init = async () => {
@@ -29,10 +62,12 @@ export const Home: React.FC = () => {
     const refresh = await GeraRefreshToken();
 
     if (refresh.sucesso && refresh.dados) {
+      await buscarUsuario();
       await buscaContas();
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
+       navigate("/", { replace: true });
     }
   };
 
@@ -45,18 +80,19 @@ export const Home: React.FC = () => {
 
   return (
     <div>
+      <button onClick={() => deslogar()}>Sair</button>
       {isLoggedIn ? (
         <>
-          <h1>Bem-vindo ao Dashboard!</h1>
+          <h1>Bem-vindo {usuario?.nomeCompleto}</h1>
           <p>Você fez login com sucesso.</p>
-{contasObtidas?.conteudo.map((conta) => (
-  <div key={conta.idConta}>
-    <p><strong>ID:</strong> {conta.idConta}</p>
-    <p><strong>Título:</strong> {conta.titulo}</p>
-    <p><strong>Status:</strong> {conta.status}</p>
-    <hr />
-  </div>
-))}          {/* Conteúdo adicional para usuários logados */}
+         {contasObtidas?.conteudo.map((conta) => (
+         <div key={conta.idConta}>
+         <p><strong>ID:</strong> {conta.idConta}</p>
+         <p><strong>Título:</strong> {conta.titulo}</p>
+         <p><strong>Status:</strong> {conta.status}</p>
+        <hr />
+       </div>
+      ))}          {/* Conteúdo adicional para usuários logados */}
         </>
       ) : (
         <p className="error">Você não está logado. Por favor, faça login para acessar esta página.</p>

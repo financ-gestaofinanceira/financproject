@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 import type { tokeRequest } from "./models/Autenticação/tokenRequest";
-import { GeraToken } from './services/auth/tokenService';
+import { GeraToken,GeraRefreshToken } from './services/auth/tokenService';
 import {Home} from './Telas/Home'; // Importa o componente Dashboard
 
 interface TokenData {
@@ -17,11 +17,17 @@ function AppContent() {
   const [senha, setSenha] = useState<string>("");
   const navigate = useNavigate(); // Hook para navegação
 
-  useEffect(() => {
-    if (tokenData) {
-      navigate('/home'); // Navega para o dashboard se houver tokenData
+useEffect(() => {
+  const handleAuth = async () => {
+    let fazRefresh = await GeraRefreshToken();
+
+    if (fazRefresh.sucesso) {
+      navigate('/home');
     }
-  }, [tokenData, navigate]);
+  };
+
+  handleAuth();
+}, [tokenData, navigate]);
 
   // Função para login
   const reqApi = async (e: React.FormEvent) => {
