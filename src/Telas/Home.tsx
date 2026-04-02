@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { GeraRefreshToken, GeraToken,Logado } from '../services/auth/tokenService';
+import { GeraRefreshToken } from '../services/auth/tokenService';
 import api from "../services/api/apiConnect";
-import type { ContaResponse, GetContasUsuarios } from '../models/ContasUsuarios/GetContasUsuarios';
+import type { ContaResponse } from '../models/ContasUsuarios/GetContasUsuarios';
 
 
 export const Home: React.FC = () => {

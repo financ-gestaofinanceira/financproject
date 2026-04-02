@@ -57,33 +57,6 @@ function AppContent() {
     }
   };
 
-  // Função para refresh
-  const refreshToken = async () => {
-    try {
-      const resposta = await GeraRefreshToken();
-
-      if (resposta.erro) {
-        console.log(resposta.erro);
-        setTokenData(null);
-        setErroMsg(resposta.erro);
-        return;
-      }
-
-      setTokenData({
-        token: resposta.dados!.token,
-        refreshToken: resposta.dados!.refreshToken
-      });
-      setErroMsg(null);
-
-      console.log("Refresh:", resposta.dados);
-
-    } catch (erro: any) {
-      console.error(erro.message);
-      setTokenData(null);
-      setErroMsg(erro.message);
-    }
-  };
-
   return (
     <>
       <div className="container">
