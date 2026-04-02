@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 import type { tokeRequest } from "./models/Autenticação/tokenRequest";
-import { GeraRefreshToken, GeraToken } from './services/auth/tokenService';
+import { GeraToken } from './services/auth/tokenService';
 import {Home} from './Telas/Home'; // Importa o componente Dashboard
 
 interface TokenData {
