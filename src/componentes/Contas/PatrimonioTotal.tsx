@@ -1,32 +1,20 @@
-import type { GetContasUsuarios } from "../models/ContasUsuarios/GetContasUsuarios";
+import type { GetContasUsuarios } from "../../models/ContasUsuarios/GetContasUsuarios";
 
 type Props = {
-  contaBancaria: GetContasUsuarios;
+  contaBancaria: GetContasUsuarios[];
 };
 
 const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
+  contaBancaria.map((conta) => console.log(conta));
   return (
     <>
-      <div
-        className={
-          contaBancaria.status === 0
-            ? "card-patrimonio"
-            : "card-patrimonio-inativo"
-        }
-      >
+      <div className="card-patrimonio">
         <div className="patrimonio-header">
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span className="material-icons" style={{ fontSize: "18px" }}>
               account_balance
             </span>
-            <p
-              style={{
-                textDecoration:
-                  contaBancaria.status !== 0 ? "line-through" : "none",
-              }}
-            >
-              {contaBancaria.titulo}
-            </p>
+            <p>Patrimônio Total</p>
           </div>
           <span className="material-icons" style={{ fontSize: "18px" }}>
             visibility
@@ -35,9 +23,7 @@ const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
         <div className="patrimonio-valor">
           <p
             style={{
-              textDecoration:
-                contaBancaria.status !== 0 ? "line-through" : "none",
-              color: contaBancaria.status !== 0 ? "#d6d6da" : "white",
+              color: "white",
             }}
           >
             R$ 42.455,00

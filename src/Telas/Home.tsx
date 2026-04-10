@@ -6,7 +6,10 @@ import { Global } from "../models/Autenticação/global";
 import { useNavigate } from "react-router-dom";
 import type { UsuarioResponse } from "../models/Usuario/UsuarioResponse";
 import "./HomeStyle.css";
-import ContaPrincipalComponent from "../componentes/ContaPrincipalComponent";
+import Modal from "../componentes/Modal/Modal";
+import CadContas from "../componentes/Contas/CadContas";
+import ContaComponent from "../componentes/Contas/ContaComponent";
+import PatrimonioTotal from "../componentes/Contas/PatrimonioTotal";
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +19,8 @@ export const Home: React.FC = () => {
   );
   const [usuario, setUsuario] = useState<UsuarioResponse | null>(null);
 
+  const [telaAtual, setTelaAtual] = useState(0);
+  const [isCadContaOpen, setIsCadContaOpen] = useState(false);
   const buscaContas = async () => {
     let resposta = await api<ContaResponse>(
       "/ContasUsuarios",
@@ -101,10 +106,49 @@ export const Home: React.FC = () => {
 
   const retornaBoasVindas = () => {
     const hora = new Date().getHours();
-
+    if (hora >= 0 && hora <= 3)
+      return "Vá dormir! Você é corno 🐂 , não morcego... 🦇🦇";
     if (hora < 12) return "Bom dia";
     if (hora < 18) return "Boa tarde";
     return "Boa noite";
+  };
+
+  const retornaTelas = () => {
+    if (telaAtual === 0)
+      return (
+        <>
+          <div className="menu-superior">
+            <div className="texto-superior">
+              <p>{retornaBoasVindas()},</p>
+              <h1>Minhas Contas</h1>
+            </div>
+            <button
+              className="botão-transação"
+              onClick={() => setIsCadContaOpen(true)}
+            >
+              + Nova Conta Bancaria
+            </button>
+          </div>
+
+          <div className="principal">
+            {contasObtidas?.conteudo !== undefined && (
+              <PatrimonioTotal contaBancaria={contasObtidas?.conteudo} />
+            )}
+            <div className="grid-cards">
+              {contasObtidas?.conteudo.map((conta) => (
+                <ContaComponent key={conta.idConta} contaBancaria={conta} />
+              ))}
+            </div>
+
+            <Modal
+              isOpen={isCadContaOpen}
+              onClose={() => setIsCadContaOpen(false)}
+            >
+              <CadContas />
+            </Modal>
+          </div>
+        </>
+      );
   };
 
   return (
@@ -136,17 +180,23 @@ export const Home: React.FC = () => {
 
         <nav className="sidebar__nav">
           <p className="nav__title">Menu</p>
-          <div className="nav__item active">
+          <div
+            className={telaAtual === 0 ? "nav__item active" : "nav__item"}
+            onClick={() => setTelaAtual(0)}
+          >
+            <span className="material-icons">account_balance</span>
+            Contas
+          </div>
+          <div
+            className={telaAtual === 1 ? "nav__item active" : "nav__item"}
+            onClick={() => setTelaAtual(1)}
+          >
             <span className="material-icons">dashboard</span>
             Dashboard
           </div>
           <div className="nav__item">
             <span className="material-icons">wallet</span>
             Transações
-          </div>
-          <div className="nav__item">
-            <span className="material-icons">account_balance</span>
-            Contas
           </div>
           <div className="nav__item">
             <span className="material-icons">add_task</span>
@@ -170,24 +220,7 @@ export const Home: React.FC = () => {
         </div>
       </aside>
 
-      <main className="pagina-central">
-        <div className="menu-superior">
-          <div className="texto-superior">
-            <p>{retornaBoasVindas()},</p>
-            <h1>{usuario?.nomeCompleto} 👋</h1>
-          </div>
-          <button className="botão-transação">+ Nova Conta Bancaria</button>
-        </div>
-
-        <div className="principal">
-          {contasObtidas?.conteudo.map((conta) => (
-            <ContaPrincipalComponent
-              key={conta.idConta}
-              contaBancaria={conta}
-            />
-          ))}
-        </div>
-      </main>
+      <main className="pagina-central">{retornaTelas()}</main>
     </div>
   );
 };
