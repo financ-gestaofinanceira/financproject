@@ -5,6 +5,7 @@ import type { ContaResponse } from "../models/ContasUsuarios/GetContasUsuarios";
 import { Global } from "../models/Autenticação/global";
 import { useNavigate } from "react-router-dom";
 import type { UsuarioResponse } from "../models/Usuario/UsuarioResponse";
+import "./HomeStyle.css";
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -99,8 +100,72 @@ export const Home: React.FC = () => {
 
   return (
     <div>
+      <aside className="sidebar">
+        <div className="sidebar__header">
+          <img
+            src="favicon/icon-site.svg"
+            className="sidebar__logo-icon"
+            alt=""
+          />
+
+          <div className="sidebar__logo-text">
+            <h1 className="sidebar__title">FinanceHub</h1>
+            <p className="sidebar__subtitle">Gestão Inteligente</p>
+          </div>
+        </div>
+
+        <div className="sidebar__user">
+          <div className="user__avatar">J</div>
+
+          <div className="user__info">
+            <p className="user__name">{usuario?.nomeCompleto}</p>
+            <p className="user__email">{usuario?.email}</p>
+          </div>
+        </div>
+
+        <nav className="sidebar__nav">
+          <p className="nav__title">Menu</p>
+
+          <div className="nav__item">
+            <span className="material-icons">dashboard</span>
+            dashboard
+          </div>
+
+          <div className="nav__item">
+            <span className="material-icons">wallet</span>
+            Transações
+          </div>
+
+          <div className="nav__item">
+            <span className="material-icons">account_balance</span>
+            Contas
+          </div>
+
+          <div className="nav__item">
+            <span className="material-icons">add_task</span>
+            <span>Metas</span>
+          </div>
+
+          <div className="nav__item">
+            <span className="material-icons">bar_chart</span>
+            <span>Relatórios</span>
+          </div>
+
+          <div className="nav__item">
+            <span className="material-icons">settings</span>
+            <span>Configurações</span>
+          </div>
+        </nav>
+
+        <div className="sidebar__footer">
+          <button className="logout__button" onClick={() => deslogar()}>
+            <span className="material-icons">exit_to_app</span>
+            Sair da conta
+          </button>
+        </div>
+      </aside>
+
       <button onClick={() => deslogar()}>Sair</button>
-      <button onClick={() => buscarUsuario()}>Teste</button>
       {isLoggedIn ? (
         <>
           <h1>Bem-vindo {usuario?.nomeCompleto}</h1>
@@ -115,6 +180,12 @@ export const Home: React.FC = () => {
               </p>
               <p>
                 <strong>Status:</strong> {conta.status}
+              </p>
+              <p>
+                <strong>Expirado:</strong> {conta.expirado}
+              </p>
+              <p>
+                <strong>Data Expiração:</strong> {conta.expiracao}
               </p>
               <hr />
             </div>

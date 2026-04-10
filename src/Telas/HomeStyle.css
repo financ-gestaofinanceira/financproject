@@ -1,0 +1,168 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 20px 16px;
+
+  background: linear-gradient(135deg, #020618, #0f172b, #020618);
+  border-right: 1px solid #1d293d;
+
+  color: #fff;
+}
+
+/* HEADER */
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar__logo-icon {
+  width: 44px;
+}
+
+.sidebar__title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sidebar__subtitle {
+  font-size: 12px;
+  color: #62748e;
+}
+
+/* USER */
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 20px;
+  padding: 12px;
+
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(43, 127, 255, 0.2),
+    rgba(97, 95, 255, 0.2)
+  );
+  border: 1px solid rgba(25, 60, 184, 0.3);
+}
+
+.user__avatar {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2b7fff, #4f39f6);
+
+  font-weight: 600;
+}
+
+.user__name {
+  font-weight: 600;
+}
+
+.user__email {
+  font-size: 12px;
+  color: #62748e;
+}
+
+/* NAV */
+.sidebar__nav {
+  margin-top: 30px;
+  flex: 1;
+}
+
+.nav__title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  color: #90a1b9;
+}
+
+.nav__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  margin-bottom: 8px;
+
+  border-radius: 14px;
+  cursor: pointer;
+
+  color: #90a1b9;
+  transition: 0.2s;
+}
+
+.nav__item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ITEM ATIVO */
+.nav__item:first-of-type {
+  background: linear-gradient(90deg, #2b7fff, #4f39f6);
+  color: #fff;
+  box-shadow: 0 10px 15px rgba(43, 127, 255, 0.25);
+}
+
+.nav__icon {
+  width: 10px;
+}
+
+/* FOOTER */
+.sidebar__footer {
+  border-top: 1px solid #1d293d;
+  padding-top: 15px;
+}
+
+/* LOGOUT */
+.logout__button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: transparent;
+  color: #90a1b9;
+
+  cursor: pointer;
+}
+
+.logout__button:hover {
+  background: rgba(233, 23, 23, 0.5);
+  color: #fff;
+  transition: 0.5s;
+}
+
+.logout__icon {
+  width: 18px;
+}
