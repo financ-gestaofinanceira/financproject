@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import api from "../services/api/apiConnect";
 
 interface RegisterProps {
@@ -14,7 +14,6 @@ type registesUser = {
   confirmarSenha: string;
 };
 const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
-  exibeCadastro,
   setExibeCadastro,
 }) => {
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
@@ -24,7 +23,7 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
   const [senha, setSenha] = useState<string>("");
   const [confirmaSenha, setConfirmaSenha] = useState<string>("");
 
-  const cadastraUsuario = async (e: React.FormEvent) => {
+  const cadastraUsuario = async () => {
     const request: registesUser = {
       primeiroNome: primeiroNome,
       segundoNome: segundoNome,

@@ -6,6 +6,7 @@ import { Global } from "../models/Autenticação/global";
 import { useNavigate } from "react-router-dom";
 import type { UsuarioResponse } from "../models/Usuario/UsuarioResponse";
 import "./HomeStyle.css";
+import ContaPrincipalComponent from "../componentes/ContaPrincipalComponent";
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -98,16 +99,23 @@ export const Home: React.FC = () => {
     return <p>Verificando status de login...</p>;
   }
 
+  const retornaBoasVindas = () => {
+    const hora = new Date().getHours();
+
+    if (hora < 12) return "Bom dia";
+    if (hora < 18) return "Boa tarde";
+    return "Boa noite";
+  };
+
   return (
-    <div>
+    <div className="home-container">
       <aside className="sidebar">
         <div className="sidebar__header">
-          <img
-            src="favicon/icon-site.svg"
-            className="sidebar__logo-icon"
-            alt=""
-          />
-
+          <div className="sidebar__logo-icon">
+            <span className="material-icons" style={{ color: "white" }}>
+              account_balance_wallet
+            </span>
+          </div>
           <div className="sidebar__logo-text">
             <h1 className="sidebar__title">FinanceHub</h1>
             <p className="sidebar__subtitle">Gestão Inteligente</p>
@@ -115,45 +123,42 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="sidebar__user">
-          <div className="user__avatar">J</div>
-
+          <div className="user__avatar">
+            {usuario?.nomeCompleto?.charAt(0) || "U"}
+          </div>
           <div className="user__info">
-            <p className="user__name">{usuario?.nomeCompleto}</p>
-            <p className="user__email">{usuario?.email}</p>
+            <p className="user__name">{usuario?.nomeCompleto || "Usuário"}</p>
+            <p className="user__email">
+              {usuario?.email || "email@exemplo.com"}
+            </p>
           </div>
         </div>
 
         <nav className="sidebar__nav">
           <p className="nav__title">Menu</p>
-
-          <div className="nav__item">
+          <div className="nav__item active">
             <span className="material-icons">dashboard</span>
-            dashboard
+            Dashboard
           </div>
-
           <div className="nav__item">
             <span className="material-icons">wallet</span>
             Transações
           </div>
-
           <div className="nav__item">
             <span className="material-icons">account_balance</span>
             Contas
           </div>
-
           <div className="nav__item">
             <span className="material-icons">add_task</span>
-            <span>Metas</span>
+            Metas
           </div>
-
           <div className="nav__item">
             <span className="material-icons">bar_chart</span>
-            <span>Relatórios</span>
+            Relatórios
           </div>
-
           <div className="nav__item">
             <span className="material-icons">settings</span>
-            <span>Configurações</span>
+            Configurações
           </div>
         </nav>
 
@@ -165,38 +170,24 @@ export const Home: React.FC = () => {
         </div>
       </aside>
 
-      <button onClick={() => deslogar()}>Sair</button>
-      {isLoggedIn ? (
-        <>
-          <h1>Bem-vindo {usuario?.nomeCompleto}</h1>
-          <p>Você fez login com sucesso.</p>
+      <main className="pagina-central">
+        <div className="menu-superior">
+          <div className="texto-superior">
+            <p>{retornaBoasVindas()},</p>
+            <h1>{usuario?.nomeCompleto} 👋</h1>
+          </div>
+          <button className="botão-transação">+ Nova Conta Bancaria</button>
+        </div>
+
+        <div className="principal">
           {contasObtidas?.conteudo.map((conta) => (
-            <div key={conta.idConta}>
-              <p>
-                <strong>ID:</strong> {conta.idConta}
-              </p>
-              <p>
-                <strong>Título:</strong> {conta.titulo}
-              </p>
-              <p>
-                <strong>Status:</strong> {conta.status}
-              </p>
-              <p>
-                <strong>Expirado:</strong> {conta.expirado}
-              </p>
-              <p>
-                <strong>Data Expiração:</strong> {conta.expiracao}
-              </p>
-              <hr />
-            </div>
-          ))}{" "}
-          {/* Conteúdo adicional para usuários logados */}
-        </>
-      ) : (
-        <p className="error">
-          Você não está logado. Por favor, faça login para acessar esta página.
-        </p>
-      )}
+            <ContaPrincipalComponent
+              key={conta.idConta}
+              contaBancaria={conta}
+            />
+          ))}
+        </div>
+      </main>
     </div>
   );
 };
