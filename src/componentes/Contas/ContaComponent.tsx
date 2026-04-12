@@ -1,11 +1,20 @@
 import type { GetContasUsuarios } from "../../models/ContasUsuarios/GetContasUsuarios";
 
 type Props = {
+  setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
+  setContaBancariaSelecionada: React.Dispatch<
+    React.SetStateAction<GetContasUsuarios | undefined>
+  >;
+
   contaBancaria: GetContasUsuarios;
 };
 
-const ContaComponent: React.FC<Props> = ({ contaBancaria }) => {
-  const retornaReceitar = () => {
+const ContaComponent: React.FC<Props> = ({
+  setTelaAtual,
+  setContaBancariaSelecionada,
+  contaBancaria,
+}) => {
+  const retornaReceitas = () => {
     return (
       <div className="patrimonio-stats">
         <div className="stat-item">
@@ -43,7 +52,13 @@ const ContaComponent: React.FC<Props> = ({ contaBancaria }) => {
 
   return (
     <>
-      <div className="card-secundario">
+      <div
+        className="card-secundario"
+        onClick={() => {
+          setTelaAtual(2);
+          setContaBancariaSelecionada(contaBancaria);
+        }}
+      >
         <div className="card-secundario__header">
           <div className="card-secundario__icon icon-corrente">
             <span className="material-icons">account_balance_wallet</span>
@@ -75,7 +90,7 @@ const ContaComponent: React.FC<Props> = ({ contaBancaria }) => {
 
         {contaBancaria.status === 0 &&
           !contaBancaria.expirado &&
-          retornaReceitar()}
+          retornaReceitas()}
       </div>
     </>
   );

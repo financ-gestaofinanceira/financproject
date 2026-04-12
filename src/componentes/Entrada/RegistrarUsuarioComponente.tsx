@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../services/api/apiConnect";
+import api from "../../services/api/apiConnect";
 
 interface RegisterProps {
   exibeCadastro: Boolean;

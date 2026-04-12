@@ -15,10 +15,12 @@ const CadContasModal: React.FC<ModalProps> = ({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="modal-close">
-          X
-        </button>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        <div className="cnt_close">
+          <button type="button" className="close-button" onClick={onClose}>
+            <span className="material-icons">close</span>
+          </button>
+        </div>
         {children}
       </div>
     </div>

@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { GeraRefreshToken } from "../services/auth/tokenService";
 import api from "../services/api/apiConnect";
-import type { ContaResponse } from "../models/ContasUsuarios/GetContasUsuarios";
+import type {
+  ContaResponse,
+  GetContasUsuarios,
+} from "../models/ContasUsuarios/GetContasUsuarios";
 import { Global } from "../models/Autenticação/global";
 import { useNavigate } from "react-router-dom";
 import type { UsuarioResponse } from "../models/Usuario/UsuarioResponse";
 import "./HomeStyle.css";
 import Modal from "../componentes/Modal/Modal";
-import CadContas from "../componentes/Contas/CadContas";
+import CadContas from "../componentes/Contas/CadConta/CadContas";
 import ContaComponent from "../componentes/Contas/ContaComponent";
 import PatrimonioTotal from "../componentes/Contas/PatrimonioTotal";
+import Movimentacoes from "../componentes/Movimentacoes/MovimentacaoDash/Movimentacoes";
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +25,8 @@ export const Home: React.FC = () => {
 
   const [telaAtual, setTelaAtual] = useState(0);
   const [isCadContaOpen, setIsCadContaOpen] = useState(false);
+  const [contaBancariaSelecionada, setContaBancariaSelecionada] =
+    useState<GetContasUsuarios>();
   const buscaContas = async () => {
     let resposta = await api<ContaResponse>(
       "/ContasUsuarios",
@@ -82,19 +88,22 @@ export const Home: React.FC = () => {
     navigate("/", { replace: true });
   };
 
+  const usaRefresh = async () => {
+    const refresh = await GeraRefreshToken();
+
+    if (refresh.sucesso && refresh.dados) {
+      await buscarUsuario();
+      await buscaContas();
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+      navigate("/", { replace: true });
+    }
+  };
   useEffect(() => {
     const init = async () => {
       // 🔥 SEM verificar antes
-      const refresh = await GeraRefreshToken();
-
-      if (refresh.sucesso && refresh.dados) {
-        await buscarUsuario();
-        await buscaContas();
-        setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-        navigate("/", { replace: true });
-      }
+      usaRefresh();
     };
 
     init();
@@ -136,7 +145,12 @@ export const Home: React.FC = () => {
             )}
             <div className="grid-cards">
               {contasObtidas?.conteudo.map((conta) => (
-                <ContaComponent key={conta.idConta} contaBancaria={conta} />
+                <ContaComponent
+                  key={conta.idConta}
+                  setTelaAtual={setTelaAtual}
+                  contaBancaria={conta}
+                  setContaBancariaSelecionada={setContaBancariaSelecionada}
+                />
               ))}
             </div>
 
@@ -144,11 +158,19 @@ export const Home: React.FC = () => {
               isOpen={isCadContaOpen}
               onClose={() => setIsCadContaOpen(false)}
             >
-              <CadContas />
+              <CadContas
+                usaRefresh={usaRefresh}
+                buscaContas={buscaContas}
+                onClose={() => setIsCadContaOpen(false)}
+              />
             </Modal>
           </div>
         </>
       );
+    else if (telaAtual === 2) {
+      if (contaBancariaSelecionada !== undefined)
+        return <Movimentacoes contaBancaria={contaBancariaSelecionada} />;
+    }
   };
 
   return (

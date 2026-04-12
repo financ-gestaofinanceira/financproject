@@ -1,0 +1,74 @@
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+}
+
+.transaction-type {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    color: #90A1B9;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 14px 18px;
+    background: #314158;
+    border: 1px solid #45556C;
+    border-radius: 14px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #2B7FFF;
+}
+.type-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #314158;
+    background: transparent;
+    color: #62748E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+/* Estilo Ativo - Receita */
+.type-btn.active[data-type="receita"] {
+    border-color: #00D492;
+    color: #00D492;
+    background: rgba(0, 212, 146, 0.1);
+}
+
+/* Estilo Ativo - Despesa */
+.type-btn.active[data-type="despesa"] {
+    border-color: #FF4D4D;
+    color: #FF4D4D;
+    background: rgba(255, 77, 77, 0.1);
+}

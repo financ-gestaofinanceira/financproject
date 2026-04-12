@@ -1,0 +1,93 @@
+.transacoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transacoes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transacoes-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-exportar {
+  height: 40px;
+  padding: 0 20px;
+  background: #1d293d;
+  border: 1px solid #314158;
+  border-radius: 14px;
+  color: #cad5e2;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tabela-container {
+  background: rgba(29, 41, 61, 0.7);
+  border-radius: 16px;
+  border: 1px rgba(49, 65, 88, 0.5) solid;
+  overflow: hidden;
+}
+
+.tabela-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(49, 65, 88, 0.5);
+  color: #62748e;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.tabela-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(49, 65, 88, 0.5);
+  font-size: 13px;
+  color: white;
+  transition: background 0.2s;
+}
+
+.tabela-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.valor-positivo {
+  color: #00d492;
+  font-weight: 600;
+}
+.valor-negativo {
+  color: #ff4b4b;
+  font-weight: 600;
+}
+.btn-exportar {
+  height: 40px;
+  padding: 0 20px;
+  background: #1d293d;
+  border: 1px solid #314158;
+  border-radius: 14px;
+  color: #cad5e2;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}

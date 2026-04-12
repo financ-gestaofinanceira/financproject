@@ -74,14 +74,18 @@ body {
   );
   border-radius: 16px;
   border: 1px rgba(25, 60, 184, 0.3) solid;
-  display: flex;
   align-items: center;
   gap: 12px;
+
+  /* 🔥 ESSENCIAL */
+  overflow: hidden;
 }
 
+/* Avatar não encolhe */
 .user__avatar {
   width: 40px;
   height: 40px;
+  min-width: 40px; /* 🔥 evita esmagar */
   background: linear-gradient(135deg, #2b7fff 0%, #4f39f6 100%);
   border-radius: 14px;
   display: flex;
@@ -90,16 +94,36 @@ body {
   font-weight: 600;
 }
 
+/* Container do texto */
+.user__info {
+  display: flex;
+  flex-direction: column;
+
+  /* 🔥 ESSENCIAL PRA FUNCIONAR ELLIPSIS */
+  min-width: 0;
+  flex: 1;
+}
+
+/* Nome */
 .user__name {
   color: white;
   font-size: 13px;
   font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Email */
 .user__email {
   color: #62748e;
   font-size: 11px;
   font-weight: 400;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar__nav {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GeraRefreshToken, GeraToken } from "../services/auth/tokenService";
-import type { tokeRequest } from "../models/Autenticação/tokenRequest";
-import "../App.css";
+import { GeraRefreshToken, GeraToken } from "../../services/auth/tokenService";
+import type { tokeRequest } from "../../models/Autenticação/tokenRequest";
+import "../../App.css";
 
 interface TokenData {
   token: string;

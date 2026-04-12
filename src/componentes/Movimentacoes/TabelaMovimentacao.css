@@ -1,0 +1,112 @@
+.transacoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.3s ease;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transacoes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titulo-secao {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.btn-exportar {
+  height: 40px;
+  padding: 0 20px;
+  background: #1d293d;
+  border: 1px solid #314158;
+  border-radius: 14px;
+  color: #cad5e2;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tabela-container {
+  background: rgba(29, 41, 61, 0.7);
+  border-radius: 16px;
+  border: 1px rgba(49, 65, 88, 0.5) solid;
+  overflow: hidden;
+}
+
+.tabela-movimentacao {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Aplicando o seu GRID original nas linhas da tabela */
+.tabela-header,
+.tabela-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.tabela-header {
+  height: 50px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(49, 65, 88, 0.5);
+}
+
+.tabela-header th {
+  color: #62748e;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.tabela-row {
+  height: 72px; /* Altura para manter o respiro da imagem */
+  border-bottom: 1px solid rgba(49, 65, 88, 0.5);
+  transition: background 0.2s;
+}
+
+.tabela-row:last-child {
+  border-bottom: none;
+}
+
+.tabela-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tabela-row td {
+  font-size: 13px;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.valor-positivo {
+  color: #00d492;
+  font-weight: 600;
+}
+
+.valor-negativo {
+  color: #ff4b4b;
+  font-weight: 600;
+}
