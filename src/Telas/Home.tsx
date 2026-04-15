@@ -14,6 +14,7 @@ import CadContas from "../componentes/Contas/CadConta/CadContas";
 import ContaComponent from "../componentes/Contas/ContaComponent";
 import PatrimonioTotal from "../componentes/Contas/PatrimonioTotal";
 import Movimentacoes from "../componentes/Movimentacoes/MovimentacaoDash/Movimentacoes";
+import LandBotComponent from "../componentes/LandBot/LandBotComponent";
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -115,7 +116,7 @@ export const Home: React.FC = () => {
 
   const retornaBoasVindas = () => {
     const hora = new Date().getHours();
-    if (hora >= 0 && hora <= 3)
+    if (hora >= 22 && hora <= 3)
       return "Vá dormir! Você é corno 🐂 , não morcego... 🦇🦇";
     if (hora < 12) return "Bom dia";
     if (hora < 18) return "Boa tarde";
@@ -126,6 +127,7 @@ export const Home: React.FC = () => {
     if (telaAtual === 0)
       return (
         <>
+          {usuario !== null && <LandBotComponent usuario={usuario} />}
           <div className="menu-superior">
             <div className="texto-superior">
               <p>{retornaBoasVindas()},</p>
@@ -138,7 +140,6 @@ export const Home: React.FC = () => {
               + Nova Conta Bancaria
             </button>
           </div>
-
           <div className="principal">
             {contasObtidas?.conteudo !== undefined && (
               <PatrimonioTotal contaBancaria={contasObtidas?.conteudo} />
