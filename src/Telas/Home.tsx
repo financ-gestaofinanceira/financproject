@@ -12,7 +12,7 @@ import "./HomeStyle.css";
 import Modal from "../componentes/Modal/Modal";
 import CadContas from "../componentes/Contas/CadConta/CadContas";
 import ContaComponent from "../componentes/Contas/ContaComponent";
-import PatrimonioTotal from "../componentes/Contas/PatrimonioTotal";
+import PatrimonioTotal from "../componentes/Contas/Patrimonio/PatrimonioTotal";
 import Movimentacoes from "../componentes/Movimentacoes/MovimentacaoDash/Movimentacoes";
 import LandBotComponent from "../componentes/LandBot/LandBotComponent";
 

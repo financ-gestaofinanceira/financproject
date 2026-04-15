@@ -1,11 +1,26 @@
+import type { GetMovimentacoes } from "../../models/Movimentacoes/GetMovimentacoes";
 import "./TabelaMovimentacao.css";
 
-const TabelaMovimentacao = () => {
+type PropMov = {
+  movimentacao: GetMovimentacoes;
+};
+
+const TabelaMovimentacao: React.FC<PropMov> = ({ movimentacao }) => {
+  const formataMoeda = (valor: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valor);
+  };
+
+  const formataData = (data: string) => {
+    return new Date(data).toLocaleDateString("pt-BR");
+  };
+
   return (
     <div className="transacoes-container">
       <div className="transacoes-header">
         <h2 className="titulo-secao">Movimentações</h2>
-        <div className="transacoes-actions"></div>
       </div>
 
       <div className="tabela-container">
@@ -18,19 +33,36 @@ const TabelaMovimentacao = () => {
               <th>VALOR</th>
             </tr>
           </thead>
+
           <tbody>
-            <tr className="tabela-row">
-              <td>Salário Mensal</td>
-              <td>Trabalho</td>
-              <td>05/04/2026</td>
-              <td className="valor-positivo">R$ 5.000,00</td>
-            </tr>
-            <tr className="tabela-row">
-              <td>Assinatura Streaming</td>
-              <td>Lazer</td>
-              <td>06/04/2026</td>
-              <td className="valor-negativo">- R$ 55,90</td>
-            </tr>
+            {movimentacao?.conteudo?.movimentacaos?.map((mov) => (
+              <tr className="tabela-row" key={mov.id}>
+                <td>{mov.titulo}</td>
+
+                <td>
+                  {typeof mov.categoria === "object"
+                    ? "Sem categoria"
+                    : (mov.categoria ?? "Sem categoria")}
+                </td>
+
+                <td>{formataData(mov.dthrMovimentacao)}</td>
+
+                <td
+                  className={
+                    mov.tipo === 0 ? "valor-positivo" : "valor-negativo"
+                  }
+                >
+                  <p
+                    className={
+                      mov.tipo === 0 ? "valor-positivo" : "valor-negativo"
+                    }
+                  >
+                    {" "}
+                    {formataMoeda(mov.valor)}
+                  </p>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

@@ -14,6 +14,12 @@ const ContaComponent: React.FC<Props> = ({
   setContaBancariaSelecionada,
   contaBancaria,
 }) => {
+  const formataMoeda = (valor: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valor);
+  };
   const retornaReceitas = () => {
     return (
       <div className="patrimonio-stats">
@@ -28,7 +34,7 @@ const ContaComponent: React.FC<Props> = ({
           </div>
           <div className="stat-info">
             <p>Receitas</p>
-            <h2>R$ 11.710,00</h2>
+            <h2>{formataMoeda(contaBancaria.entradaPendente)}</h2>
           </div>
         </div>
 
@@ -42,21 +48,24 @@ const ContaComponent: React.FC<Props> = ({
             </span>
           </div>
           <div className="stat-info">
-            <p>Receitas</p>
-            <h2>R$ 11.710,00</h2>
+            <p>Despesas</p>
+            <h2>{formataMoeda(contaBancaria.saidaPendente)}</h2>
           </div>
         </div>
       </div>
     );
   };
-
+  console.log(contaBancaria);
   return (
     <>
       <div
-        className="card-secundario"
+        className="card-secundario-custom"
+        style={{ background: contaBancaria.cor }}
         onClick={() => {
-          setTelaAtual(2);
-          setContaBancariaSelecionada(contaBancaria);
+          if (contaBancaria.status == 0) {
+            setTelaAtual(2);
+            setContaBancariaSelecionada(contaBancaria);
+          }
         }}
       >
         <div className="card-secundario__header">
@@ -75,7 +84,7 @@ const ContaComponent: React.FC<Props> = ({
               color: contaBancaria.status !== 0 ? "#d6d6da" : "white",
             }}
           >
-            R$ 4.255,00
+            {formataMoeda(contaBancaria.saldoAtual)}
           </p>
         </div>
         <div className="card-footer-info">

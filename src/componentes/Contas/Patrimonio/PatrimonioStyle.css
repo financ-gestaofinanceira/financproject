@@ -1,0 +1,50 @@
+.card-patrimonio {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #155dfc 0%, #4f39f6 50%, #7f22fe 100%);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-patrimonio-inativo {
+  width: 100%;
+  height: 192px;
+  background: linear-gradient(135deg, #283657 0%, #1a1922 50%, #100e13 100%);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-patrimonio::before {
+  content: "";
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  right: -100px;
+  top: -128px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+
+.card-patrimonio::after {
+  content: "";
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  left: -80px;
+  bottom: -80px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+.saldo_total_projetado {
+  font-size: 25px;
+}
