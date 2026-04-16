@@ -14,7 +14,7 @@ const CadContasModal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay active" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="cnt_close">
           <button type="button" className="close-button" onClick={onClose}>

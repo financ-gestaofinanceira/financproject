@@ -103,7 +103,6 @@ export const Home: React.FC = () => {
   };
   useEffect(() => {
     const init = async () => {
-      // 🔥 SEM verificar antes
       usaRefresh();
     };
 
@@ -169,8 +168,13 @@ export const Home: React.FC = () => {
         </>
       );
     else if (telaAtual === 2) {
-      if (contaBancariaSelecionada !== undefined)
-        return <Movimentacoes contaBancaria={contaBancariaSelecionada} />;
+      if (contaBancariaSelecionada !== undefined && usuario !== null)
+        return (
+          <Movimentacoes
+            contaBancaria={contaBancariaSelecionada}
+            usuario={usuario}
+          />
+        );
     }
   };
 
@@ -220,18 +224,6 @@ export const Home: React.FC = () => {
           <div className="nav__item">
             <span className="material-icons">wallet</span>
             Transações
-          </div>
-          <div className="nav__item">
-            <span className="material-icons">add_task</span>
-            Metas
-          </div>
-          <div className="nav__item">
-            <span className="material-icons">bar_chart</span>
-            Relatórios
-          </div>
-          <div className="nav__item">
-            <span className="material-icons">settings</span>
-            Configurações
           </div>
         </nav>
 

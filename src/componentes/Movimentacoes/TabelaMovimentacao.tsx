@@ -61,6 +61,8 @@ const TabelaMovimentacao: React.FC<PropMov> = ({ movimentacao }) => {
                     {formataMoeda(mov.valor)}
                   </p>
                 </td>
+
+                <td>{mov.concluido ? "Concluido" : "Pendente"}</td>
               </tr>
             ))}
           </tbody>

@@ -5,19 +5,25 @@ import api from "../../../services/api/apiConnect";
 import "./MovimentacaoesStyle.css";
 import { useCallback, useEffect, useState } from "react";
 import type { GetMovimentacoes } from "../../../models/Movimentacoes/GetMovimentacoes";
+import Modal from "../../Modal/Modal";
+import CadMov from "../CadMov/CadMov";
+import type { UsuarioResponse } from "../../../models/Usuario/UsuarioResponse";
 
 type Props = {
   contaBancaria: GetContasUsuarios;
+  usuario: UsuarioResponse;
 };
 
-const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
+const Movimentacoes: React.FC<Props> = ({ contaBancaria, usuario }) => {
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
+  const [isCadMovOpen, setIsCadMovOpen] = useState(false);
 
-  const formataMoeda = (valor: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(valor);
+  const formataMoeda = (valor: number | undefined) => {
+    if (valor !== undefined)
+      return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(valor);
   };
 
   const buscaMovimentacoes = useCallback(async () => {
@@ -49,7 +55,12 @@ const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
 
         <div className="transacoes-actions">
           <button className="btn-exportar">Exportar</button>
-          <button className="botão-transação">Nova</button>
+          <button
+            className="botão-transação"
+            onClick={() => setIsCadMovOpen(true)}
+          >
+            Nova
+          </button>
         </div>
       </div>
 
@@ -109,25 +120,38 @@ const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
         <div className="card-secundario">
           <div className="card-secundario__label">Saldo no período</div>
           <div className="card-secundario__valor" style={{ color: "#2B7FFF" }}>
-            {formataMoeda(contaBancaria.saldoAtual)}
+            {formataMoeda(movimentacoes?.conteudo.resumo.saldoRealizado)}
+          </div>
+        </div>
+
+        <div className="card-secundario">
+          <div className="card-secundario__label">Saldo no projetado</div>
+          <div className="card-secundario__valor" style={{ color: "#2B7FFF" }}>
+            {formataMoeda(movimentacoes?.conteudo.resumo.saldoProjetado)}
           </div>
         </div>
 
         <div className="card-secundario">
           <div className="card-secundario__label">Receitas no período</div>
           <div className="card-secundario__valor" style={{ color: "#00D492" }}>
-            {formataMoeda(contaBancaria.entradaPendente)}
+            {formataMoeda(movimentacoes?.conteudo.resumo.entrada.projetado)}
           </div>
         </div>
 
         <div className="card-secundario">
           <div className="card-secundario__label">Despesas no período</div>
           <div className="card-secundario__valor" style={{ color: "#FF4B4B" }}>
-            {formataMoeda(contaBancaria.saidaPendente)}
+            {formataMoeda(movimentacoes?.conteudo.resumo.saida.projetado)}
           </div>
         </div>
       </div>
-
+      <Modal isOpen={isCadMovOpen} onClose={() => setIsCadMovOpen(false)}>
+        <CadMov
+          onClose={() => setIsCadMovOpen(false)}
+          idConta={contaBancaria.idConta}
+          buscaMovimentacoes={buscaMovimentacoes}
+        />
+      </Modal>
       {movimentacoes && <TabelaMovimentacao movimentacao={movimentacoes} />}
     </div>
   );
