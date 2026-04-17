@@ -14,7 +14,7 @@ type Props = {
   usuario: UsuarioResponse;
 };
 
-const Movimentacoes: React.FC<Props> = ({ contaBancaria, usuario }) => {
+const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
 
