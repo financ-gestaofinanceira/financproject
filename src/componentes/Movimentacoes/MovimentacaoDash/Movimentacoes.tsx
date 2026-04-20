@@ -28,7 +28,7 @@ const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
 
   const buscaMovimentacoes = useCallback(async () => {
     const resposta = await api<GetMovimentacoes>(
-      `/Contas/Movimentacoes/${contaBancaria.idConta}/Retornar?DthrMovimentacaoInicial=2020-04-01T20%3A13%3A16.3444041Z&DthrMovimentacaoFinal=2030-12-31T20%3A13%3A16.3444041Z`,
+      `/Contas/${contaBancaria.idConta}/Movimentacoes/Retornar?DthrMovimentacaoInicial=2020-04-01T20%3A13%3A16.3444041Z&DthrMovimentacaoFinal=2030-12-31T20%3A13%3A16.3444041Z`,
       "GET",
       undefined,
       true,

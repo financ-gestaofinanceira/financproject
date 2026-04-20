@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./CadMovStyle.css";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { MovimentacaoPost } from "../../../models/Movimentacoes/MovimentacaoPost";
 import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
+import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 
 type PropCadMov = {
   onClose: () => void;
@@ -31,6 +32,25 @@ const CadMov: React.FC<PropCadMov> = ({
   const [dataMovimentacao, setDataMovimentacao] = useState(getNow);
   const [dataConclusao, setDataConclusao] = useState(getNow);
   const [concluido, setConcluido] = useState(false);
+  const [categorias, setCategorias] = useState<CategoriaResponse>();
+  const [categoiaId, setCategoriaId] = useState<number | null>(null);
+
+  useEffect(() => {
+    buscaCategorias();
+  }, [buscaMovimentacoes]);
+
+  const buscaCategorias = async () => {
+    const resposta = await api<CategoriaResponse>(
+      `/Contas/${idConta}/Categorias`,
+      "GET",
+      undefined,
+      true,
+    );
+
+    if (resposta.sucesso && resposta.dados) {
+      setCategorias(resposta.dados);
+    }
+  };
 
   const criaMov = async () => {
     const toUTCISOString = (data: string) => {
@@ -40,7 +60,6 @@ const CadMov: React.FC<PropCadMov> = ({
 
     try {
       let request: MovimentacaoPost = {
-        idConta: idConta,
         tipo: type === "receita" ? 0 : 1,
         valor: valor,
         concluido: concluido,
@@ -48,10 +67,11 @@ const CadMov: React.FC<PropCadMov> = ({
         observacao: descricao,
         dthrMovimentacao: toUTCISOString(dataMovimentacao),
         dthrConclusao: concluido ? toUTCISOString(dataConclusao) : null,
+        idCategoria: categoiaId,
       };
 
       var resposta = await api<ApiResult<Movimentacao>>(
-        "/Contas/Movimentacoes",
+        `/Contas/${idConta}/Movimentacoes`,
         "POST",
         request,
         true,
@@ -156,11 +176,19 @@ const CadMov: React.FC<PropCadMov> = ({
 
         <div className="input-group">
           <label>Categoria</label>
-          <select defaultValue="">
+          <select
+            value={categoiaId ?? ""}
+            onChange={(e) => setCategoriaId(Number(e.target.value))}
+          >
             <option value="" disabled>
               Selecione uma categoria
             </option>
-            <option value="alimentacao">Alimentação</option>
+
+            {categorias?.conteudo.map((categoria) => (
+              <option key={categoria.idCategoria} value={categoria.idCategoria}>
+                {categoria.nome}
+              </option>
+            ))}
           </select>
         </div>
 
