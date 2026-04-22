@@ -1,5 +1,5 @@
 {
-  "homepage":"https://financ-gestaofinanceira.github.io/financproject",
+  "homepage": "https://financ-gestaofinanceira.github.io/financproject",
   "name": "vite-project",
   "private": true,
   "version": "0.0.0",
@@ -9,13 +9,14 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy":"npm run build",
-    "deploy":"gh-pages -d dist"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "axion": "^0.1.0",
     "axios": "^1.14.0",
     "react": "^19.2.4",
+    "react-colorful": "^5.6.1",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.2"
   },

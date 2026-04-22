@@ -1,0 +1,170 @@
+/* ================= TABELA (RESTAURADO DO ORIGINAL) ================= */
+.centraliza .table-wrapper {
+  border-radius: 16px;
+  border: 1px solid rgba(49, 65, 88, 0.5);
+  overflow: auto;
+  background: rgba(29, 41, 61, 0.7);
+  max-height: 300px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.centraliza table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.centraliza th {
+  color: #62748e;
+  font-size: 11px;
+  text-align: center;
+  padding: 12px;
+}
+
+.centraliza td {
+  color: white;
+  padding: 12px;
+  text-align: center;
+}
+
+/* ================= CATEGORIA (RESTAURADO DO ORIGINAL) ================= */
+.centraliza .categoria {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.centraliza .categoria p {
+  margin: 0;
+}
+
+/* ================= INPUT E ALINHAMENTO (CORRIGIDO) ================= */
+
+/* Container para alinhar o label "Nome" com o input */
+.input-group-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input-group-horizontal label {
+  color: #62748e;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.input-categoria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #3b4a5e;
+  border-radius: 10px;
+  padding: 0 12px;
+  height: 45px;
+  flex: 1; /* Faz o input ocupar o espaço restante */
+  margin-bottom: 10px;
+}
+
+/* Bolinha da cor */
+.color-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.color-preview {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #2a35454d;
+}
+
+/* Esconde input color nativo */
+.color-wrapper input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.input-categoria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #3b4a5e;
+  border-radius: 10px;
+  padding: 10px 12px; /* 👈 substitui height fixa */
+  width: 100%;
+}
+
+/* INPUT TEXTO */
+.input-categoria input[type="text"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 14px;
+}
+
+/* ================= OUTROS ESTILOS ================= */
+.centraliza {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.modal-body {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.error {
+  color: #ff4d4d;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.ctn-vertical {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.botão-cancelamento {
+  height: 40px;
+  padding: 0 24px;
+  background: linear-gradient(90deg, #f8901a 0%, #ff531f 100%);
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.25);
+}
+
+.botão-cancelamento:hover {
+  background: linear-gradient(90deg, #5c5858 0%, #757272 100%);
+}
+.botão-deletar {
+  height: 40px;
+  padding: 0 24px;
+  background: linear-gradient(90deg, #f81a1a 0%, #ff531f 100%);
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.25);
+}
+
+.botão-deletar:hover {
+  background: linear-gradient(90deg, #d22923 0%, #e40f0f 100%);
+}

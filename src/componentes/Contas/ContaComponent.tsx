@@ -55,7 +55,7 @@ const ContaComponent: React.FC<Props> = ({
       </div>
     );
   };
-  console.log(contaBancaria);
+  console.log("4454" + contaBancaria);
   return (
     <>
       <div
@@ -63,7 +63,7 @@ const ContaComponent: React.FC<Props> = ({
         style={{ background: contaBancaria.cor }}
         onClick={() => {
           if (contaBancaria.status == 0) {
-            setTelaAtual(2);
+            setTelaAtual(1);
             setContaBancariaSelecionada(contaBancaria);
           }
         }}

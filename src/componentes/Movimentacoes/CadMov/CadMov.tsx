@@ -1,29 +1,50 @@
-import { useEffect, useState } from "react";
-import "./CadMovStyle.css";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { MovimentacaoPost } from "../../../models/Movimentacoes/MovimentacaoPost";
 import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
+import "./CadMovStyle.css";
+import type {
+  ContaResponse,
+  GetContasUsuarios,
+} from "../../../models/ContasUsuarios/GetContasUsuarios";
 
-type PropCadMov = {
+interface PropCadMov {
   onClose: () => void;
   idConta: number;
   buscaMovimentacoes: () => void;
-};
+  setContaBancaria: React.Dispatch<
+    React.SetStateAction<GetContasUsuarios | undefined>
+  >;
+}
 
 const CadMov: React.FC<PropCadMov> = ({
   onClose,
   idConta,
   buscaMovimentacoes,
+  setContaBancaria,
 }) => {
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
-
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
+  const buscaContas = async () => {
+    let resposta = await api<ContaResponse>(
+      `/ContasUsuarios?id=${idConta}`,
+      "GET",
+      undefined,
+      true,
+    );
+
+    console.log(resposta);
+
+    if (resposta.sucesso && resposta.dados) {
+      setContaBancaria(resposta.dados.conteudo[0]);
+    }
+  };
   const [type, setType] = useState<"receita" | "despesa">("receita");
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -33,33 +54,50 @@ const CadMov: React.FC<PropCadMov> = ({
   const [dataConclusao, setDataConclusao] = useState(getNow);
   const [concluido, setConcluido] = useState(false);
   const [categorias, setCategorias] = useState<CategoriaResponse>();
-  const [categoiaId, setCategoriaId] = useState<number | null>(null);
+  const [categoriaId, setCategoriaId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
+
+  const buscaCategorias = useCallback(async () => {
+    try {
+      const resposta = await api<CategoriaResponse>(
+        `/Contas/${idConta}/Categorias`,
+        "GET",
+        undefined,
+        true,
+      );
+      if (resposta.sucesso && resposta.dados) {
+        setCategorias(resposta.dados);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar categorias:", error);
+    }
+  }, [idConta]);
 
   useEffect(() => {
     buscaCategorias();
-  }, [buscaMovimentacoes]);
+  }, [buscaCategorias]);
 
-  const buscaCategorias = async () => {
-    const resposta = await api<CategoriaResponse>(
-      `/Contas/${idConta}/Categorias`,
-      "GET",
-      undefined,
-      true,
-    );
-
-    if (resposta.sucesso && resposta.dados) {
-      setCategorias(resposta.dados);
-    }
+  const handleValor = (value: string) => {
+    const numeros = value.replace(/\D/g, "");
+    const valorNumerico = Number(numeros) / 100;
+    const formatado = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valorNumerico);
+    setValorFormatado(formatado);
+    setValor(valorNumerico);
   };
 
-  const criaMov = async () => {
-    const toUTCISOString = (data: string) => {
-      const date = new Date(data);
-      return date.toISOString();
-    };
+  const criaMov = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErroMsg(undefined);
+
+    const toUTCISOString = (data: string) => new Date(data).toISOString();
 
     try {
-      let request: MovimentacaoPost = {
+      const request: MovimentacaoPost = {
         tipo: type === "receita" ? 0 : 1,
         valor: valor,
         concluido: concluido,
@@ -67,49 +105,28 @@ const CadMov: React.FC<PropCadMov> = ({
         observacao: descricao,
         dthrMovimentacao: toUTCISOString(dataMovimentacao),
         dthrConclusao: concluido ? toUTCISOString(dataConclusao) : null,
-        idCategoria: categoiaId,
+        idCategoria: categoriaId,
       };
 
-      var resposta = await api<ApiResult<Movimentacao>>(
+      const resposta = await api<ApiResult<Movimentacao>>(
         `/Contas/${idConta}/Movimentacoes`,
         "POST",
         request,
         true,
       );
-      console.log(resposta.erro);
+
       if (resposta.sucesso) {
         buscaMovimentacoes();
+        buscaContas();
         onClose();
-        //  buscaContas();
-      } // else
-      /*setErroMsg(
-          resposta.erro === undefined ? "Titulo invalido!" : resposta.erro,
-        );*/
-
-      console.log(resposta);
-
-      if (resposta.erro) {
-        console.log(resposta.erro);
-        //setErroMsg(resposta.erro);
-        return;
+      } else {
+        setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
       }
-    } catch (erro: any) {
-      console.error(erro.message);
-      // setErroMsg(erro.message);
+    } catch (error: any) {
+      setErroMsg(error.message || "Erro inesperado.");
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const handleValor = (value: string) => {
-    const numeros = value.replace(/\D/g, "");
-    const valorNumerico = Number(numeros) / 100;
-
-    const formatado = new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(valorNumerico);
-
-    setValorFormatado(formatado);
-    setValor(valorNumerico);
   };
 
   return (
@@ -128,7 +145,6 @@ const CadMov: React.FC<PropCadMov> = ({
           >
             Receita
           </button>
-
           <button
             type="button"
             className={`type-btn ${type === "despesa" ? "active" : ""}`}
@@ -177,16 +193,17 @@ const CadMov: React.FC<PropCadMov> = ({
         <div className="input-group">
           <label>Categoria</label>
           <select
-            value={categoiaId ?? ""}
+            value={categoriaId ?? ""}
             onChange={(e) => setCategoriaId(Number(e.target.value))}
           >
             <option value="" disabled>
               Selecione uma categoria
             </option>
-
             {categorias?.conteudo.map((categoria) => (
               <option key={categoria.idCategoria} value={categoria.idCategoria}>
-                {categoria.nome}
+                <div className="categoria">
+                  <p>{categoria.nome}</p>
+                </div>
               </option>
             ))}
           </select>
@@ -197,7 +214,10 @@ const CadMov: React.FC<PropCadMov> = ({
           <input
             type="datetime-local"
             value={dataMovimentacao}
-            onChange={(e) => setDataMovimentacao(e.target.value)}
+            onChange={(e) => {
+              setDataMovimentacao(e.target.value);
+              setDataConclusao(e.target.value);
+            }}
             required
           />
         </div>
@@ -225,8 +245,10 @@ const CadMov: React.FC<PropCadMov> = ({
           </div>
         )}
 
-        <button type="submit" className="botão-transação">
-          Cadastrar
+        {erroMsg && <p className="error">{erroMsg}</p>}
+
+        <button type="submit" className="botão-transação" disabled={isLoading}>
+          {isLoading ? "Cadastrando..." : "Cadastrar"}
         </button>
       </div>
     </form>

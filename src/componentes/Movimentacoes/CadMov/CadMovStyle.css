@@ -113,3 +113,17 @@
   align-items: center;
   gap: 8px;
 }
+
+.categoria {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  padding: 2px 5px;
+  border-radius: 8px;
+  width: 100%;
+}
+.categoria .p {
+  margin: 0;
+}

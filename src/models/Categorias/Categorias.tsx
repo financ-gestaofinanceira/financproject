@@ -8,3 +8,7 @@ export type CategoriaResponse = {
   conteudo: Categoria[];
   metadados: any | null;
 };
+
+export type CategoriaPost = {
+  valor: Categoria;
+};

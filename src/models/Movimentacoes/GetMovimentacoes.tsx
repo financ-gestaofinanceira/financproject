@@ -22,9 +22,15 @@ export type UsuarioCriador = {
   nomeCompleto: string;
 };
 
+export type Categoria = {
+  idCategoria: number;
+  nome: string;
+  cor: string;
+};
+
 export type Movimentacao = {
   id: number;
-  tipo: number;
+  tipo: number; // ideal: enum depois
   idConta: number;
   idFixo: number;
   concluido: boolean;
@@ -35,14 +41,16 @@ export type Movimentacao = {
   dthrMovimentacao: string;
   dthrConclusao: string | null;
   usarioCriador: UsuarioCriador;
-  usuarioExecutor: null;
-  categoria: null;
+  usuarioExecutor: UsuarioCriador | null; // assumindo padrão
+  categoria: Categoria | null;
+};
+
+export type ConteudoMovimentacoes = {
+  resumo: Resumo;
+  movimentacaos: Movimentacao[];
 };
 
 export type GetMovimentacoes = {
-  conteudo: {
-    resumo: Resumo;
-    movimentacaos: Movimentacao[];
-  };
-  metadados: null;
+  conteudo: ConteudoMovimentacoes;
+  metadados: any | null;
 };

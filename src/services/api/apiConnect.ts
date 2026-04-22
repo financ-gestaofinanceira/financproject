@@ -39,6 +39,20 @@ export default async function Conecta<T>(
         });
 
         break;
+      case "PATCH":
+        resposta = await api.patch<T>(rota, objeto, {
+          headers: header?.headers,
+          withCredentials: true,
+        });
+
+        break;
+      case "DELETE":
+        resposta = await api.delete<T>(rota, {
+          headers: header?.headers,
+          withCredentials: true,
+        });
+
+        break;
       default:
         throw new Error(`Método inválido: ${metodo}`);
     }

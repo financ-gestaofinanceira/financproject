@@ -1,22 +1,30 @@
-import type { GetContasUsuarios } from "../../../models/ContasUsuarios/GetContasUsuarios";
-import TabelaMovimentacao from "../TabelaMovimentacao";
-import api from "../../../services/api/apiConnect";
+import type { GetContasUsuarios } from "../../models/ContasUsuarios/GetContasUsuarios";
+import TabelaMovimentacao from "../../componentes/Movimentacoes/tabela/TabelaMovimentacao";
+import api from "../../services/api/apiConnect";
 
 import "./MovimentacaoesStyle.css";
 import { useCallback, useEffect, useState } from "react";
-import type { GetMovimentacoes } from "../../../models/Movimentacoes/GetMovimentacoes";
-import Modal from "../../Modal/Modal";
-import CadMov from "../CadMov/CadMov";
-import type { UsuarioResponse } from "../../../models/Usuario/UsuarioResponse";
+import type { GetMovimentacoes } from "../../models/Movimentacoes/GetMovimentacoes";
+import Modal from "../../componentes/Modal/Modal";
+import CadMov from "../../componentes/Movimentacoes/CadMov/CadMov";
+import type { UsuarioResponse } from "../../models/Usuario/UsuarioResponse";
+import Categorias from "../../componentes/categoria/Categorias";
 
 type Props = {
   contaBancaria: GetContasUsuarios;
   usuario: UsuarioResponse;
+  setContaBancaria: React.Dispatch<
+    React.SetStateAction<GetContasUsuarios | undefined>
+  >;
 };
 
-const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
+const Movimentacoes: React.FC<Props> = ({
+  contaBancaria,
+  setContaBancaria,
+}) => {
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
+  const [isCategoriaOpen, setIsCategoriaOpen] = useState(false);
 
   const formataMoeda = (valor: number | undefined) => {
     if (valor !== undefined)
@@ -54,12 +62,17 @@ const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
         </div>
 
         <div className="transacoes-actions">
-          <button className="btn-exportar">Exportar</button>
+          <button
+            className="botão-transação"
+            onClick={() => setIsCategoriaOpen(true)}
+          >
+            Categorias
+          </button>
           <button
             className="botão-transação"
             onClick={() => setIsCadMovOpen(true)}
           >
-            Nova
+            Nova Tansação
           </button>
         </div>
       </div>
@@ -148,6 +161,13 @@ const Movimentacoes: React.FC<Props> = ({ contaBancaria }) => {
       <Modal isOpen={isCadMovOpen} onClose={() => setIsCadMovOpen(false)}>
         <CadMov
           onClose={() => setIsCadMovOpen(false)}
+          idConta={contaBancaria.idConta}
+          buscaMovimentacoes={buscaMovimentacoes}
+          setContaBancaria ={setContaBancaria}
+        />
+      </Modal>
+      <Modal isOpen={isCategoriaOpen} onClose={() => setIsCategoriaOpen(false)}>
+        <Categorias
           idConta={contaBancaria.idConta}
           buscaMovimentacoes={buscaMovimentacoes}
         />
