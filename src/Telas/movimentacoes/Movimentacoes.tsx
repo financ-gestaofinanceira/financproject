@@ -1,4 +1,7 @@
-import type { GetContasUsuarios } from "../../models/ContasUsuarios/GetContasUsuarios";
+import type {
+  ContaResponse,
+  GetContasUsuarios,
+} from "../../models/ContasUsuarios/GetContasUsuarios";
 import TabelaMovimentacao from "../../componentes/Movimentacoes/tabela/TabelaMovimentacao";
 import api from "../../services/api/apiConnect";
 
@@ -24,6 +27,7 @@ const Movimentacoes: React.FC<Props> = ({
 }) => {
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
+
   const [isCategoriaOpen, setIsCategoriaOpen] = useState(false);
 
   const formataMoeda = (valor: number | undefined) => {
@@ -41,14 +45,28 @@ const Movimentacoes: React.FC<Props> = ({
       undefined,
       true,
     );
-    console.log(`/Contas/Movimentacoes/${contaBancaria.idConta}/Retornar`);
 
-    console.log(resposta);
     if (resposta.sucesso && resposta.dados) {
       setMovimentacoes(resposta.dados);
     }
+
+    await buscaContas();
   }, [contaBancaria.idConta]);
 
+  const buscaContas = async () => {
+    let resposta = await api<ContaResponse>(
+      `/ContasUsuarios?id=${contaBancaria.idConta}`,
+      "GET",
+      undefined,
+      true,
+    );
+
+    console.log(resposta);
+
+    if (resposta.sucesso && resposta.dados) {
+      setContaBancaria(resposta.dados.conteudo[0]);
+    }
+  };
   useEffect(() => {
     buscaMovimentacoes();
   }, [buscaMovimentacoes]);
@@ -163,7 +181,6 @@ const Movimentacoes: React.FC<Props> = ({
           onClose={() => setIsCadMovOpen(false)}
           idConta={contaBancaria.idConta}
           buscaMovimentacoes={buscaMovimentacoes}
-          setContaBancaria ={setContaBancaria}
         />
       </Modal>
       <Modal isOpen={isCategoriaOpen} onClose={() => setIsCategoriaOpen(false)}>
@@ -172,7 +189,13 @@ const Movimentacoes: React.FC<Props> = ({
           buscaMovimentacoes={buscaMovimentacoes}
         />
       </Modal>
-      {movimentacoes && <TabelaMovimentacao movimentacao={movimentacoes} />}
+      {movimentacoes && (
+        <TabelaMovimentacao
+          movimentacao={movimentacoes}
+          buscaMovimentacoes={buscaMovimentacoes}
+          idConta={contaBancaria.idConta}
+        />
+      )}
     </div>
   );
 };

@@ -1,11 +1,25 @@
-import type { GetMovimentacoes } from "../../../models/Movimentacoes/GetMovimentacoes";
+import { useState } from "react";
+import type {
+  GetMovimentacoes,
+  Movimentacao,
+} from "../../../models/Movimentacoes/GetMovimentacoes";
+import ConclusaoMovimentacao from "../confirmacao/ConclusaoMovimentacao";
 import "./TabelaMovimentacao.css";
+import Modal from "../../Modal/Modal";
 
 type PropMov = {
+  idConta: number;
   movimentacao: GetMovimentacoes;
+  buscaMovimentacoes: () => void;
 };
 
-const TabelaMovimentacao: React.FC<PropMov> = ({ movimentacao }) => {
+const TabelaMovimentacao: React.FC<PropMov> = ({
+  idConta,
+  movimentacao,
+  buscaMovimentacoes,
+}) => {
+  const [movSelecionada, setMovSelecionada] = useState<Movimentacao | null>();
+  const [isAlterMovOpen, setIsAlterMovOpen] = useState(false);
   const formataMoeda = (valor: number, movTipo: number) => {
     let moeda = new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -57,7 +71,14 @@ const TabelaMovimentacao: React.FC<PropMov> = ({ movimentacao }) => {
           </thead>
           <tbody>
             {movimentacao?.conteudo?.movimentacaos?.map((mov) => (
-              <tr key={mov.id}>
+              <tr
+                key={mov.id}
+                onClick={() => {
+                  setMovSelecionada(mov);
+                  setIsAlterMovOpen(true);
+                  console.log(mov);
+                }}
+              >
                 <td>{mov.titulo}</td>
                 <td>{mov.observacao}</td>
                 <td>
@@ -86,6 +107,16 @@ const TabelaMovimentacao: React.FC<PropMov> = ({ movimentacao }) => {
           </tbody>
         </table>
       </div>
+      {isAlterMovOpen && movSelecionada && (
+        <Modal isOpen={isAlterMovOpen} onClose={() => setIsAlterMovOpen(false)}>
+          <ConclusaoMovimentacao
+            onClose={() => setIsAlterMovOpen(false)}
+            buscaMovimentacoes={buscaMovimentacoes}
+            idConta={idConta}
+            movimentacaoSelecionada={movSelecionada}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

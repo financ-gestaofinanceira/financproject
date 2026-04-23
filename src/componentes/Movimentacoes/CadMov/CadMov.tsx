@@ -5,25 +5,18 @@ import type { MovimentacaoPost } from "../../../models/Movimentacoes/Movimentaca
 import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 import "./CadMovStyle.css";
-import type {
-  ContaResponse,
-  GetContasUsuarios,
-} from "../../../models/ContasUsuarios/GetContasUsuarios";
+
 
 interface PropCadMov {
   onClose: () => void;
   idConta: number;
   buscaMovimentacoes: () => void;
-  setContaBancaria: React.Dispatch<
-    React.SetStateAction<GetContasUsuarios | undefined>
-  >;
 }
 
 const CadMov: React.FC<PropCadMov> = ({
   onClose,
   idConta,
   buscaMovimentacoes,
-  setContaBancaria,
 }) => {
   const getNow = () => {
     const now = new Date();
@@ -31,20 +24,7 @@ const CadMov: React.FC<PropCadMov> = ({
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
-  const buscaContas = async () => {
-    let resposta = await api<ContaResponse>(
-      `/ContasUsuarios?id=${idConta}`,
-      "GET",
-      undefined,
-      true,
-    );
-
-    console.log(resposta);
-
-    if (resposta.sucesso && resposta.dados) {
-      setContaBancaria(resposta.dados.conteudo[0]);
-    }
-  };
+  
   const [type, setType] = useState<"receita" | "despesa">("receita");
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -117,7 +97,6 @@ const CadMov: React.FC<PropCadMov> = ({
 
       if (resposta.sucesso) {
         buscaMovimentacoes();
-        buscaContas();
         onClose();
       } else {
         setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
