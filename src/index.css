@@ -112,15 +112,6 @@ body {
   font-weight: 600;
 }
 
-.input-group input {
-  width: 100%;
-  margin-top: 6px;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
 /* botão */
 .btn {
   width: 100%;

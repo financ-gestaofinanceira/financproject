@@ -3,7 +3,7 @@ import type { ApiResult } from "../../models/interface/ApiResult";
 import { Global } from "../../models/Autenticação/global";
 
 const api = axios.create({
-  baseURL: "https://localhost:7147/api", //
+  baseURL: "https://api.pldprojects.com.br/api", //
 });
 
 export default async function Conecta<T>(

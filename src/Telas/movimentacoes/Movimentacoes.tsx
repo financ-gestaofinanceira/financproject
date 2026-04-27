@@ -12,6 +12,7 @@ import Modal from "../../componentes/Modal/Modal";
 import CadMov from "../../componentes/Movimentacoes/CadMov/CadMov";
 import type { UsuarioResponse } from "../../models/Usuario/UsuarioResponse";
 import Categorias from "../../componentes/categoria/Categorias";
+import type { CategoriaResponse } from "../../models/Categorias/Categorias";
 
 type Props = {
   contaBancaria: GetContasUsuarios;
@@ -27,49 +28,102 @@ const Movimentacoes: React.FC<Props> = ({
 }) => {
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
-
+  const [categorias, setCategorias] = useState<CategoriaResponse>();
+  const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [isCategoriaOpen, setIsCategoriaOpen] = useState(false);
 
-  const formataMoeda = (valor: number | undefined) => {
-    if (valor !== undefined)
-      return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(valor);
-  };
+  // Helper para datas
+  const getNow = (isEnd: boolean = false) => {
+    const now = new Date();
+    let date: Date;
 
-  const buscaMovimentacoes = useCallback(async () => {
-    const resposta = await api<GetMovimentacoes>(
-      `/Contas/${contaBancaria.idConta}/Movimentacoes/Retornar?DthrMovimentacaoInicial=2020-04-01T20%3A13%3A16.3444041Z&DthrMovimentacaoFinal=2030-12-31T20%3A13%3A16.3444041Z`,
-      "GET",
-      undefined,
-      true,
-    );
-
-    if (resposta.sucesso && resposta.dados) {
-      setMovimentacoes(resposta.dados);
+    if (!isEnd) {
+      date = new Date(now.getFullYear(), now.getMonth(), 1);
+      date.setHours(0, 0, 0, 0);
+    } else {
+      date = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      date.setHours(23, 59, 59, 999);
     }
 
-    await buscaContas();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
+
+  const [dataInicial, setDataInicial] = useState(getNow(false));
+  const [dataFinal, setDataFinal] = useState(getNow(true));
+
+  const formataMoeda = (valor: number | undefined) => {
+    if (valor === undefined) return "R$ 0,00";
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valor);
+  };
+
+  // 1. Busca de Categorias (Memorizada)
+  const buscaCategorias = useCallback(async () => {
+    try {
+      const resposta = await api<CategoriaResponse>(
+        `/Contas/${contaBancaria.idConta}/Categorias`,
+        "GET",
+        undefined,
+        true,
+      );
+      if (resposta.sucesso && resposta.dados) {
+        setCategorias(resposta.dados);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar categorias:", error);
+    }
   }, [contaBancaria.idConta]);
 
-  const buscaContas = async () => {
-    let resposta = await api<ContaResponse>(
-      `/ContasUsuarios?id=${contaBancaria.idConta}`,
-      "GET",
-      undefined,
-      true,
-    );
-
-    console.log(resposta);
-
-    if (resposta.sucesso && resposta.dados) {
-      setContaBancaria(resposta.dados.conteudo[0]);
+  // 2. Busca de Dados da Conta (Saldos no topo)
+  const buscaDadosConta = useCallback(async () => {
+    try {
+      const resposta = await api<ContaResponse>(
+        `/ContasUsuarios?id=${contaBancaria.idConta}`,
+        "GET",
+        undefined,
+        true,
+      );
+      if (resposta.sucesso && resposta.dados?.conteudo?.[0]) {
+        setContaBancaria(resposta.dados.conteudo[0]);
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar dados da conta:", error);
     }
-  };
+  }, [contaBancaria.idConta, setContaBancaria]);
+
+  // 3. Busca de Movimentações (Memorizada)
+  const buscaMovimentacoes = useCallback(async () => {
+    const toUTCISOString = (data: string) => new Date(data).toISOString();
+
+    // Incluímos o categoriaId na query caso ele exista
+    const url = `/Contas/${contaBancaria.idConta}/Movimentacoes/Retornar?DthrMovimentacaoInicial=${toUTCISOString(dataInicial)}&DthrMovimentacaoFinal=${toUTCISOString(dataFinal)}${categoriaId ? `&IdCategoria=${categoriaId}` : ""}`;
+
+    try {
+      const resposta = await api<GetMovimentacoes>(url, "GET", undefined, true);
+      if (resposta.sucesso && resposta.dados) {
+        setMovimentacoes(resposta.dados);
+      }
+      // Atualiza os saldos do topo também
+      buscaDadosConta();
+    } catch (error) {
+      console.error("Erro ao buscar movimentações:", error);
+    }
+  }, [
+    contaBancaria.idConta,
+    dataInicial,
+    dataFinal,
+    categoriaId,
+    buscaDadosConta,
+  ]);
+
+  // Efeito principal: Carrega categorias e movimentações
   useEffect(() => {
+    buscaCategorias();
     buscaMovimentacoes();
-  }, [buscaMovimentacoes]);
+  }, [buscaCategorias, buscaMovimentacoes]);
 
   return (
     <div className="transacoes-container">
@@ -90,7 +144,7 @@ const Movimentacoes: React.FC<Props> = ({
             className="botão-transação"
             onClick={() => setIsCadMovOpen(true)}
           >
-            Nova Tansação
+            Nova Transação
           </button>
         </div>
       </div>
@@ -176,6 +230,7 @@ const Movimentacoes: React.FC<Props> = ({
           </div>
         </div>
       </div>
+
       <Modal isOpen={isCadMovOpen} onClose={() => setIsCadMovOpen(false)}>
         <CadMov
           onClose={() => setIsCadMovOpen(false)}
@@ -183,12 +238,53 @@ const Movimentacoes: React.FC<Props> = ({
           buscaMovimentacoes={buscaMovimentacoes}
         />
       </Modal>
+
       <Modal isOpen={isCategoriaOpen} onClose={() => setIsCategoriaOpen(false)}>
         <Categorias
           idConta={contaBancaria.idConta}
           buscaMovimentacoes={buscaMovimentacoes}
         />
       </Modal>
+
+      <div className="ctn-vertical-dt">
+        <div className="input-group">
+          <label>Data inicial</label>
+          <input
+            type="datetime-local"
+            value={dataInicial}
+            onChange={(e) => setDataInicial(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Data Final</label>
+          <input
+            type="datetime-local"
+            value={dataFinal}
+            onChange={(e) => setDataFinal(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Categoria</label>
+          <select
+            value={categoriaId ?? ""}
+            onChange={(e) =>
+              setCategoriaId(e.target.value ? Number(e.target.value) : null)
+            }
+          >
+            <option value="">Todas as categorias</option>
+            {categorias?.conteudo.map((categoria) => (
+              <option key={categoria.idCategoria} value={categoria.idCategoria}>
+                {categoria.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {movimentacoes && (
         <TabelaMovimentacao
           movimentacao={movimentacoes}

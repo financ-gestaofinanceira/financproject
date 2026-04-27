@@ -20,6 +20,7 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
 }) => {
   const [movSelecionada, setMovSelecionada] = useState<Movimentacao | null>();
   const [isAlterMovOpen, setIsAlterMovOpen] = useState(false);
+
   const formataMoeda = (valor: number, movTipo: number) => {
     let moeda = new Intl.NumberFormat("pt-BR", {
       style: "currency",
