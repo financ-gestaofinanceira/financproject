@@ -14,6 +14,16 @@ const ContaComponent: React.FC<Props> = ({
   setContaBancariaSelecionada,
   contaBancaria,
 }) => {
+  function getTextColor(bgColor: string) {
+    const r = parseInt(bgColor.substr(1, 2), 16);
+    const g = parseInt(bgColor.substr(3, 2), 16);
+    const b = parseInt(bgColor.substr(5, 2), 16);
+
+    // fórmula de luminância simplificada
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+    return luminance > 186 ? "#000000" : "#FFFFFF";
+  }
   const formataMoeda = (valor: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -74,7 +84,9 @@ const ContaComponent: React.FC<Props> = ({
           </div>
         </div>
         <div className="card-secundario__label">
-          <p>{contaBancaria.titulo}</p>
+          <p style={{ color: getTextColor(contaBancaria.cor) }}>
+            {contaBancaria.titulo}
+          </p>
         </div>
         <div className="card-secundario__valor">
           <p

@@ -54,3 +54,30 @@ export type GetMovimentacoes = {
   conteudo: ConteudoMovimentacoes;
   metadados: any | null;
 };
+
+type MovimentacaoDash = {
+  entrada: number;
+  saida: number;
+};
+
+type DashboardItem = {
+  ano: number;
+  mes: number;
+  movimentacao: MovimentacaoDash;
+};
+
+type Conta = {
+  idConta: number;
+  titulo: string;
+  cor: string;
+};
+
+type Conteudo = {
+  conta: Conta;
+  dashboard: DashboardItem[];
+};
+
+export type DashboardResponse = {
+  conteudo: Conteudo;
+  metadados: unknown | null;
+};
