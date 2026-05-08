@@ -31,6 +31,7 @@ const Movimentacoes: React.FC<Props> = ({
   const [categorias, setCategorias] = useState<CategoriaResponse>();
   const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [isCategoriaOpen, setIsCategoriaOpen] = useState(false);
+  const [isConcluido, setIsConcluido] = useState<Boolean | null>(null);
 
   // Helper para datas
   const getNow = (isEnd: boolean = false) => {
@@ -99,7 +100,7 @@ const Movimentacoes: React.FC<Props> = ({
     const toUTCISOString = (data: string) => new Date(data).toISOString();
 
     // Incluímos o categoriaId na query caso ele exista
-    const url = `/Contas/${contaBancaria.idConta}/Movimentacoes/Retornar?DthrMovimentacaoInicial=${toUTCISOString(dataInicial)}&DthrMovimentacaoFinal=${toUTCISOString(dataFinal)}${categoriaId ? `&IdCategoria=${categoriaId}` : ""}`;
+    const url = `/Contas/${contaBancaria.idConta}/Movimentacoes/Retornar?DthrMovimentacaoInicial=${toUTCISOString(dataInicial)}&DthrMovimentacaoFinal=${toUTCISOString(dataFinal)}${categoriaId ? `&IdCategoria=${categoriaId}` : ""}${isConcluido !== null ? `&Concluido=${isConcluido}` : ""}`;
 
     try {
       const resposta = await api<GetMovimentacoes>(url, "GET", undefined, true);
@@ -117,6 +118,7 @@ const Movimentacoes: React.FC<Props> = ({
     dataFinal,
     categoriaId,
     buscaDadosConta,
+    isConcluido,
   ]);
 
   // Efeito principal: Carrega categorias e movimentações
@@ -281,6 +283,23 @@ const Movimentacoes: React.FC<Props> = ({
                 {categoria.nome}
               </option>
             ))}
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label>Status</label>
+          <select
+            onChange={(e) => {
+              let valor = e.target.value;
+
+              setIsConcluido(
+                valor === "Todas" ? null : valor === "Pendente" ? false : true,
+              );
+            }}
+          >
+            <option>Todas</option>
+            <option>Pendente</option>
+            <option>Concluído</option>
           </select>
         </div>
       </div>
