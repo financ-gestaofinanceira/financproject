@@ -6,6 +6,15 @@ import type {
   CategoriaResponse,
 } from "../../models/Categorias/Categorias";
 import "./CategoriasStyle.css";
+import FncButton from "../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
+import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
+import { TypeThemeButton } from "../../refatoracao/props/FncButton/TypeThemeButton";
+import InputColor from "../../refatoracao/props/InputColor/InputColor";
+import InputText from "../../refatoracao/props/InputText/InputText";
+import InputTextAndColor from "../../refatoracao/props/InputTextAndColor/InputTextAndColor";
+import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
+import TitleText from "../../refatoracao/props/TitleText/TitleText";
 
 interface PropCadMov {
   idConta: number;
@@ -56,9 +65,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
   const cadastraCategoria = () => {
     return (
       <>
-        <div className="modal-header">
-          <h2>Categorias</h2>
-        </div>
+        <TitleText text="Categorias" />
 
         <form className="centraliza" onSubmit={criaCategoriaRequest}>
           <div className="modal-body">
@@ -94,42 +101,21 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
                 </tbody>
               </table>
             </div>
-            <div className="input-group-horizontal">
-              <div className="input-categoria">
-                <div className="input-color">
-                  <label className="color-wrapper">
-                    <div
-                      className="color-preview"
-                      style={{ background: cor }}
-                    />
-                    <input
-                      type="color"
-                      value={cor}
-                      onChange={(e) => setCor(e.target.value)}
-                    />
-                  </label>
-                </div>
 
-                <input
-                  type="text"
-                  value={titulo}
-                  maxLength={80}
-                  placeholder="Ex: Alimentação"
-                  onChange={(e) => setTitulo(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
+            <InputTextAndColor
+              color={cor}
+              onChangeColor={setCor}
+              placeholder="Ex: Alimentação"
+              text={titulo}
+              setText={setTitulo}
+            />
 
-            {erroMsg && <p className="error">{erroMsg}</p>}
+            {erroMsg && <ErrorText text={erroMsg} />}
 
-            <button
-              type="submit"
-              className="botão-transação"
-              disabled={isLoading}
-            >
-              {isLoading ? "Cadastrando..." : "Cadastrar"}
-            </button>
+            <FncButton
+              type={TypeButton.Submit}
+              title={isLoading ? "Cadastrando..." : "Cadastrar"}
+            />
           </div>
         </form>
       </>
@@ -144,63 +130,43 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
     return (
       <>
         <div className="modal-header">
-          <h2>Alterar Categoria</h2>
+          <TitleText text="Alterar Categoria" />
         </div>
         <div className="categoria" style={{ background: corEditor }}>
           <p style={{ color: getTextColor(corEditor) }}>{tituloEditor}</p>
         </div>
         <form className="centraliza" onSubmit={EditaCategoriaRequest}>
           <div className="modal-body">
-            <p>Novo nome</p>
-            <div className="input-categoria">
-              <div className="input-color">
-                <label className="color-wrapper">
-                  <div
-                    className="color-preview"
-                    style={{ background: corEditor }}
-                  />
-                  <input
-                    type="color"
-                    value={corEditor}
-                    onChange={(e) => setCorEditor(e.target.value)}
-                  />
-                </label>
-              </div>
-
-              <input
-                type="text"
-                value={tituloEditor}
-                maxLength={80}
-                placeholder="Ex: Alimentação"
-                onChange={(e) => setTituloEditor(e.target.value)}
-                required
-              />
-            </div>
+            <SubtitleText text="Novo nome" />
+            <InputTextAndColor
+              color={corEditor}
+              onChangeColor={setCorEditor}
+              placeholder="Ex: Alimentação"
+              text={tituloEditor}
+              setText={setTituloEditor}
+            />
 
             {erroMsg && <p className="error">{erroMsg}</p>}
 
             <div className="ctn-vertical">
-              <button
-                type="submit"
-                className="botão-cancelamento"
-                onClick={() => setEditOnly(false)}
-              >
-                {"Cancelar"}
-              </button>
-              <button
-                type="submit"
-                className="botão-transação"
+              <FncButton
+                type={TypeButton.Submit}
                 disabled={isLoading}
-              >
-                {isLoading ? "Editando..." : "Editar"}
-              </button>
-              <button
-                type="submit"
-                className="botão-deletar"
+                thema={TypeThemeButton.Cancel}
+                title="Cancelar"
+                onClick={() => setEditOnly(false)}
+              />
+              <FncButton
+                type={TypeButton.Submit}
+                disabled={isLoading}
+                title={isLoading ? "Editando..." : "Editar"}
+              />
+              <FncButton
+                type={TypeButton.Submit}
+                thema={TypeThemeButton.Delete}
+                title="Deletar"
                 onClick={DeletarCategoriaRequest}
-              >
-                {"Deletar"}
-              </button>
+              />
             </div>
           </div>
         </form>

@@ -112,30 +112,6 @@ body {
   font-weight: 600;
 }
 
-/* botão */
-.btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #2b7fff, #4f39f6);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* registro */
-.register {
-  color: #90a1b9;
-  text-align: center;
-}
-
-.register span {
-  color: #155dfc;
-  font-weight: 600;
-  cursor: pointer;
-}
-
 /* box teste */
 .test-box {
   margin-top: 10px;
@@ -145,17 +121,6 @@ body {
   color: #155dfc;
   font-size: 12px;
 }
-
-.error {
-  padding: 5px;
-  width: 100%;
-  color: red;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-}
-
 /* RESPONSIVO */
 @media (max-width: 500px) {
   .left {

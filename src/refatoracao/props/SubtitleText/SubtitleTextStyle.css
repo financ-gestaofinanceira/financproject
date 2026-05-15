@@ -1,0 +1,9 @@
+.fnc-subtitle-text {
+  color: #90a1b9;
+  font-family: Inter;
+  margin: 0px;
+  display: inline-block;
+}
+.fnc-subtitle-text:hover {
+  cursor: pointer;
+}

@@ -44,15 +44,7 @@
 .input-group-horizontal {
   display: flex;
   align-items: center;
-  gap: 15px;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.input-group-horizontal label {
-  color: #62748e;
-  font-size: 14px;
-  white-space: nowrap;
+  flex-direction: row;
 }
 
 .input-categoria {
@@ -67,6 +59,13 @@
   margin-bottom: 10px;
 }
 
+.input-color {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+}
+
 /* Bolinha da cor */
 .color-wrapper {
   display: flex;
@@ -75,39 +74,12 @@
   cursor: pointer;
 }
 
-.color-preview {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid #2a35454d;
-}
-
 /* Esconde input color nativo */
 .color-wrapper input {
   position: absolute;
   opacity: 0;
   width: 0;
   height: 0;
-}
-
-.input-categoria {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #3b4a5e;
-  border-radius: 10px;
-  padding: 10px 12px; /* 👈 substitui height fixa */
-  width: 100%;
-}
-
-/* INPUT TEXTO */
-.input-categoria input[type="text"] {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: white;
-  font-size: 14px;
 }
 
 /* ================= OUTROS ESTILOS ================= */
@@ -134,37 +106,4 @@
   align-items: center;
   gap: 15px;
   width: 100%;
-}
-
-.botão-cancelamento {
-  height: 40px;
-  padding: 0 24px;
-  background: linear-gradient(90deg, #f8901a 0%, #ff531f 100%);
-  border: none;
-  border-radius: 14px;
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.25);
-}
-
-.botão-cancelamento:hover {
-  background: linear-gradient(90deg, #5c5858 0%, #757272 100%);
-}
-.botão-deletar {
-  height: 40px;
-  padding: 0 24px;
-  background: linear-gradient(90deg, #f81a1a 0%, #ff531f 100%);
-  border: none;
-  border-radius: 14px;
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.25);
-}
-
-.botão-deletar:hover {
-  background: linear-gradient(90deg, #d22923 0%, #e40f0f 100%);
 }

@@ -5,7 +5,12 @@ import type { MovimentacaoPost } from "../../../models/Movimentacoes/Movimentaca
 import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 import "./CadMovStyle.css";
-
+import TitleText from "../../../refatoracao/props/TitleText/TitleText";
+import InputText from "../../../refatoracao/props/InputText/InputText";
+import InputPrice from "../../../refatoracao/props/InputPrice/InputPrice";
+import FncButton from "../../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
+import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
 
 interface PropCadMov {
   onClose: () => void;
@@ -24,7 +29,6 @@ const CadMov: React.FC<PropCadMov> = ({
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
-  
   const [type, setType] = useState<"receita" | "despesa">("receita");
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -57,17 +61,6 @@ const CadMov: React.FC<PropCadMov> = ({
   useEffect(() => {
     buscaCategorias();
   }, [buscaCategorias]);
-
-  const handleValor = (value: string) => {
-    const numeros = value.replace(/\D/g, "");
-    const valorNumerico = Number(numeros) / 100;
-    const formatado = new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(valorNumerico);
-    setValorFormatado(formatado);
-    setValor(valorNumerico);
-  };
 
   const criaMov = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,128 +102,119 @@ const CadMov: React.FC<PropCadMov> = ({
   };
 
   return (
-    <form className="centraliza" onSubmit={criaMov}>
-      <div className="modal-header">
-        <h2>Nova Transação</h2>
+    <>
+      <TitleText text="Nova Transação" />
+      <div className="transaction-type">
+        <button
+          type="button"
+          className={`type-btn ${type === "receita" ? "active" : ""}`}
+          data-type="receita"
+          onClick={() => setType("receita")}
+        >
+          Receita
+        </button>
+        <button
+          type="button"
+          className={`type-btn ${type === "despesa" ? "active" : ""}`}
+          data-type="despesa"
+          onClick={() => setType("despesa")}
+        >
+          Despesa
+        </button>
       </div>
-
-      <div className="modal-body">
-        <div className="transaction-type">
-          <button
-            type="button"
-            className={`type-btn ${type === "receita" ? "active" : ""}`}
-            data-type="receita"
-            onClick={() => setType("receita")}
-          >
-            Receita
-          </button>
-          <button
-            type="button"
-            className={`type-btn ${type === "despesa" ? "active" : ""}`}
-            data-type="despesa"
-            onClick={() => setType("despesa")}
-          >
-            Despesa
-          </button>
-        </div>
-
-        <div className="input-group">
-          <label>Título</label>
-          <input
-            type="text"
-            value={titulo}
-            maxLength={80}
+      <form className="centraliza" onSubmit={criaMov}>
+        <div className="modal-body">
+          <InputText
+            label="Título"
+            text={titulo}
             placeholder="Ex: Mercado"
-            onChange={(e) => setTitulo(e.target.value)}
-            required
+            setText={setTitulo}
           />
-        </div>
 
-        <div className="input-group">
-          <label>Descrição</label>
-          <input
-            type="text"
+          <InputText
+            label="Descrição"
+            text={descricao}
             placeholder="Ex: Compra do mês"
-            value={descricao}
-            maxLength={255}
-            onChange={(e) => setDescricao(e.target.value)}
+            setText={setDescricao}
+            maxLenght={255}
           />
-        </div>
 
-        <div className="input-group">
-          <label>Valor (R$)</label>
-          <input
-            type="text"
-            maxLength={25}
-            value={valorFormatado}
-            onChange={(e) => handleValor(e.target.value)}
-            placeholder="R$ 0,00"
-            required
+          <InputPrice
+            label="Valor (R$)"
+            value={valor}
+            formattedValue={valorFormatado}
+            setValue={setValor}
+            setFormattedValue={setValorFormatado}
           />
-        </div>
 
-        <div className="input-group">
-          <label>Categoria</label>
-          <select
-            value={categoriaId ?? ""}
-            onChange={(e) => setCategoriaId(Number(e.target.value))}
-          >
-            <option value="" disabled>
-              Selecione uma categoria
-            </option>
-            {categorias?.conteudo.map((categoria) => (
-              <option key={categoria.idCategoria} value={categoria.idCategoria}>
-                <div className="categoria">
-                  <p>{categoria.nome}</p>
-                </div>
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="input-group">
-          <label>Data Movimentação</label>
-          <input
-            type="datetime-local"
-            value={dataMovimentacao}
-            onChange={(e) => {
-              setDataMovimentacao(e.target.value);
-              setDataConclusao(e.target.value);
-            }}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={concluido}
-              onChange={() => setConcluido(!concluido)}
-            />{" "}
-            Movimentação concluída
-          </label>
-        </div>
-
-        {concluido && (
           <div className="input-group">
-            <label>Data Conclusão</label>
+            <label>Categoria</label>
+            <select
+              value={categoriaId ?? ""}
+              onChange={(e) => setCategoriaId(Number(e.target.value))}
+            >
+              <option value="" disabled>
+                Selecione uma categoria
+              </option>
+              {categorias?.conteudo.map((categoria) => (
+                <option
+                  key={categoria.idCategoria}
+                  value={categoria.idCategoria}
+                >
+                  <div className="categoria">
+                    <p>{categoria.nome}</p>
+                  </div>
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label>Data Movimentação</label>
             <input
               type="datetime-local"
-              value={dataConclusao}
-              onChange={(e) => setDataConclusao(e.target.value)}
+              value={dataMovimentacao}
+              onChange={(e) => {
+                setDataMovimentacao(e.target.value);
+                setDataConclusao(e.target.value);
+              }}
               required
             />
           </div>
-        )}
 
-        {erroMsg && <p className="error">{erroMsg}</p>}
+          <div className="input-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={concluido}
+                onChange={() => setConcluido(!concluido)}
+              />{" "}
+              Movimentação concluída
+            </label>
+          </div>
 
-        <button type="submit" className="botão-transação" disabled={isLoading}>
-          {isLoading ? "Cadastrando..." : "Cadastrar"}
-        </button>
-      </div>
-    </form>
+          {concluido && (
+            <div className="input-group">
+              <label>Data Conclusão</label>
+              <input
+                type="datetime-local"
+                value={dataConclusao}
+                onChange={(e) => setDataConclusao(e.target.value)}
+                required
+              />
+            </div>
+          )}
+
+          {erroMsg && <ErrorText text={erroMsg} />}
+
+          <FncButton
+            type={TypeButton.Submit}
+            title={isLoading ? "Cadastrando..." : "Cadastrar"}
+            disabled={isLoading}
+          />
+        </div>
+      </form>
+    </>
   );
 };
 

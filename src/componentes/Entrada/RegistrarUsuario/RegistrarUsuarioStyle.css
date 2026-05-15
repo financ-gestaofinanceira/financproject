@@ -1,0 +1,10 @@
+.fnc-ctn-reg-user {
+  width: 100%;
+  max-width: 400px;
+
+  max-height: 85vh;
+  overflow-y: auto;
+
+  padding: 10px;
+  box-sizing: border-box;
+}

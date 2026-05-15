@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./CadContasStyle.css";
 import api from "../../../services/api/apiConnect";
+import FncButton from "../../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
 
 type conta = {
   titulo: string;
@@ -68,9 +70,12 @@ const CadContas: React.FC<Props> = ({ usaRefresh, buscaContas, onClose }) => {
             />
           </div>
           <p className="error">{erroMsg}</p>
-          <button type="submit" className="botão-transação" onClick={criaConta}>
-            Cadastrar
-          </button>
+
+          <FncButton
+            type={TypeButton.Submit}
+            title="Cadastrar"
+            onClick={criaConta}
+          />
         </form>
       </div>
     </>

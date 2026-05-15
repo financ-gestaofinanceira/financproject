@@ -1,0 +1,9 @@
+.fnc-title {
+  color: #fff;
+  font-family: Inter;
+  font-size: 28px;
+  font-weight: 800;
+}
+.fnc-title:hover {
+  cursor: pointer;
+}

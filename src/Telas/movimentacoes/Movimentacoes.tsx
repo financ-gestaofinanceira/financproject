@@ -4,7 +4,6 @@ import type {
 } from "../../models/ContasUsuarios/GetContasUsuarios";
 import TabelaMovimentacao from "../../componentes/Movimentacoes/tabela/TabelaMovimentacao";
 import api from "../../services/api/apiConnect";
-
 import "./MovimentacaoesStyle.css";
 import { useCallback, useEffect, useState } from "react";
 import type { GetMovimentacoes } from "../../models/Movimentacoes/GetMovimentacoes";
@@ -13,6 +12,9 @@ import CadMov from "../../componentes/Movimentacoes/CadMov/CadMov";
 import type { UsuarioResponse } from "../../models/Usuario/UsuarioResponse";
 import Categorias from "../../componentes/categoria/Categorias";
 import type { CategoriaResponse } from "../../models/Categorias/Categorias";
+import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
+import TitleText from "../../refatoracao/props/TitleText/TitleText";
+import FncButton from "../../refatoracao/props/FncButton/FncButton";
 
 type Props = {
   contaBancaria: GetContasUsuarios;
@@ -131,23 +133,20 @@ const Movimentacoes: React.FC<Props> = ({
     <div className="transacoes-container">
       <div className="transacoes-header">
         <div className="texto-superior">
-          <p>Gerencie todas as suas movimentações</p>
-          <h1>Transações - {contaBancaria.titulo}</h1>
+          <SubtitleText text="Gerencie todas as suas movimentações" />
+          <TitleText text={`Transações - ${contaBancaria.titulo}`} />
         </div>
 
-        <div className="transacoes-actions">
-          <button
-            className="botão-transação"
+        <div className="fnc-ctn-cads">
+          <FncButton
+            title="Categorias"
             onClick={() => setIsCategoriaOpen(true)}
-          >
-            Categorias
-          </button>
-          <button
-            className="botão-transação"
+          />
+
+          <FncButton
+            title="Nova Transação"
             onClick={() => setIsCadMovOpen(true)}
-          >
-            Nova Transação
-          </button>
+          />
         </div>
       </div>
 

@@ -33,18 +33,6 @@
   margin: 0;
 }
 
-.transacoes-container .btn-exportar {
-  height: 40px;
-  padding: 0 20px;
-  background: #1d293d;
-  border: 1px solid #314158;
-  border-radius: 14px;
-  color: #cad5e2;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
 /* container tabela */
 .transacoes-container .table-wrapper {
   border-radius: 16px;

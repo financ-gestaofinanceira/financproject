@@ -12,6 +12,7 @@ import LandBotComponent from "../../componentes/LandBot/LandBotComponent";
 import PatrimonioTotal from "../../componentes/Contas/Patrimonio/PatrimonioTotal";
 import ContaComponent from "../../componentes/Contas/ContaComponent";
 import CadContas from "../../componentes/Contas/CadConta/CadContas";
+import FncButton from "../../refatoracao/props/FncButton/FncButton";
 
 type Props = {
   usuario: UsuarioResponse;
@@ -69,12 +70,12 @@ const Contas: React.FC<Props> = ({
           <p>{retornaBoasVindas()},</p>
           <h1>Minhas Contas</h1>
         </div>
-        <button
-          className="botão-transação"
-          onClick={() => setIsCadContaOpen(true)}
-        >
-          + Nova Conta Bancaria
-        </button>
+        <div className="w-25">
+          <FncButton
+            title="Nova Conta Bancaria"
+            onClick={() => setIsCadContaOpen(true)}
+          />
+        </div>
       </div>
       <div className="principal">
         {contasObtidas?.conteudo !== undefined && (

@@ -1,0 +1,11 @@
+.fnc-error-text {
+  align-items: center;
+  color: #ff4d4d;
+  display: flex;
+  font-family: Inter;
+  font-size: 12px;
+  font-weight: 700;
+  justify-content: center;
+  margin: 0px 0px 10px;
+  padding: 5px;
+}

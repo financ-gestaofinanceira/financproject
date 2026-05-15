@@ -3,6 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { GeraRefreshToken, GeraToken } from "../../services/auth/tokenService";
 import type { tokeRequest } from "../../models/Autenticação/tokenRequest";
 import "../../App.css";
+import InputText from "../../refatoracao/props/InputText/InputText";
+import { TypeText } from "../../refatoracao/props/InputText/TypeText";
+import TitleText from "../../refatoracao/props/TitleText/TitleText";
+import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
+import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
+import SubtitleInteractive from "../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
+import MsgBox from "../../refatoracao/props/TextBox/MsgtBox";
+import FncButton from "../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
 
 interface TokenData {
   token: string;
@@ -40,13 +49,20 @@ const LoginComponent: React.FC<LoginProps> = ({
   const reqApi = async (e: React.FormEvent) => {
     e.preventDefault(); // Previne o comportamento padrão de recarregar a página
     try {
+      if (!email || !senha) {
+        setErroMsg("Preencha todos os campos");
+        return;
+      }
+
       const request: tokeRequest = {
         email: email,
         senha: senha,
       };
 
       const resposta = await GeraToken(request);
-
+      console.log(email);
+      console.log(senha);
+      console.log(resposta);
       if (resposta.erro) {
         console.log(resposta.erro);
         setTokenData(null);
@@ -71,48 +87,42 @@ const LoginComponent: React.FC<LoginProps> = ({
 
   return (
     <div className="login-box">
-      <h1>Bem-vindo de volta</h1>
-      <p className="subtitle">Entre na sua conta para continuar</p>
+      <TitleText text="Bem-vindo" />
+      <SubtitleText text="Entre na sua conta para continuar" />
+
       <form className="form" onSubmit={reqApi}>
-        <div className="input-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="seu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+        <InputText
+          label="Email"
+          text={email}
+          placeholder="seu@email.com"
+          type={TypeText.Email}
+          setText={setEmail}
+        ></InputText>
 
-        <div className="input-group">
-          <label htmlFor="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            placeholder="••••••••"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-          />
-        </div>
+        <InputText
+          label="Senha"
+          text={senha}
+          placeholder="••••••••"
+          type={TypeText.Password}
+          setText={setSenha}
+        ></InputText>
 
-        <button type="submit" className="btn">
-          Entrar
-        </button>
+        <FncButton title="Entrar" type={TypeButton.Submit} />
       </form>
 
-      <p className="error">{erroMsg}</p>
+      {erroMsg !== null && <ErrorText text={erroMsg} />}
 
-      <p className="register">
-        Não tem conta?
-        <span onClick={() => setExibeCadastro(!exibeCadastro)}>
-          Criar conta grátis
-        </span>
-      </p>
-      <div className="test-box">
-        <strong>💡 Credenciais de teste:</strong>
-        <p>Email: joao@exemplo.com | Senha: Arr0zD12@</p>
-      </div>
+      <SubtitleInteractive
+        subtitle="Não tem conta?"
+        textInteractive="Criar conta grátis"
+        color="#155dfc"
+        onClick={() => setExibeCadastro(!exibeCadastro)}
+      />
+
+      <MsgBox
+        title="💡 Credenciais de teste:"
+        description="Email: joao@exemplo.com | Senha: Arr0zD12@"
+      />
     </div>
   );
 };
