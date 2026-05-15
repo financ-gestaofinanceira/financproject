@@ -10,8 +10,6 @@ import FncButton from "../../refatoracao/props/FncButton/FncButton";
 import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
 import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
 import { TypeThemeButton } from "../../refatoracao/props/FncButton/TypeThemeButton";
-import InputColor from "../../refatoracao/props/InputColor/InputColor";
-import InputText from "../../refatoracao/props/InputText/InputText";
 import InputTextAndColor from "../../refatoracao/props/InputTextAndColor/InputTextAndColor";
 import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
 import TitleText from "../../refatoracao/props/TitleText/TitleText";

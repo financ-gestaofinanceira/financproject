@@ -141,7 +141,6 @@ const CadMov: React.FC<PropCadMov> = ({
 
           <InputPrice
             label="Valor (R$)"
-            value={valor}
             formattedValue={valorFormatado}
             setValue={setValor}
             setFormattedValue={setValorFormatado}

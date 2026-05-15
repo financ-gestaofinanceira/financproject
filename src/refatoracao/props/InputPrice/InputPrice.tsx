@@ -2,14 +2,12 @@ import InputText from "../InputText/InputText";
 import "./InputPriceStyle.css";
 interface PropInputPrice {
   label?: string;
-  value: number;
   formattedValue: string;
   setValue: React.Dispatch<React.SetStateAction<number>>;
   setFormattedValue: React.Dispatch<React.SetStateAction<string>>;
 }
 const InputPrice: React.FC<PropInputPrice> = ({
   label,
-  value,
   formattedValue,
   setValue,
   setFormattedValue,
@@ -23,7 +21,6 @@ const InputPrice: React.FC<PropInputPrice> = ({
     }).format(valorNumerico);
     setFormattedValue(formatado);
     setValue(valorNumerico);
-    return formatado;
   };
 
   return (
