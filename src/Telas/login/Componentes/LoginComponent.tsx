@@ -1,23 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  GeraRefreshToken,
-  GeraToken,
-} from "../../../services/auth/tokenService";
-import type { tokeRequest } from "../../../models/Autenticação/tokenRequest";
-import "../../../App.css";
-import InputText from "../../../refatoracao/props/InputText/InputText";
-import { TypeText } from "../../../refatoracao/props/InputText/TypeText";
-import TitleText from "../../../refatoracao/props/TitleText/TitleText";
-import SubtitleText from "../../../refatoracao/props/SubtitleText/SubtitleText";
-import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
-import SubtitleInteractive from "../../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
-import MsgBox from "../../../refatoracao/props/TextBox/MsgtBox";
-import FncButton from "../../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
 
 import "./LoginComponentStyle.css";
 import { AuthContext, type TokenData } from "../../../contexts/AuthContext";
+import type { tokeRequest } from "../../../models/Autenticação/tokenRequest";
+import { GeraToken } from "../../../services/auth/tokenService";
+import TitleText from "../../../refatoracao/props/TitleText/TitleText";
+import SubtitleText from "../../../refatoracao/props/SubtitleText/SubtitleText";
+import InputText from "../../../refatoracao/props/InputText/InputText";
+import { TypeText } from "../../../refatoracao/props/InputText/TypeText";
+import FncButton from "../../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
+import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
+import SubtitleInteractive from "../../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
+import MsgBox from "../../../refatoracao/props/TextBox/MsgtBox";
 
 interface LoginProps {
   exibeCadastro: Boolean;
@@ -28,24 +24,24 @@ const LoginComponent: React.FC<LoginProps> = ({
   exibeCadastro,
   setExibeCadastro,
 }) => {
-  const { login, tokenData, authenticated } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
 
   const [erroMsg, setErroMsg] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
 
   useEffect(() => {
-    console.log(authenticated);
+    console.log(user);
 
-    if (authenticated) {
+    if (user) {
       navigate("/home");
     }
-  }, [tokenData]);
+  }, [user]);
 
   const navigate = useNavigate(); // Hook para navegação
 
   const reqApi = async (e: React.FormEvent) => {
-    e.preventDefault(); // Previne o comportamento padrão de recarregar a página
+    e.preventDefault();
     try {
       if (!email || !senha) {
         setErroMsg("Preencha todos os campos");

@@ -5,6 +5,13 @@ import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoe
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
+import TitleText from "../../../refatoracao/props/TitleText/TitleText";
+import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
+import FncButton from "../../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
+import { TypeThemeButton } from "../../../refatoracao/props/FncButton/TypeThemeButton";
+import "./ConclusaoMovimentacao.css";
+import InputDate from "../../../refatoracao/props/InputDate/InputDate";
 
 interface PropAlteraMov {
   onClose: () => void;
@@ -91,40 +98,32 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
   };
   return (
     <div className="centraliza">
-      <h2>Alterar {movimentacaoSelecionada.titulo}</h2>
-      <h3>{formataMoeda(movimentacaoSelecionada.valor)}</h3>
+      <TitleText text={`Alterar ${movimentacaoSelecionada.titulo}`} />
+      <TitleText text={formataMoeda(movimentacaoSelecionada.valor)} />
 
       <div className="modal-body">
-        {erroMsg && <p className="error">{erroMsg}</p>}
+        {erroMsg && <ErrorText text={erroMsg} />}
 
         {!movimentacaoSelecionada.concluido && (
-          <div className="input-group">
-            <label>Data Conclusão</label>
-            <input
-              type="datetime-local"
-              value={dataConclusao}
-              onChange={(e) => {
-                setDataConclusao(e.target.value);
-              }}
-            />
-          </div>
+          <InputDate
+            text={dataConclusao}
+            label="Data Conclusão"
+            setText={setDataConclusao}
+          />
         )}
 
-        <div className="ctn-vertical">
-          <button
+        <div className="fnc-edit-mov-ctn-vertical">
+          <FncButton
+            title={movimentacaoSelecionada.concluido ? "Extornar" : "Concluir"}
+            type={TypeButton.Submit}
             onClick={ExecutarMovRequest}
-            type="submit"
-            className="botão-transação"
-          >
-            {movimentacaoSelecionada.concluido ? "Extornar" : "Concluir"}
-          </button>
-          <button
+          />
+          <FncButton
+            title="Deletar"
+            type={TypeButton.Submit}
             onClick={DeletarMovRequest}
-            type="submit"
-            className="botão-deletar"
-          >
-            Deletar
-          </button>
+            thema={TypeThemeButton.Delete}
+          />
         </div>
       </div>
     </div>

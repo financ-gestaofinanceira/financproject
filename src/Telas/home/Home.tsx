@@ -8,13 +8,14 @@ import type {
 import { useNavigate } from "react-router-dom";
 import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import "./HomeStyle.css";
-import Contas from "../contas/Contas";
-import Movimentacoes from "../movimentacoes/Movimentacoes";
-import { AuthContext } from "../../contexts/AuthContext";
+import Contas from "../ContasBancarias/Contas";
+import Movimentacoes from "../Movimentacoes/Movimentacoes";
+import { AuthContext, type TokenData } from "../../contexts/AuthContext";
 import Carregamento from "../../componentes/Carregamento/Carregamento";
+import { Login } from "../Login/Login";
 
 export const Home: React.FC = () => {
-  const { tokenData, authenticated, user, logout, setUser } =
+  const { tokenData, authenticated, user, logout, login, setUser } =
     useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -31,49 +32,41 @@ export const Home: React.FC = () => {
       "/Usuarios/me",
       "GET",
       undefined,
-      tokenData?.token,
     );
+    console.log("*");
+    console.log(resposta);
+    console.log("*");
 
     if (resposta.sucesso && resposta.dados) {
       setUser(resposta.dados);
-      return;
     }
+  };
 
-    console.log("passou");
-    if (resposta.status === 401) {
-      const refresh = await GeraRefreshToken();
-      if (refresh.sucesso) {
-        return;
-      }
+  const resfresh = async () => {
+    let response = await GeraRefreshToken();
+
+    if (response.dados) {
+      const tokenObj: TokenData = {
+        token: response.dados.token,
+        expiration: response.dados.expiracao,
+      };
+
+      login(tokenObj);
     }
-    logout();
-    navigate("/", { replace: true });
   };
 
   const deslogar = async () => {
-    await api<ContaResponse>(
-      "/Autenticacao/revoke",
-      "POST",
-      undefined,
-      tokenData!.token,
-    );
+    await api<ContaResponse>("/Autenticacao/revoke", "POST", undefined);
     logout();
     navigate("/", { replace: true });
   };
 
   useEffect(() => {
     const init = async () => {
-      if (!authenticated) {
-        navigate("/", { replace: true });
-        return;
-      }
-
-      if (!tokenData?.token) return;
-
-      setLoading(true);
-
       if (!user) {
         await buscarUsuario();
+      } else {
+        await resfresh();
       }
 
       setLoading(false);

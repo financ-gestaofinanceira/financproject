@@ -12,6 +12,8 @@ import FncButton from "../../../refatoracao/props/FncButton/FncButton";
 import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
 import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
 import { AuthContext } from "../../../contexts/AuthContext";
+import InputDate from "../../../refatoracao/props/InputDate/InputDate";
+import InputCheckBox from "../../../refatoracao/props/InputCheckBox/InputCheckBox";
 
 interface PropCadMov {
   onClose: () => void;
@@ -45,13 +47,17 @@ const CadMov: React.FC<PropCadMov> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
 
+  const setDateMov = (value: string) => {
+    setDataMovimentacao(value);
+    setDataConclusao(value);
+  };
+
   const buscaCategorias = useCallback(async () => {
     try {
       const resposta = await api<CategoriaResponse>(
         `/Contas/${idConta}/Categorias`,
         "GET",
         undefined,
-        tokenData?.token,
       );
       if (resposta.sucesso && resposta.dados) {
         setCategorias(resposta.dados);
@@ -88,7 +94,6 @@ const CadMov: React.FC<PropCadMov> = ({
         `/Contas/${idConta}/Movimentacoes`,
         "POST",
         request,
-        tokenData?.token,
       );
 
       if (resposta.sucesso) {
@@ -171,40 +176,24 @@ const CadMov: React.FC<PropCadMov> = ({
             </select>
           </div>
 
-          <div className="input-group">
-            <label>Data Movimentação</label>
-            <input
-              type="datetime-local"
-              value={dataMovimentacao}
-              onChange={(e) => {
-                setDataMovimentacao(e.target.value);
-                setDataConclusao(e.target.value);
-              }}
-              required
-            />
-          </div>
+          <InputDate
+            label="Data Movimentação"
+            text={dataMovimentacao}
+            setText={setDateMov}
+          />
 
-          <div className="input-group">
-            <label>
-              <input
-                type="checkbox"
-                checked={concluido}
-                onChange={() => setConcluido(!concluido)}
-              />{" "}
-              Movimentação concluída
-            </label>
-          </div>
+          <InputCheckBox
+            label="Movimentação concluída"
+            checked={concluido}
+            setChecked={setConcluido}
+          />
 
           {concluido && (
-            <div className="input-group">
-              <label>Data Conclusão</label>
-              <input
-                type="datetime-local"
-                value={dataConclusao}
-                onChange={(e) => setDataConclusao(e.target.value)}
-                required
-              />
-            </div>
+            <InputDate
+              label="Data Conclusão"
+              text={dataConclusao}
+              setText={setDataConclusao}
+            />
           )}
 
           {erroMsg && <ErrorText text={erroMsg} />}

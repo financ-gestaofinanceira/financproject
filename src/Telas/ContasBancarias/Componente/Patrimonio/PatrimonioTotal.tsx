@@ -1,4 +1,4 @@
-import type { GetContasUsuarios } from "../../../models/ContasUsuarios/GetContasUsuarios";
+import type { GetContasUsuarios } from "../../../../../models/ContasUsuarios/GetContasUsuarios";
 import "./PatrimonioStyle.css";
 
 type Props = {
@@ -55,7 +55,9 @@ const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
       </div>
 
       <div className="patrimonio-valor">
-        <p className="saldo_total_projetado">{formataMoeda(saldoTotalProjetado)}</p>
+        <p className="saldo_total_projetado">
+          {formataMoeda(saldoTotalProjetado)}
+        </p>
       </div>
 
       <div className="patrimonio-stats">

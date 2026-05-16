@@ -104,6 +104,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
             </div>
 
             <InputTextAndColor
+              label="Nova Categoria"
               color={cor}
               onChangeColor={setCor}
               placeholder="Ex: Alimentação"
@@ -139,6 +140,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         <form className="centraliza" onSubmit={EditaCategoriaRequest}>
           <div className="modal-body">
             <InputTextAndColor
+              label="Editar Categoria"
               color={corEditor}
               onChangeColor={setCorEditor}
               placeholder="Ex: Alimentação"

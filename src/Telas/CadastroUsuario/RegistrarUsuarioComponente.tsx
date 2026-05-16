@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import api from "../../../services/api/apiConnect";
-import TitleText from "../../../refatoracao/props/TitleText/TitleText";
-import SubtitleText from "../../../refatoracao/props/SubtitleText/SubtitleText";
-import InputText from "../../../refatoracao/props/InputText/InputText";
-import { TypeText } from "../../../refatoracao/props/InputText/TypeText";
+import api from "../../services/api/apiConnect";
+import TitleText from "../../refatoracao/props/TitleText/TitleText";
+import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
+import InputText from "../../refatoracao/props/InputText/InputText";
+import { TypeText } from "../../refatoracao/props/InputText/TypeText";
 import "./RegistrarUsuarioStyle.css";
-import SubtitleInteractive from "../../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
-import FncButton from "../../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
-import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
+import SubtitleInteractive from "../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
+import FncButton from "../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
+import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
 interface RegisterProps {
   exibeCadastro: Boolean;
   setExibeCadastro: React.Dispatch<React.SetStateAction<boolean>>;

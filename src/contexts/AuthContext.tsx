@@ -37,13 +37,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     Date.now() < new Date(tokenData!.expiration).getTime();
 
   useEffect(() => {
-    const tokenStorage = localStorage.getItem("tokenData");
     const userStorage = localStorage.getItem("user");
-
-    if (tokenStorage) {
-      const parsedToken: TokenData = JSON.parse(tokenStorage);
-      setTokenData(parsedToken);
-    }
 
     if (userStorage) {
       const parsedUser: User = JSON.parse(userStorage);
@@ -53,13 +47,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   function login(tokenData: TokenData) {
     setTokenData(tokenData);
-    localStorage.setItem("tokenData", JSON.stringify(tokenData));
   }
 
   function logout() {
     setTokenData(null);
     setUserObj(null);
-    localStorage.removeItem("tokenData");
     localStorage.removeItem("user");
   }
 

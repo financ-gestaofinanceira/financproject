@@ -1,10 +1,11 @@
 import React, { useId } from "react";
 import { TypeText } from "./TypeText";
 import "./InputTextStyle.css";
+import LabelText from "../LabelText/LabelText";
 interface PropInputText {
   label?: string;
   text: string;
-  placeholder: string;
+  placeholder?: string;
   type?: TypeText;
   maxLenght?: number;
   setText: (value: string) => void;
@@ -21,7 +22,7 @@ const InputText: React.FC<PropInputText> = ({
   return (
     <>
       <div className="fnc-input-group">
-        {label && <label htmlFor={id}>{label}</label>}
+        {label && <LabelText text={label} />}
         <input
           type={type}
           id={id}

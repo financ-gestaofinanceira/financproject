@@ -5,16 +5,7 @@
   flex-direction: column;
 }
 
-.fnc-input-group label {
-  align-items: center;
-  color: #90a1b9;
-  display: flex;
-  font-family: Inter;
-  font-size: 13px;
-  font-weight: 600;
-  gap: 8px;
-  margin: 8px;
-}
+
 .fnc-input-group input {
   background-color: #314158;
   border-color: #45556c;

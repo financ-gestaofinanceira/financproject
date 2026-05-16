@@ -4,16 +4,17 @@ import type {
 } from "../../models/ContasUsuarios/GetContasUsuarios";
 import api from "../../services/api/apiConnect";
 
-import "../movimentacoes/MovimentacaoesStyle.css";
 import { useContext, useEffect, useState } from "react";
 import Modal from "../../componentes/Modal/Modal";
 import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import LandBotComponent from "../../componentes/LandBot/LandBotComponent";
-import PatrimonioTotal from "../../componentes/Contas/Patrimonio/PatrimonioTotal";
-import ContaComponent from "../../componentes/Contas/ContaComponent";
-import CadContas from "../../componentes/Contas/CadConta/CadContas";
 import FncButton from "../../refatoracao/props/FncButton/FncButton";
 import { AuthContext } from "../../contexts/AuthContext";
+import TitleText from "../../refatoracao/props/TitleText/TitleText";
+import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
+import CadContas from "./CadConta/CadContas";
+import PatrimonioTotal from "./Componente/Patrimonio/PatrimonioTotal";
+import ContaComponent from "./Componente/ContaUnitaria/ContaComponent";
 
 type Props = {
   usuario: UsuarioResponse3;
@@ -30,7 +31,6 @@ const Contas: React.FC<Props> = ({
   usaRefresh,
   contaBancaria,
 }) => {
-  const { tokenData } = useContext(AuthContext);
   const [contasObtidas, setcontasObtidas] = useState<ContaResponse | null>(
     null,
   );
@@ -50,7 +50,6 @@ const Contas: React.FC<Props> = ({
       "/ContasUsuarios",
       "GET",
       undefined,
-      tokenData!.token,
     );
 
     console.log(resposta);
@@ -69,16 +68,17 @@ const Contas: React.FC<Props> = ({
       {usuario !== null && <LandBotComponent usuario={usuario} />}
       <div className="menu-superior">
         <div className="texto-superior">
-          <p>{retornaBoasVindas()},</p>
-          <h1>Minhas Contas</h1>
+          <SubtitleText text={retornaBoasVindas()} />
+          <TitleText text="Minhas Contas" />
         </div>
-        <div className="w-25">
+        <div>
           <FncButton
             title="Nova Conta Bancaria"
             onClick={() => setIsCadContaOpen(true)}
           />
         </div>
       </div>
+
       <div className="principal">
         {contasObtidas?.conteudo !== undefined && (
           <PatrimonioTotal contaBancaria={contasObtidas?.conteudo} />

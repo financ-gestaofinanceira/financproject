@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GeraRefreshToken } from "../../services/auth/tokenService";
-import LoginComponent from "../../componentes/Entrada/Login/LoginComponent";
-import RegistrarUsuarioComponente from "../../componentes/Entrada/RegistrarUsuario/RegistrarUsuarioComponente";
+
+import RegistrarUsuarioComponente from "../CadastroUsuario/RegistrarUsuarioComponente";
+import LoginComponent from "./Componentes/LoginComponent";
 
 export const Login: React.FC = () => {
   const navigate = useNavigate(); // Hook para navegação

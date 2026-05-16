@@ -3,9 +3,9 @@ import type {
   GetMovimentacoes,
   Movimentacao,
 } from "../../../models/Movimentacoes/GetMovimentacoes";
-import ConclusaoMovimentacao from "../confirmacao/ConclusaoMovimentacao";
+import ConclusaoMovimentacao from "../Confirmacao/ConclusaoMovimentacao";
 import "./TabelaMovimentacao.css";
-import Modal from "../../Modal/Modal";
+import Modal from "../../../componentes/Modal/Modal";
 
 type PropMov = {
   idConta: number;

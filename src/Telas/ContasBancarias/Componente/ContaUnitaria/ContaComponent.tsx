@@ -1,4 +1,4 @@
-import type { GetContasUsuarios } from "../../models/ContasUsuarios/GetContasUsuarios";
+import type { GetContasUsuarios } from "../../../../../models/ContasUsuarios/GetContasUsuarios";
 
 type Props = {
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
