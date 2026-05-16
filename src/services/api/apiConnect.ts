@@ -1,6 +1,5 @@
 import axios from "axios";
 import type { ApiResult } from "../../models/interface/ApiResult";
-import { Global } from "../../models/Autenticação/global";
 
 const api = axios.create({
   baseURL: "https://api.pldprojects.com.br/api", //
@@ -10,14 +9,13 @@ export default async function Conecta<T>(
   rota: string,
   metodo: string,
   objeto?: object,
-  token?: boolean | false,
+  token?: string | null,
 ): Promise<ApiResult<T>> {
   try {
-    console.log(Global.BEARER_TOKEN);
     const header = token
       ? {
           headers: {
-            Authorization: `Bearer ${Global.BEARER_TOKEN}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       : undefined;

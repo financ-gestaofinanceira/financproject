@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { GeraRefreshToken } from "../../services/auth/tokenService";
 import api from "../../services/api/apiConnect";
 import type {
   ContaResponse,
   GetContasUsuarios,
 } from "../../models/ContasUsuarios/GetContasUsuarios";
-import { Global } from "../../models/Autenticação/global";
 import { useNavigate } from "react-router-dom";
-import type { UsuarioResponse } from "../../models/Usuario/UsuarioResponse";
+import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import "./HomeStyle.css";
 import Contas from "../contas/Contas";
 import Movimentacoes from "../movimentacoes/Movimentacoes";
+import { AuthContext } from "../../contexts/AuthContext";
+import Carregamento from "../../componentes/Carregamento/Carregamento";
 
 export const Home: React.FC = () => {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const { tokenData, authenticated, user, logout, setUser } =
+    useContext(AuthContext);
 
-  const [usuario, setUsuario] = useState<UsuarioResponse | null>(null);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const [telaAtual, setTelaAtual] = useState(0);
 
@@ -25,87 +27,72 @@ export const Home: React.FC = () => {
   >();
 
   const buscarUsuario = async () => {
-    let tentativas = 0;
-    let sucesso = false;
+    const resposta = await api<UsuarioResponse3>(
+      "/Usuarios/me",
+      "GET",
+      undefined,
+      tokenData?.token,
+    );
 
-    while (tentativas < 2 && !sucesso) {
-      tentativas++;
-      const resposta = await api<UsuarioResponse>(
-        "/Usuarios/me",
-        "GET",
-        undefined,
-        true,
-      );
-
-      if (resposta.sucesso && resposta.dados) {
-        setUsuario(resposta.dados);
-        sucesso = true;
-        return;
-      }
-
-      // Se der 401, tenta refresh token
-      if (resposta.status === 401) {
-        const refresh = await GeraRefreshToken();
-        if (!refresh.sucesso) break; // não adianta continuar se refresh falhar
-      } else {
-        break; // outro erro, não retry
-      }
+    if (resposta.sucesso && resposta.dados) {
+      setUser(resposta.dados);
+      return;
     }
 
-    // Se falhou depois das tentativas
-    Global.BEARER_TOKEN = null;
+    console.log("passou");
+    if (resposta.status === 401) {
+      const refresh = await GeraRefreshToken();
+      if (refresh.sucesso) {
+        return;
+      }
+    }
+    logout();
     navigate("/", { replace: true });
   };
 
   const deslogar = async () => {
-    let resposta = await api<ContaResponse>(
+    await api<ContaResponse>(
       "/Autenticacao/revoke",
       "POST",
       undefined,
-      true,
+      tokenData!.token,
     );
-
-    if (resposta.sucesso) Global.BEARER_TOKEN = null;
-
+    logout();
     navigate("/", { replace: true });
   };
 
-  const usaRefresh = async () => {
-    const refresh = await GeraRefreshToken();
-
-    if (refresh.sucesso && refresh.dados) {
-      await buscarUsuario();
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-      navigate("/", { replace: true });
-    }
-  };
-  const jaExecutou = React.useRef(false);
-
   useEffect(() => {
-    if (jaExecutou.current) return;
-
-    jaExecutou.current = true;
-
     const init = async () => {
-      await usaRefresh();
+      if (!authenticated) {
+        navigate("/", { replace: true });
+        return;
+      }
+
+      if (!tokenData?.token) return;
+
+      setLoading(true);
+
+      if (!user) {
+        await buscarUsuario();
+      }
+
+      setLoading(false);
     };
 
     init();
-  }, []);
+  }, [authenticated, tokenData?.token]);
 
-  if (isLoggedIn === null) {
-    return <p>Verificando status de login...</p>;
+  if (loading) {
+    return <Carregamento />;
   }
 
   const retornaTelas = () => {
-    if (telaAtual === 0 && usuario !== null) {
+    if (telaAtual === 0 && user !== null) {
       return (
         <Contas
           setTelaAtual={setTelaAtual}
-          usuario={usuario}
-          usaRefresh={usaRefresh}
+          usuario={user}
+          usaRefresh={() => console.log()}
           contaBancaria={setContaSelecionada}
         />
       );
@@ -114,13 +101,13 @@ export const Home: React.FC = () => {
       telaAtual === 1 &&
       contaSelecionada !== null &&
       contaSelecionada !== undefined &&
-      usuario !== null
+      user !== null
     ) {
       return (
         <Movimentacoes
           contaBancaria={contaSelecionada}
           setContaBancaria={setContaSelecionada}
-          usuario={usuario}
+          usuario={user}
         />
       );
     }
@@ -143,13 +130,11 @@ export const Home: React.FC = () => {
 
         <div className="sidebar__user">
           <div className="user__avatar">
-            {usuario?.nomeCompleto?.charAt(0) || "U"}
+            {user?.nomeCompleto?.charAt(0) || "U"}
           </div>
           <div className="user__info">
-            <p className="user__name">{usuario?.nomeCompleto || "Usuário"}</p>
-            <p className="user__email">
-              {usuario?.email || "email@exemplo.com"}
-            </p>
+            <p className="user__name">{user?.nomeCompleto || "Usuário"}</p>
+            <p className="user__email">{user?.email || "email@exemplo.com"}</p>
           </div>
         </div>
 

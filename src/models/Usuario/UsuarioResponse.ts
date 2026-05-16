@@ -1,7 +1,7 @@
-export type UsuarioResponse = {
-    id:string,
-	primeiroNome: string,
-	segundoNome: string,
-	nomeCompleto: string,
-	email: string
-}
+export type UsuarioResponse3 = {
+  id: string;
+  primeiroNome: string;
+  segundoNome: string;
+  nomeCompleto: string;
+  email: string;
+};

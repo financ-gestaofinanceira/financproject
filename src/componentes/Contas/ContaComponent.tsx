@@ -65,7 +65,6 @@ const ContaComponent: React.FC<Props> = ({
       </div>
     );
   };
-  console.log("4454" + contaBancaria);
   return (
     <>
       <div

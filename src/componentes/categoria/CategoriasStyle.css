@@ -38,51 +38,6 @@
   margin: 0;
 }
 
-/* ================= INPUT E ALINHAMENTO (CORRIGIDO) ================= */
-
-/* Container para alinhar o label "Nome" com o input */
-.input-group-horizontal {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-
-.input-categoria {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #3b4a5e;
-  border-radius: 10px;
-  padding: 0 12px;
-  height: 45px;
-  flex: 1; /* Faz o input ocupar o espaço restante */
-  margin-bottom: 10px;
-}
-
-.input-color {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  align-items: center;
-}
-
-/* Bolinha da cor */
-.color-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-/* Esconde input color nativo */
-.color-wrapper input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* ================= OUTROS ESTILOS ================= */
 .centraliza {
   display: flex;
   justify-content: center;
@@ -93,17 +48,16 @@
 .modal-body {
   width: 100%;
   margin-top: 20px;
-}
-
-.error {
-  color: #ff4d4d;
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-.ctn-vertical {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  width: 100%;
+  flex-direction: column;
+}
+.fnc-btn-edit-cat {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  gap: 10px;
 }

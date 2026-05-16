@@ -3,7 +3,8 @@ import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 interface PropAlteraMov {
   onClose: () => void;
@@ -17,55 +18,17 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
   buscaMovimentacoes,
   movimentacaoSelecionada,
 }) => {
+  const { tokenData } = useContext(AuthContext);
+
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
-  //   const [type, setType] = useState<"receita" | "despesa">("receita");
-  //   const [titulo, setTitulo] = useState("");
-  //   const [descricao, setDescricao] = useState("");
-  //   const [valorFormatado, setValorFormatado] = useState("");
-  //   const [valor, setValor] = useState(0);
-  //const [dataMovimentacao, setDataMovimentacao] = useState(getNow);
   const [dataConclusao, setDataConclusao] = useState(getNow);
-  //   const [concluido, setConcluido] = useState(false);
-  //    const [categorias, setCategorias] = useState<CategoriaResponse>();
-  //   const [categoriaId, setCategoriaId] = useState<number | null>(null);
-  //   const [isLoading, setIsLoading] = useState(false);
+
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
-
-  //   const buscaCategorias = useCallback(async () => {
-  //     try {
-  //       const resposta = await api<CategoriaResponse>(
-  //         `/Contas/${idConta}/Categorias`,
-  //         "GET",
-  //         undefined,
-  //         true,
-  //       );
-  //       if (resposta.sucesso && resposta.dados) {
-  //         setCategorias(resposta.dados);
-  //       }
-  //     } catch (error) {
-  //       console.error("Erro ao buscar categorias:", error);
-  //     }
-  //   }, [idConta]);
-
-  //   useEffect(() => {
-  //     buscaCategorias();
-  //   }, [buscaCategorias]);
-
-  //   const handleValor = (value: string) => {
-  //     const numeros = value.replace(/\D/g, "");
-  //     const valorNumerico = Number(numeros) / 100;
-  //     const formatado = new Intl.NumberFormat("pt-BR", {
-  //       style: "currency",
-  //       currency: "BRL",
-  //     }).format(valorNumerico);
-  //     setValorFormatado(formatado);
-  //     setValor(valorNumerico);
-  //   };
 
   const formataMoeda = (valor: number) => {
     let moeda = new Intl.NumberFormat("pt-BR", {
@@ -90,7 +53,7 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
         `/Contas/Movimentacoes/${movimentacaoSelecionada.id}/${movimentacaoSelecionada.concluido ? "Extornar" : "Concluir"}`,
         "POST",
         movimentacaoSelecionada.concluido ? undefined : request,
-        true,
+        tokenData?.token,
       );
 
       if (resposta.sucesso) {
@@ -113,7 +76,7 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
         `/Contas/Movimentacoes/${movimentacaoSelecionada.id}/Remover`,
         "DELETE",
         undefined,
-        true,
+        tokenData?.token,
       );
 
       if (resposta.sucesso) {

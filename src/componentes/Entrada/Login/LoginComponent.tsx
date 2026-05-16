@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GeraRefreshToken, GeraToken } from "../../services/auth/tokenService";
-import type { tokeRequest } from "../../models/Autenticação/tokenRequest";
-import "../../App.css";
-import InputText from "../../refatoracao/props/InputText/InputText";
-import { TypeText } from "../../refatoracao/props/InputText/TypeText";
-import TitleText from "../../refatoracao/props/TitleText/TitleText";
-import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
-import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
-import SubtitleInteractive from "../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
-import MsgBox from "../../refatoracao/props/TextBox/MsgtBox";
-import FncButton from "../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
+import {
+  GeraRefreshToken,
+  GeraToken,
+} from "../../../services/auth/tokenService";
+import type { tokeRequest } from "../../../models/Autenticação/tokenRequest";
+import "../../../App.css";
+import InputText from "../../../refatoracao/props/InputText/InputText";
+import { TypeText } from "../../../refatoracao/props/InputText/TypeText";
+import TitleText from "../../../refatoracao/props/TitleText/TitleText";
+import SubtitleText from "../../../refatoracao/props/SubtitleText/SubtitleText";
+import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
+import SubtitleInteractive from "../../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
+import MsgBox from "../../../refatoracao/props/TextBox/MsgtBox";
+import FncButton from "../../../refatoracao/props/FncButton/FncButton";
+import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
 
-interface TokenData {
-  token: string;
-  refreshToken: string;
-}
+import "./LoginComponentStyle.css";
+import { AuthContext, type TokenData } from "../../../contexts/AuthContext";
 
 interface LoginProps {
   exibeCadastro: Boolean;
@@ -27,24 +28,21 @@ const LoginComponent: React.FC<LoginProps> = ({
   exibeCadastro,
   setExibeCadastro,
 }) => {
+  const { login, tokenData, authenticated } = useContext(AuthContext);
+
   const [erroMsg, setErroMsg] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
 
-  const [tokenData, setTokenData] = useState<TokenData | null>(null);
-  const navigate = useNavigate(); // Hook para navegação
-
   useEffect(() => {
-    const handleAuth = async () => {
-      let fazRefresh = await GeraRefreshToken();
+    console.log(authenticated);
 
-      if (fazRefresh.sucesso) {
-        navigate("/home");
-      }
-    };
+    if (authenticated) {
+      navigate("/home");
+    }
+  }, [tokenData]);
 
-    handleAuth();
-  }, [tokenData, navigate]);
+  const navigate = useNavigate(); // Hook para navegação
 
   const reqApi = async (e: React.FormEvent) => {
     e.preventDefault(); // Previne o comportamento padrão de recarregar a página
@@ -60,27 +58,24 @@ const LoginComponent: React.FC<LoginProps> = ({
       };
 
       const resposta = await GeraToken(request);
-      console.log(email);
-      console.log(senha);
-      console.log(resposta);
       if (resposta.erro) {
         console.log(resposta.erro);
-        setTokenData(null);
         setErroMsg(resposta.erro);
         return;
       }
 
-      // salva o token de forma consistente
-      setTokenData({
-        token: resposta.dados!.token,
-        refreshToken: resposta.dados!.refreshToken,
-      });
-      setErroMsg(null);
+      if (!resposta.dados?.token && !resposta.dados?.expiracao) return;
 
-      console.log("Login:", resposta.dados);
+      const tokenObj: TokenData = {
+        token: resposta.dados.token,
+        expiration: resposta.dados.expiracao,
+      };
+
+      setErroMsg(null);
+      login(tokenObj);
+      navigate("/home");
     } catch (erro: any) {
       console.error(erro.message);
-      setTokenData(null);
       setErroMsg(erro.message);
     }
   };
@@ -90,7 +85,7 @@ const LoginComponent: React.FC<LoginProps> = ({
       <TitleText text="Bem-vindo" />
       <SubtitleText text="Entre na sua conta para continuar" />
 
-      <form className="form" onSubmit={reqApi}>
+      <form className="fnc-form-login" onSubmit={reqApi}>
         <InputText
           label="Email"
           text={email}

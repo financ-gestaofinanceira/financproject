@@ -5,17 +5,18 @@ import type {
 import api from "../../services/api/apiConnect";
 
 import "../movimentacoes/MovimentacaoesStyle.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Modal from "../../componentes/Modal/Modal";
-import type { UsuarioResponse } from "../../models/Usuario/UsuarioResponse";
+import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import LandBotComponent from "../../componentes/LandBot/LandBotComponent";
 import PatrimonioTotal from "../../componentes/Contas/Patrimonio/PatrimonioTotal";
 import ContaComponent from "../../componentes/Contas/ContaComponent";
 import CadContas from "../../componentes/Contas/CadConta/CadContas";
 import FncButton from "../../refatoracao/props/FncButton/FncButton";
+import { AuthContext } from "../../contexts/AuthContext";
 
 type Props = {
-  usuario: UsuarioResponse;
+  usuario: UsuarioResponse3;
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
   usaRefresh: () => void;
   contaBancaria: React.Dispatch<
@@ -29,6 +30,7 @@ const Contas: React.FC<Props> = ({
   usaRefresh,
   contaBancaria,
 }) => {
+  const { tokenData } = useContext(AuthContext);
   const [contasObtidas, setcontasObtidas] = useState<ContaResponse | null>(
     null,
   );
@@ -48,7 +50,7 @@ const Contas: React.FC<Props> = ({
       "/ContasUsuarios",
       "GET",
       undefined,
-      true,
+      tokenData!.token,
     );
 
     console.log(resposta);

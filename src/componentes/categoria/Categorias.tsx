@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import api from "../.././services/api/apiConnect";
 import type { ApiResult } from "../../models/interface/ApiResult";
 import type {
@@ -13,6 +13,7 @@ import { TypeThemeButton } from "../../refatoracao/props/FncButton/TypeThemeButt
 import InputTextAndColor from "../../refatoracao/props/InputTextAndColor/InputTextAndColor";
 import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
 import TitleText from "../../refatoracao/props/TitleText/TitleText";
+import { AuthContext } from "../../contexts/AuthContext";
 
 interface PropCadMov {
   idConta: number;
@@ -30,6 +31,8 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
 
     return luminance > 186 ? "#000000" : "#FFFFFF";
   }
+
+  const { tokenData } = useContext(AuthContext);
 
   const [titulo, setTitulo] = useState("");
   const [categorias, setCategorias] = useState<CategoriaResponse>();
@@ -50,7 +53,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/${idConta}/Categorias`,
         "GET",
         undefined,
-        true,
+        tokenData!.token,
       );
       if (resposta.sucesso && resposta.dados) {
         setCategorias(resposta.dados);
@@ -135,7 +138,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         </div>
         <form className="centraliza" onSubmit={EditaCategoriaRequest}>
           <div className="modal-body">
-            <SubtitleText text="Novo nome" />
             <InputTextAndColor
               color={corEditor}
               onChangeColor={setCorEditor}
@@ -144,15 +146,18 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
               setText={setTituloEditor}
             />
 
-            {erroMsg && <p className="error">{erroMsg}</p>}
+            {erroMsg && <ErrorText text={erroMsg} />}
 
-            <div className="ctn-vertical">
+            <div className="fnc-btn-edit-cat">
               <FncButton
                 type={TypeButton.Submit}
                 disabled={isLoading}
                 thema={TypeThemeButton.Cancel}
                 title="Cancelar"
-                onClick={() => setEditOnly(false)}
+                onClick={() => {
+                  setErroMsg("");
+                  setEditOnly(false);
+                }}
               />
               <FncButton
                 type={TypeButton.Submit}
@@ -191,7 +196,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/${idConta}/Categorias`,
         "POST",
         request,
-        true,
+        tokenData!.token,
       );
 
       if (resposta.sucesso) {
@@ -224,7 +229,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/Categorias/${categoriaSelecionada?.idCategoria}/Alterar`,
         "PATCH",
         request,
-        true,
+        tokenData!.token,
       );
 
       if (resposta.sucesso) {
@@ -247,10 +252,11 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/Categorias/${categoriaSelecionada?.idCategoria}/Remover`,
         "DELETE",
         undefined,
-        true,
+        tokenData!.token,
       );
 
       if (resposta.sucesso) {
+        setErroMsg("");
         buscaCategorias();
         setEditOnly(false);
         buscaMovimentacoes();

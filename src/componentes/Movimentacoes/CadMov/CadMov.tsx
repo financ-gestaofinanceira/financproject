@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { MovimentacaoPost } from "../../../models/Movimentacoes/MovimentacaoPost";
@@ -11,6 +11,7 @@ import InputPrice from "../../../refatoracao/props/InputPrice/InputPrice";
 import FncButton from "../../../refatoracao/props/FncButton/FncButton";
 import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
 import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 interface PropCadMov {
   onClose: () => void;
@@ -23,6 +24,8 @@ const CadMov: React.FC<PropCadMov> = ({
   idConta,
   buscaMovimentacoes,
 }) => {
+  const { tokenData } = useContext(AuthContext);
+
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
@@ -48,7 +51,7 @@ const CadMov: React.FC<PropCadMov> = ({
         `/Contas/${idConta}/Categorias`,
         "GET",
         undefined,
-        true,
+        tokenData?.token,
       );
       if (resposta.sucesso && resposta.dados) {
         setCategorias(resposta.dados);
@@ -85,7 +88,7 @@ const CadMov: React.FC<PropCadMov> = ({
         `/Contas/${idConta}/Movimentacoes`,
         "POST",
         request,
-        true,
+        tokenData?.token,
       );
 
       if (resposta.sucesso) {

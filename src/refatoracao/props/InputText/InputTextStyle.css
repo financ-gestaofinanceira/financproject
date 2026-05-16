@@ -1,6 +1,5 @@
 .fnc-input-group {
   color: #fff;
-  margin: 10px;
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -14,7 +13,7 @@
   font-size: 13px;
   font-weight: 600;
   gap: 8px;
-  margin: 0px 0px 8px;
+  margin: 8px;
 }
 .fnc-input-group input {
   background-color: #314158;
@@ -27,4 +26,6 @@
   font-family: Arial;
   font-size: 14px;
   padding: 14px 18px;
+  width: 100%;
+  box-sizing: border-box;
 }

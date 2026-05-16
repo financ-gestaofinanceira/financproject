@@ -1,23 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GeraRefreshToken } from "../../services/auth/tokenService";
-import LoginComponent from "../../componentes/Entrada/LoginComponent";
+import LoginComponent from "../../componentes/Entrada/Login/LoginComponent";
 import RegistrarUsuarioComponente from "../../componentes/Entrada/RegistrarUsuario/RegistrarUsuarioComponente";
 
 export const Login: React.FC = () => {
   const navigate = useNavigate(); // Hook para navegação
-
-  useEffect(() => {
-    const handleAuth = async () => {
-      let fazRefresh = await GeraRefreshToken();
-
-      if (fazRefresh.sucesso) {
-        navigate("/home");
-      }
-    };
-
-    handleAuth();
-  }, [navigate]);
 
   const [exibeCadastro, setExibeCadastro] = useState(Boolean || false);
   return (

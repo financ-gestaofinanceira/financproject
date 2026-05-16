@@ -1,0 +1,14 @@
+.fnc-ctn-loader {
+  height: 100vh;
+  flex: 1;
+  padding: 32px;
+  background: linear-gradient(135deg, #020618 0%, #0f172b 50%, #020618 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+}
+.fnc-loader {
+  width: 20%;
+}

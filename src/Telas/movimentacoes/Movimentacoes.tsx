@@ -5,20 +5,21 @@ import type {
 import TabelaMovimentacao from "../../componentes/Movimentacoes/tabela/TabelaMovimentacao";
 import api from "../../services/api/apiConnect";
 import "./MovimentacaoesStyle.css";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import type { GetMovimentacoes } from "../../models/Movimentacoes/GetMovimentacoes";
 import Modal from "../../componentes/Modal/Modal";
 import CadMov from "../../componentes/Movimentacoes/CadMov/CadMov";
-import type { UsuarioResponse } from "../../models/Usuario/UsuarioResponse";
+import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import Categorias from "../../componentes/categoria/Categorias";
 import type { CategoriaResponse } from "../../models/Categorias/Categorias";
 import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
 import TitleText from "../../refatoracao/props/TitleText/TitleText";
 import FncButton from "../../refatoracao/props/FncButton/FncButton";
+import { AuthContext } from "../../contexts/AuthContext";
 
 type Props = {
   contaBancaria: GetContasUsuarios;
-  usuario: UsuarioResponse;
+  usuario: UsuarioResponse3;
   setContaBancaria: React.Dispatch<
     React.SetStateAction<GetContasUsuarios | undefined>
   >;
@@ -28,6 +29,8 @@ const Movimentacoes: React.FC<Props> = ({
   contaBancaria,
   setContaBancaria,
 }) => {
+    const {tokenData } = useContext(AuthContext);
+
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
   const [categorias, setCategorias] = useState<CategoriaResponse>();
@@ -70,7 +73,7 @@ const Movimentacoes: React.FC<Props> = ({
         `/Contas/${contaBancaria.idConta}/Categorias`,
         "GET",
         undefined,
-        true,
+        tokenData?.token,
       );
       if (resposta.sucesso && resposta.dados) {
         setCategorias(resposta.dados);
@@ -87,7 +90,7 @@ const Movimentacoes: React.FC<Props> = ({
         `/ContasUsuarios?id=${contaBancaria.idConta}`,
         "GET",
         undefined,
-        true,
+        tokenData?.token,
       );
       if (resposta.sucesso && resposta.dados?.conteudo?.[0]) {
         setContaBancaria(resposta.dados.conteudo[0]);
@@ -105,7 +108,7 @@ const Movimentacoes: React.FC<Props> = ({
     const url = `/Contas/${contaBancaria.idConta}/Movimentacoes/Retornar?DthrMovimentacaoInicial=${toUTCISOString(dataInicial)}&DthrMovimentacaoFinal=${toUTCISOString(dataFinal)}${categoriaId ? `&IdCategoria=${categoriaId}` : ""}${isConcluido !== null ? `&Concluido=${isConcluido}` : ""}`;
 
     try {
-      const resposta = await api<GetMovimentacoes>(url, "GET", undefined, true);
+      const resposta = await api<GetMovimentacoes>(url, "GET", undefined, tokenData?.token);
       if (resposta.sucesso && resposta.dados) {
         setMovimentacoes(resposta.dados);
       }

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { UsuarioResponse } from "../../models/Usuario/UsuarioResponse";
+import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import "./LanBotStyle.css";
 
 interface LandBotProp {
-  usuario: UsuarioResponse;
+  usuario: UsuarioResponse3;
 }
 
 const LandBotComponent: React.FC<LandBotProp> = ({ usuario }) => {

@@ -1,6 +1,5 @@
 import SubtitleText from "../SubtitleText/SubtitleText";
 import "./SubtitleInteractiveStyle.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 interface PropSubtitleInteractive {
   subtitle: string;
