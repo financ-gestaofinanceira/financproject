@@ -14,13 +14,20 @@ type conta = {
 };
 
 type Props = {
-  usaRefresh: () => void;
   buscaContas: () => void;
   onClose: () => void;
 };
+function getTextColor(bgColor: string) {
+  const r = parseInt(bgColor.substr(1, 2), 16);
+  const g = parseInt(bgColor.substr(3, 2), 16);
+  const b = parseInt(bgColor.substr(5, 2), 16);
 
-const CadContas: React.FC<Props> = ({ usaRefresh, buscaContas, onClose }) => {
-  const { tokenData } = useContext(AuthContext);
+  // fórmula de luminância simplificada
+  const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+  return luminance > 186 ? "#000000" : "#FFFFFF";
+}
+const CadContas: React.FC<Props> = ({ buscaContas, onClose }) => {
   const [inputTitulo, setInputTitulo] = useState<string>("");
   const [color, setColor] = useState<string>("#314158");
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
@@ -28,17 +35,12 @@ const CadContas: React.FC<Props> = ({ usaRefresh, buscaContas, onClose }) => {
   const criaConta = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await usaRefresh();
       const request: conta = {
         titulo: inputTitulo,
         cor: color,
       };
 
-      var resposta = await Conecta<string>(
-        "Contas",
-        "POST",
-        request,
-      );
+      var resposta = await Conecta<string>("Contas", "POST", request);
       console.log(resposta.erro);
       if (resposta.sucesso) {
         onClose();
@@ -64,7 +66,12 @@ const CadContas: React.FC<Props> = ({ usaRefresh, buscaContas, onClose }) => {
   return (
     <>
       <TitleText text="Nova Conta" />
+
       <div className="fnc-cad-conta">
+        <div className="fnc-name-conta" style={{ background: color }}>
+          <p style={{ color: getTextColor(color) }}>{inputTitulo}</p>
+        </div>
+
         <InputTextAndColor
           placeholder="Ex: Minha Conta"
           text={inputTitulo}

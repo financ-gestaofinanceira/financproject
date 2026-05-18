@@ -83,16 +83,18 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
                 <td>{mov.titulo}</td>
                 <td>{mov.observacao}</td>
                 <td>
-                  {mov.categoria !== null && (
-                    <div
-                      className="categoria"
-                      style={{ background: mov.categoria.cor }}
-                    >
-                      <p style={{ color: getTextColor(mov.categoria.cor) }}>
-                        {mov.categoria?.nome}
-                      </p>
-                    </div>
-                  )}
+                  <div className="fnc-cnt-cat-mov">
+                    {mov.categorias.map((cat) => (
+                      <div
+                        className="categoria"
+                        style={{ background: cat.cor }}
+                      >
+                        <p style={{ color: getTextColor(cat.cor) }}>
+                          {cat.nome}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </td>
                 <td>{formataData(mov.dthrMovimentacao)}</td>
                 <td>{formataMoeda(mov.valor, mov.tipo)}</td>

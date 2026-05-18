@@ -1,18 +1,19 @@
-import type { GetContasUsuarios } from "../../../../../models/ContasUsuarios/GetContasUsuarios";
+import { useContext } from "react";
+import { ContaContext } from "../../../../contexts/ContaContext";
+import type { ContaBancaria } from "../../../../models/ContasUsuarios/GetContasUsuarios";
+import api from "../../../../services/api/apiConnect";
+import "./ContaComponentStyle.css";
 
 type Props = {
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
-  setContaBancariaSelecionada: React.Dispatch<
-    React.SetStateAction<GetContasUsuarios | undefined>
-  >;
-
-  contaBancaria: GetContasUsuarios;
+  conta: ContaBancaria;
+  buscaContas: () => void;
 };
 
 const ContaComponent: React.FC<Props> = ({
   setTelaAtual,
-  setContaBancariaSelecionada,
-  contaBancaria,
+  conta,
+  buscaContas,
 }) => {
   function getTextColor(bgColor: string) {
     const r = parseInt(bgColor.substr(1, 2), 16);
@@ -22,7 +23,7 @@ const ContaComponent: React.FC<Props> = ({
     // fórmula de luminância simplificada
     const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
 
-    return luminance > 186 ? "#000000" : "#FFFFFF";
+    return luminance > 186 ? "#292a2b" : "#FFFFFF";
   }
   const formataMoeda = (valor: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -30,6 +31,7 @@ const ContaComponent: React.FC<Props> = ({
       currency: "BRL",
     }).format(valor);
   };
+
   const retornaReceitas = () => {
     return (
       <div className="patrimonio-stats">
@@ -37,14 +39,16 @@ const ContaComponent: React.FC<Props> = ({
           <div className="stat-icon">
             <span
               className="material-icons"
-              style={{ fontSize: "14px", color: "white" }}
+              style={{ fontSize: "14px", color: getTextColor(conta.cor) }}
             >
               arrow_upward
             </span>
           </div>
           <div className="stat-info">
-            <p>Receitas</p>
-            <h2>{formataMoeda(contaBancaria.entradaPendente)}</h2>
+            <p style={{ color: getTextColor(conta.cor) }}>Receitas</p>
+            <h2 style={{ color: getTextColor(conta.cor) }}>
+              {formataMoeda(conta.entradaPendente)}
+            </h2>
           </div>
         </div>
 
@@ -52,54 +56,81 @@ const ContaComponent: React.FC<Props> = ({
           <div className="stat-icon">
             <span
               className="material-icons"
-              style={{ fontSize: "14px", color: "white" }}
+              style={{ fontSize: "14px", color: getTextColor(conta.cor) }}
             >
               arrow_downward
             </span>
           </div>
           <div className="stat-info">
-            <p>Despesas</p>
-            <h2>{formataMoeda(contaBancaria.saidaPendente)}</h2>
+            <p style={{ color: getTextColor(conta.cor) }}>Despesas</p>
+            <h2 style={{ color: getTextColor(conta.cor) }}>
+              {formataMoeda(conta.saidaPendente)}
+            </h2>
           </div>
         </div>
       </div>
     );
   };
+
+  const favoritarConta = async () => {
+    await api<string>(`/ContasUsuarios/${conta?.idConta}/Favorita`, "POST");
+  };
+
+  const { setConta } = useContext(ContaContext);
+
   return (
     <>
       <div
         className="card-secundario-custom"
-        style={{ background: contaBancaria.cor }}
+        style={{ background: conta?.cor }}
         onClick={() => {
-          if (contaBancaria.status == 0) {
+          if (conta?.status == 0) {
             setTelaAtual(1);
-            setContaBancariaSelecionada(contaBancaria);
+            setConta(conta);
           }
         }}
       >
         <div className="card-secundario__header">
-          <div className="card-secundario__icon icon-corrente">
-            <span className="material-icons">account_balance_wallet</span>
+          <div className="fnc-ctn-icons icon-corrente">
+            <span
+              className="material-icons"
+              style={{ color: getTextColor(conta.cor) }}
+            >
+              account_balance_wallet
+            </span>
+
+            <span
+              style={conta.contaFavorita ? { color: "#e2c20c" } : undefined}
+              className="material-icons icon-favorite"
+              onClick={async (e) => {
+                e.stopPropagation();
+
+                await favoritarConta();
+                await buscaContas();
+              }}
+            >
+              star
+            </span>
           </div>
         </div>
         <div className="card-secundario__label">
-          <p style={{ color: getTextColor(contaBancaria.cor) }}>
-            {contaBancaria.titulo}
-          </p>
+          <p style={{ color: getTextColor(conta.cor) }}>{conta?.titulo}</p>
         </div>
         <div className="card-secundario__valor">
           <p
             style={{
-              textDecoration:
-                contaBancaria.status !== 0 ? "line-through" : "none",
-              color: contaBancaria.status !== 0 ? "#d6d6da" : "white",
+              textDecoration: conta?.status !== 0 ? "line-through" : "none",
+              color: conta?.status !== 0 ? "#d6d6da" : getTextColor(conta.cor),
             }}
           >
-            {formataMoeda(contaBancaria.saldoAtual)}
+            {formataMoeda(conta?.saldoAtual!)}
           </p>
         </div>
         <div className="card-footer-info">
-          <div className="footer-label">
+          <div
+            className="footer-label"
+            style={{ color: getTextColor(conta.cor) }}
+          >
             <span className="material-icons" style={{ fontSize: "12px" }}>
               account_balance
             </span>
@@ -108,9 +139,7 @@ const ContaComponent: React.FC<Props> = ({
           <div className="status-dot dot-blue"></div>
         </div>
 
-        {contaBancaria.status === 0 &&
-          !contaBancaria.expirado &&
-          retornaReceitas()}
+        {conta?.status === 0 && !conta?.expirado && retornaReceitas()}
       </div>
     </>
   );

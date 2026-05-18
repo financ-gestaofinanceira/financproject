@@ -2,7 +2,10 @@ import React, { useEffect, useState, useCallback, useContext } from "react";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { MovimentacaoPost } from "../../../models/Movimentacoes/MovimentacaoPost";
-import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
+import type {
+  Categoria,
+  Movimentacao,
+} from "../../../models/Movimentacoes/GetMovimentacoes";
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 import "./CadMovStyle.css";
 import TitleText from "../../../refatoracao/props/TitleText/TitleText";
@@ -14,6 +17,7 @@ import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
 import { AuthContext } from "../../../contexts/AuthContext";
 import InputDate from "../../../refatoracao/props/InputDate/InputDate";
 import InputCheckBox from "../../../refatoracao/props/InputCheckBox/InputCheckBox";
+import CheckBoxList from "../../../refatoracao/props/CheckBoxList/CheckBoxList";
 
 interface PropCadMov {
   onClose: () => void;
@@ -26,15 +30,13 @@ const CadMov: React.FC<PropCadMov> = ({
   idConta,
   buscaMovimentacoes,
 }) => {
-  const { tokenData } = useContext(AuthContext);
-
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
-  const [type, setType] = useState<"receita" | "despesa">("receita");
+  const [type, setType] = useState("receita");
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [valorFormatado, setValorFormatado] = useState("");
@@ -46,6 +48,10 @@ const CadMov: React.FC<PropCadMov> = ({
   const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
+
+  const [categoriasSelecionadas, setCategoriasSelecionadas] = useState<
+    number[]
+  >([]);
 
   const setDateMov = (value: string) => {
     setDataMovimentacao(value);
@@ -87,7 +93,7 @@ const CadMov: React.FC<PropCadMov> = ({
         observacao: descricao,
         dthrMovimentacao: toUTCISOString(dataMovimentacao),
         dthrConclusao: concluido ? toUTCISOString(dataConclusao) : null,
-        idCategoria: categoriaId,
+        idsCategoria: categoriasSelecionadas,
       };
 
       const resposta = await api<ApiResult<Movimentacao>>(
@@ -108,11 +114,15 @@ const CadMov: React.FC<PropCadMov> = ({
       setIsLoading(false);
     }
   };
+  {
+    console.log(categoriasSelecionadas);
+  }
 
   return (
     <>
       <TitleText text="Nova Transação" />
-      <div className="transaction-type">
+
+      <div className="fnc-transaction-type">
         <button
           type="button"
           className={`type-btn ${type === "receita" ? "active" : ""}`}
@@ -121,6 +131,7 @@ const CadMov: React.FC<PropCadMov> = ({
         >
           Receita
         </button>
+
         <button
           type="button"
           className={`type-btn ${type === "despesa" ? "active" : ""}`}
@@ -130,6 +141,7 @@ const CadMov: React.FC<PropCadMov> = ({
           Despesa
         </button>
       </div>
+
       <form className="centraliza" onSubmit={criaMov}>
         <div className="modal-body">
           <InputText
@@ -154,28 +166,14 @@ const CadMov: React.FC<PropCadMov> = ({
             setFormattedValue={setValorFormatado}
           />
 
-          <div className="input-group">
-            <label>Categoria</label>
-            <select
-              value={categoriaId ?? ""}
-              onChange={(e) => setCategoriaId(Number(e.target.value))}
-            >
-              <option value="" disabled>
-                Selecione uma categoria
-              </option>
-              {categorias?.conteudo.map((categoria) => (
-                <option
-                  key={categoria.idCategoria}
-                  value={categoria.idCategoria}
-                >
-                  <div className="categoria">
-                    <p>{categoria.nome}</p>
-                  </div>
-                </option>
-              ))}
-            </select>
-          </div>
-
+          <CheckBoxList<Categoria>
+            itens={categorias?.conteudo ?? []}
+            idKey="idCategoria"
+            labelKey="nome"
+            selecionados={categoriasSelecionadas}
+            onChange={setCategoriasSelecionadas}
+            label="Categorias"
+          />
           <InputDate
             label="Data Movimentação"
             text={dataMovimentacao}

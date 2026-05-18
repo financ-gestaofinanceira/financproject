@@ -6,5 +6,5 @@ export type MovimentacaoPost = {
   observacao: string;
   dthrMovimentacao: string;
   dthrConclusao: string | null;
-  idCategoria: number | null;
+  idsCategoria: number[];
 };

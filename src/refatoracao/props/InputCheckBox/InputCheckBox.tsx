@@ -1,5 +1,4 @@
 import LabelText from "../LabelText/LabelText";
-import SubtitleText from "../SubtitleText/SubtitleText";
 import "./InputCheckBoxStyle.css";
 interface PropInputCheckBox {
   label: string;

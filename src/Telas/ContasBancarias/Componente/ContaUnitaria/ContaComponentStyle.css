@@ -1,0 +1,28 @@
+.icon-favorite {
+  font-size: 20px;
+  color: rgba(199, 195, 195, 0.877);
+
+  text-shadow:
+    1px 1px rgba(0, 0, 0, 0.096),
+    -1px 1px rgba(0, 0, 0, 0.096),
+    1px -1px rgba(0, 0, 0, 0.096),
+    -1px -1px rgba(0, 0, 0, 0.096);
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.icon-favorite:hover {
+  color: rgba(182, 155, 6, 0.877);
+  transform: scale(1.2);
+}
+
+.fnc-ctn-icons {
+  width: 100%;
+  height: 38px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

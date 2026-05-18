@@ -1,9 +1,41 @@
+.fnc-input-status {
+  width: 100%;
+}
+
+.fnc-input-status input,
+.fnc-input-status select {
+  width: 100%;
+  padding: 14px 18px;
+  background: #314158;
+  border: 1px solid #45556c;
+  border-radius: 14px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+  box-sizing: border-box;
+}
+
+.fnc-input-status input:focus,
+.fnc-input-status select:focus {
+  border-color: #2b7fff;
+}
+
 .fnc-ctn-cads {
   display: flex;
   gap: 5px;
   height: 40px;
   width: 300px;
 }
+
+.fnc-ctn-filter {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 70%;
+  gap: 10px;
+}
+
 .transacoes-container {
   display: flex;
   flex-direction: column;

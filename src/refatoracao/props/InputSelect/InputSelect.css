@@ -1,0 +1,47 @@
+.fnc-input-select {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.fnc-input-select__wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.fnc-input-select__wrapper select {
+  width: 100%;
+  padding: 14px 44px 14px 18px;
+  background: #314158;
+  border: 1px solid #45556c;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 14px;
+  font-family: Arial;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.fnc-input-select__wrapper select:focus {
+  border-color: #2b7fff;
+}
+
+.fnc-input-select__wrapper select option {
+  background: #243044;
+  color: #fff;
+}
+
+.fnc-input-select__icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #62748e;
+  font-size: 20px;
+  pointer-events: none;
+}

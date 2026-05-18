@@ -42,7 +42,7 @@ export type Movimentacao = {
   dthrConclusao: string | null;
   usarioCriador: UsuarioCriador;
   usuarioExecutor: UsuarioCriador | null; // assumindo padrão
-  categoria: Categoria | null;
+  categorias: Categoria[];
 };
 
 export type ConteudoMovimentacoes = {

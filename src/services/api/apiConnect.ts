@@ -1,73 +1,43 @@
 import type { ApiResult } from "../../models/interface/ApiResult";
 import api from "./api";
 
-async function executarRequisicao<T>(
-  rota: string,
-  metodo: string,
-  objeto?: object,
-) {
-  switch (metodo) {
-    case "POST":
-      return await api.post<T>(rota, objeto);
-
-    case "GET":
-      return await api.get<T>(rota);
-
-    case "PATCH":
-      return await api.patch<T>(rota, objeto);
-
-    case "DELETE":
-      return await api.delete<T>(rota);
-
-    default:
-      throw new Error(`Método inválido: ${metodo}`);
-  }
-}
-
+// Essa função apenas executa a requisição e formata o resultado.
+// O refresh token é tratado automaticamente pelo interceptor
+// registrado no AuthProvider (AuthContext.tsx) — não precisa fazer nada aqui.
 export default async function Conecta<T>(
   rota: string,
   metodo: string,
   objeto?: object,
 ): Promise<ApiResult<T>> {
   try {
-    const resposta = await executarRequisicao<T>(rota, metodo, objeto);
+    let resposta;
+
+    switch (metodo) {
+      case "POST":
+        resposta = await api.post<T>(rota, objeto);
+        break;
+      case "GET":
+        resposta = await api.get<T>(rota);
+        console.log(rota);
+        console.log(resposta);
+        break;
+      case "PATCH":
+        resposta = await api.patch<T>(rota, objeto);
+        break;
+      case "DELETE":
+        resposta = await api.delete<T>(rota);
+        break;
+      default:
+        throw new Error(`Método inválido: ${metodo}`);
+    }
 
     return {
       sucesso: true,
       dados: resposta.data,
     };
   } catch (erro: any) {
-    // TOKEN EXPIRADO
-    if (erro.response?.status === 401) {
-      try {
-        console.log("Tentando refresh token...");
-
-        const refreshResponse = await api.post("/Autenticacao/refresh");
-
-        const novoToken = refreshResponse.data.token;
-
-        // tenta novamente
-        const novaResposta = await executarRequisicao<T>(rota, metodo, objeto);
-
-        return {
-          sucesso: true,
-          dados: novaResposta.data,
-        };
-      } catch {
-        console.log("Refresh falhou");
-
-        localStorage.removeItem("user");
-
-        window.location.href = "/";
-
-        return {
-          sucesso: false,
-          erro: "Sessão expirada",
-          status: 401,
-        };
-      }
-    }
-
+    // Se chegou aqui com 401, o interceptor do AuthContext já tentou
+    // o refresh e não conseguiu — o usuário foi deslogado automaticamente.
     const msgErro =
       typeof erro.response?.data === "string"
         ? erro.response.data

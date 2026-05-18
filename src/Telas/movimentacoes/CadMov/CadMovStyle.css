@@ -1,19 +1,9 @@
-.input-group input,
-.input-group select {
-  width: 100%;
-  padding: 14px 18px;
-  background: #314158;
-  border: 1px solid #45556c;
-  border-radius: 14px;
-  color: white;
-  font-size: 14px;
-  outline: none;
-  transition: 0.2s;
+.fnc-transaction-type {
+  display: flex;
+  gap: 15px;
+  margin: 5px;
 }
 
-.input-group input:focus {
-  border-color: #2b7fff;
-}
 .type-btn {
   flex: 1;
   padding: 12px;

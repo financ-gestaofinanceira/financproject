@@ -2,10 +2,11 @@ import "./FncButton.css";
 import { TypeButton } from "./TypeButton";
 import { TypeThemeButton } from "./TypeThemeButton";
 interface PropFncButton {
-  title: string;
+  title?: string;
   type?: TypeButton;
   thema?: TypeThemeButton;
   disabled?: boolean;
+  icon?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 const FncButton: React.FC<PropFncButton> = ({
@@ -13,6 +14,7 @@ const FncButton: React.FC<PropFncButton> = ({
   thema = TypeThemeButton.Default,
   type = TypeButton.Button,
   disabled = false,
+  icon,
   onClick,
 }) => {
   const selectTheme = () => {
@@ -23,6 +25,8 @@ const FncButton: React.FC<PropFncButton> = ({
         return "fnc-btn-cancel";
       case TypeThemeButton.Delete:
         return "fnc-btn-delete";
+      case TypeThemeButton.Icon:
+        return "fnc-btn-icon";
       default:
         return "fnc-btn-default";
     }
@@ -36,7 +40,13 @@ const FncButton: React.FC<PropFncButton> = ({
         disabled={disabled}
         onClick={onClick}
       >
-        {title}
+        {!icon && title}
+        {icon && (
+          <div className="fnc-ctn-btn-icon">
+            <span className="material-icons">{icon}</span>
+            {title}
+          </div>
+        )}
       </button>
     </>
   );

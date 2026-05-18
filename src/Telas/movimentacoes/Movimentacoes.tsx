@@ -1,12 +1,15 @@
 import type {
   ContaResponse,
-  GetContasUsuarios,
+  ContaBancaria,
 } from "../../models/ContasUsuarios/GetContasUsuarios";
 import TabelaMovimentacao from "./Tabela/TabelaMovimentacao";
 import api from "../../services/api/apiConnect";
 import "./MovimentacaoesStyle.css";
 import { useCallback, useContext, useEffect, useState } from "react";
-import type { GetMovimentacoes } from "../../models/Movimentacoes/GetMovimentacoes";
+import type {
+  Categoria,
+  GetMovimentacoes,
+} from "../../models/Movimentacoes/GetMovimentacoes";
 import Modal from "../../componentes/Modal/Modal";
 import CadMov from "./CadMov/CadMov";
 import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
@@ -14,30 +17,25 @@ import type { CategoriaResponse } from "../../models/Categorias/Categorias";
 import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
 import TitleText from "../../refatoracao/props/TitleText/TitleText";
 import FncButton from "../../refatoracao/props/FncButton/FncButton";
-import { AuthContext } from "../../contexts/AuthContext";
 import Categorias from "../Categorias/Categorias";
+import InputDate from "../../refatoracao/props/InputDate/InputDate";
+import CheckBoxList from "../../refatoracao/props/CheckBoxList/CheckBoxList";
+import { ContaContext } from "../../contexts/ContaContext";
+import InputSelect from "../../refatoracao/props/InputSelect/InputSelect";
 
-type Props = {
-  contaBancaria: GetContasUsuarios;
-  usuario: UsuarioResponse3;
-  setContaBancaria: React.Dispatch<
-    React.SetStateAction<GetContasUsuarios | undefined>
-  >;
-};
+type Props = {};
 
-const Movimentacoes: React.FC<Props> = ({
-  contaBancaria,
-  setContaBancaria,
-}) => {
-  const { tokenData } = useContext(AuthContext);
-
+const Movimentacoes: React.FC<Props> = ({}) => {
+  const { conta, setConta } = useContext(ContaContext);
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
   const [categorias, setCategorias] = useState<CategoriaResponse>();
   const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [isCategoriaOpen, setIsCategoriaOpen] = useState(false);
   const [isConcluido, setIsConcluido] = useState<Boolean | null>(null);
-
+  const [categoriasSelecionadas, setCategoriasSelecionadas] = useState<
+    number[]
+  >([]);
   // Helper para datas
   const getNow = (isEnd: boolean = false) => {
     const now = new Date();
@@ -70,7 +68,7 @@ const Movimentacoes: React.FC<Props> = ({
   const buscaCategorias = useCallback(async () => {
     try {
       const resposta = await api<CategoriaResponse>(
-        `/Contas/${contaBancaria.idConta}/Categorias`,
+        `/Contas/${conta!.idConta}/Categorias`,
         "GET",
         undefined,
       );
@@ -80,55 +78,43 @@ const Movimentacoes: React.FC<Props> = ({
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
     }
-  }, [contaBancaria.idConta]);
-
-  // 2. Busca de Dados da Conta (Saldos no topo)
-  const buscaDadosConta = useCallback(async () => {
-    try {
-      const resposta = await api<ContaResponse>(
-        `/ContasUsuarios?id=${contaBancaria.idConta}`,
-        "GET",
-        undefined,
-      );
-      if (resposta.sucesso && resposta.dados?.conteudo?.[0]) {
-        setContaBancaria(resposta.dados.conteudo[0]);
-      }
-    } catch (error) {
-      console.error("Erro ao atualizar dados da conta:", error);
-    }
-  }, [contaBancaria.idConta, setContaBancaria]);
+  }, [conta!.idConta]);
 
   // 3. Busca de Movimentações (Memorizada)
   const buscaMovimentacoes = useCallback(async () => {
     const toUTCISOString = (data: string) => new Date(data).toISOString();
 
-    // Incluímos o categoriaId na query caso ele exista
-    const url = `/Contas/${contaBancaria.idConta}/Movimentacoes/Retornar?DthrMovimentacaoInicial=${toUTCISOString(dataInicial)}&DthrMovimentacaoFinal=${toUTCISOString(dataFinal)}${categoriaId ? `&IdCategoria=${categoriaId}` : ""}${isConcluido !== null ? `&Concluido=${isConcluido}` : ""}`;
+    const params = new URLSearchParams({
+      DthrMovimentacaoInicial: toUTCISOString(dataInicial),
+      DthrMovimentacaoFinal: toUTCISOString(dataFinal),
+    });
+
+    categoriasSelecionadas.forEach((cat) => {
+      params.append("IdCategoria", cat.toString());
+    });
+
+    if (isConcluido !== null) {
+      params.append("Concluido", isConcluido.toString());
+    }
+
+    const url = `/Contas/${conta!.idConta}/Movimentacoes/Retornar?${params.toString()}`;
 
     try {
-      const resposta = await api<GetMovimentacoes>(
-        url,
-        "GET",
-        undefined,
-      );
+      const resposta = await api<GetMovimentacoes>(url, "GET", undefined);
       if (resposta.sucesso && resposta.dados) {
         setMovimentacoes(resposta.dados);
       }
-      // Atualiza os saldos do topo também
-      buscaDadosConta();
     } catch (error) {
       console.error("Erro ao buscar movimentações:", error);
     }
   }, [
-    contaBancaria.idConta,
+    conta!.idConta,
     dataInicial,
     dataFinal,
-    categoriaId,
-    buscaDadosConta,
+    categoriasSelecionadas,
     isConcluido,
   ]);
 
-  // Efeito principal: Carrega categorias e movimentações
   useEffect(() => {
     buscaCategorias();
     buscaMovimentacoes();
@@ -139,7 +125,7 @@ const Movimentacoes: React.FC<Props> = ({
       <div className="transacoes-header">
         <div className="texto-superior">
           <SubtitleText text="Gerencie todas as suas movimentações" />
-          <TitleText text={`Transações - ${contaBancaria.titulo}`} />
+          <TitleText text={`Transações - ${conta!.titulo}`} />
         </div>
 
         <div className="fnc-ctn-cads">
@@ -164,7 +150,7 @@ const Movimentacoes: React.FC<Props> = ({
           </div>
           <div className="card-secundario__label">Saldo atual</div>
           <div className="card-secundario__valor" style={{ color: "#2B7FFF" }}>
-            {formataMoeda(contaBancaria.saldoAtual)}
+            {formataMoeda(conta!.saldoAtual)}
           </div>
         </div>
 
@@ -176,7 +162,7 @@ const Movimentacoes: React.FC<Props> = ({
           </div>
           <div className="card-secundario__label">Saldo Projetado</div>
           <div className="card-secundario__valor" style={{ color: "#0c42f5" }}>
-            {formataMoeda(contaBancaria.saldoProjetado)}
+            {formataMoeda(conta!.saldoProjetado)}
           </div>
         </div>
 
@@ -188,7 +174,7 @@ const Movimentacoes: React.FC<Props> = ({
           </div>
           <div className="card-secundario__label">Receitas</div>
           <div className="card-secundario__valor" style={{ color: "#00D492" }}>
-            {formataMoeda(contaBancaria.entradaPendente)}
+            {formataMoeda(conta!.entradaPendente)}
           </div>
         </div>
 
@@ -200,7 +186,7 @@ const Movimentacoes: React.FC<Props> = ({
           </div>
           <div className="card-secundario__label">Despesas</div>
           <div className="card-secundario__valor" style={{ color: "#FF4B4B" }}>
-            {formataMoeda(contaBancaria.saidaPendente)}
+            {formataMoeda(conta!.saidaPendente)}
           </div>
         </div>
       </div>
@@ -240,79 +226,61 @@ const Movimentacoes: React.FC<Props> = ({
       <Modal isOpen={isCadMovOpen} onClose={() => setIsCadMovOpen(false)}>
         <CadMov
           onClose={() => setIsCadMovOpen(false)}
-          idConta={contaBancaria.idConta}
+          idConta={conta!.idConta}
           buscaMovimentacoes={buscaMovimentacoes}
         />
       </Modal>
 
       <Modal isOpen={isCategoriaOpen} onClose={() => setIsCategoriaOpen(false)}>
         <Categorias
-          idConta={contaBancaria.idConta}
+          idConta={conta!.idConta}
           buscaMovimentacoes={buscaMovimentacoes}
         />
       </Modal>
+      <div className="fnc-ctn-filter">
+        <InputDate
+          label="Data inicial"
+          text={dataInicial}
+          setText={setDataInicial}
+        />
+        <InputDate label="Data Final" text={dataFinal} setText={setDataFinal} />
 
-      <div className="ctn-vertical-dt">
-        <div className="input-group">
-          <label>Data inicial</label>
-          <input
-            type="datetime-local"
-            value={dataInicial}
-            onChange={(e) => setDataInicial(e.target.value)}
-            required
-          />
-        </div>
+        <CheckBoxList<Categoria>
+          itens={[
+            {
+              idCategoria: 0,
+              nome: "Sem categoria",
+            } as Categoria,
 
-        <div className="input-group">
-          <label>Data Final</label>
-          <input
-            type="datetime-local"
-            value={dataFinal}
-            onChange={(e) => setDataFinal(e.target.value)}
-            required
-          />
-        </div>
+            ...(categorias?.conteudo ?? []),
+          ]}
+          idKey="idCategoria"
+          labelKey="nome"
+          selecionados={categoriasSelecionadas}
+          onChange={setCategoriasSelecionadas}
+          label="Categorias"
+        />
 
-        <div className="input-group">
-          <label>Categoria</label>
-          <select
-            value={categoriaId ?? ""}
-            onChange={(e) =>
-              setCategoriaId(e.target.value ? Number(e.target.value) : null)
-            }
-          >
-            <option value="">Todas as categorias</option>
-            {categorias?.conteudo.map((categoria) => (
-              <option key={categoria.idCategoria} value={categoria.idCategoria}>
-                {categoria.nome}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="input-group">
-          <label>Status</label>
-          <select
-            onChange={(e) => {
-              let valor = e.target.value;
-
-              setIsConcluido(
-                valor === "Todas" ? null : valor === "Pendente" ? false : true,
-              );
-            }}
-          >
-            <option>Todas</option>
-            <option>Pendente</option>
-            <option>Concluído</option>
-          </select>
-        </div>
+        <InputSelect
+          label="Status"
+          opcoes={[
+            { label: "Todas", value: "Todas" },
+            { label: "Pendente", value: "Pendente" },
+            { label: "Concluído", value: "Concluido" },
+          ]}
+          onChange={(valor) =>
+            setIsConcluido(
+              valor === "Todas" ? null : valor === "Pendente" ? false : true,
+            )
+          }
+        />
       </div>
 
       {movimentacoes && (
         <TabelaMovimentacao
           movimentacao={movimentacoes}
           buscaMovimentacoes={buscaMovimentacoes}
-          idConta={contaBancaria.idConta}
+          idConta={conta!.idConta}
         />
       )}
     </div>

@@ -1,41 +1,33 @@
 import type {
   ContaResponse,
-  GetContasUsuarios,
+  ContaBancaria,
 } from "../../models/ContasUsuarios/GetContasUsuarios";
 import api from "../../services/api/apiConnect";
 
 import { useContext, useEffect, useState } from "react";
 import Modal from "../../componentes/Modal/Modal";
-import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
+
 import LandBotComponent from "../../componentes/LandBot/LandBotComponent";
 import FncButton from "../../refatoracao/props/FncButton/FncButton";
-import { AuthContext } from "../../contexts/AuthContext";
 import TitleText from "../../refatoracao/props/TitleText/TitleText";
 import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
 import CadContas from "./CadConta/CadContas";
 import PatrimonioTotal from "./Componente/Patrimonio/PatrimonioTotal";
 import ContaComponent from "./Componente/ContaUnitaria/ContaComponent";
+import { AuthContext } from "../../contexts/AuthContext";
+import Carregamento from "../../componentes/Carregamento/Carregamento";
 
 type Props = {
-  usuario: UsuarioResponse3;
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
-  usaRefresh: () => void;
-  contaBancaria: React.Dispatch<
-    React.SetStateAction<GetContasUsuarios | undefined>
-  >;
 };
 
-const Contas: React.FC<Props> = ({
-  usuario,
-  setTelaAtual,
-  usaRefresh,
-  contaBancaria,
-}) => {
+const Contas: React.FC<Props> = ({ setTelaAtual }) => {
+  const { user } = useContext(AuthContext);
   const [contasObtidas, setcontasObtidas] = useState<ContaResponse | null>(
     null,
   );
+  const [loading, setLoading] = useState<Boolean>(false);
   const [isCadContaOpen, setIsCadContaOpen] = useState(false);
-
   const retornaBoasVindas = () => {
     const hora = new Date().getHours();
     if (hora >= 22 && hora <= 3)
@@ -46,17 +38,13 @@ const Contas: React.FC<Props> = ({
   };
 
   const buscaContas = async () => {
-    let resposta = await api<ContaResponse>(
-      "/ContasUsuarios",
-      "GET",
-      undefined,
-    );
-
-    console.log(resposta);
+    setLoading(true);
+    let resposta = await api<ContaResponse>("/ContasUsuarios", "GET");
 
     if (resposta.sucesso && resposta.dados) {
       setcontasObtidas(resposta.dados);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -65,43 +53,54 @@ const Contas: React.FC<Props> = ({
 
   return (
     <>
-      {usuario !== null && <LandBotComponent usuario={usuario} />}
-      <div className="menu-superior">
-        <div className="texto-superior">
-          <SubtitleText text={retornaBoasVindas()} />
-          <TitleText text="Minhas Contas" />
-        </div>
-        <div>
-          <FncButton
-            title="Nova Conta Bancaria"
-            onClick={() => setIsCadContaOpen(true)}
-          />
-        </div>
-      </div>
+      {user !== null && <LandBotComponent usuario={user} />}
 
-      <div className="principal">
-        {contasObtidas?.conteudo !== undefined && (
-          <PatrimonioTotal contaBancaria={contasObtidas?.conteudo} />
-        )}
-        <div className="grid-cards">
-          {contasObtidas?.conteudo.map((conta) => (
-            <ContaComponent
-              key={conta.idConta}
-              setTelaAtual={setTelaAtual}
-              contaBancaria={conta}
-              setContaBancariaSelecionada={contaBancaria}
-            />
-          ))}
-        </div>
+      {loading ? (
+        <Carregamento />
+      ) : (
+        <>
+          <div className="menu-superior">
+            <div className="texto-superior">
+              <SubtitleText text={retornaBoasVindas()} />
+              <TitleText text="Minhas Contas" />
+            </div>
 
-        <Modal isOpen={isCadContaOpen} onClose={() => setIsCadContaOpen(false)}>
-          <CadContas
-            usaRefresh={usaRefresh}
-            buscaContas={buscaContas}
-            onClose={() => setIsCadContaOpen(false)}
-          />
-        </Modal>
-      </div>
+            <div>
+              <FncButton
+                title="Nova Conta Bancaria"
+                onClick={() => setIsCadContaOpen(true)}
+              />
+            </div>
+          </div>
+
+          <div className="principal">
+            {contasObtidas?.conteudo !== undefined && (
+              <PatrimonioTotal contaBancaria={contasObtidas?.conteudo} />
+            )}
+
+            <div className="grid-cards">
+              {contasObtidas?.conteudo.map((conta) => (
+                <ContaComponent
+                  key={conta.idConta}
+                  setTelaAtual={setTelaAtual}
+                  conta={conta}
+                  buscaContas={buscaContas}
+                />
+              ))}
+            </div>
+
+            <Modal
+              isOpen={isCadContaOpen}
+              onClose={() => setIsCadContaOpen(false)}
+            >
+              <CadContas
+                buscaContas={buscaContas}
+                onClose={() => setIsCadContaOpen(false)}
+              />
+            </Modal>
+          </div>
+        </>
+      )}
     </>
   );
 };

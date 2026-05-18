@@ -1,6 +1,7 @@
-export type GetContasUsuarios = {
+export type ContaBancaria = {
   idConta: number;
   titulo: string;
+  contaFavorita: true;
   status: number;
   saldoAtual: number;
   saldoProjetado: number;
@@ -26,6 +27,6 @@ export type Metadados = {
 };
 
 export type ContaResponse = {
-  conteudo: GetContasUsuarios[];
+  conteudo: ContaBancaria[];
   metadados: Metadados;
 };

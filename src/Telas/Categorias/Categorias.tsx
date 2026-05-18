@@ -11,7 +11,6 @@ import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
 import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
 import { TypeThemeButton } from "../../refatoracao/props/FncButton/TypeThemeButton";
 import InputTextAndColor from "../../refatoracao/props/InputTextAndColor/InputTextAndColor";
-import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
 import TitleText from "../../refatoracao/props/TitleText/TitleText";
 import { AuthContext } from "../../contexts/AuthContext";
 
@@ -32,8 +31,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
     return luminance > 186 ? "#000000" : "#FFFFFF";
   }
 
-  const { tokenData } = useContext(AuthContext);
-
   const [titulo, setTitulo] = useState("");
   const [categorias, setCategorias] = useState<CategoriaResponse>();
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +50,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/${idConta}/Categorias`,
         "GET",
         undefined,
-        tokenData!.token,
       );
       if (resposta.sucesso && resposta.dados) {
         setCategorias(resposta.dados);
@@ -198,7 +194,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/${idConta}/Categorias`,
         "POST",
         request,
-        tokenData!.token,
       );
 
       if (resposta.sucesso) {
@@ -231,7 +226,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/Categorias/${categoriaSelecionada?.idCategoria}/Alterar`,
         "PATCH",
         request,
-        tokenData!.token,
       );
 
       if (resposta.sucesso) {
@@ -254,7 +248,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         `/Contas/Categorias/${categoriaSelecionada?.idCategoria}/Remover`,
         "DELETE",
         undefined,
-        tokenData!.token,
       );
 
       if (resposta.sucesso) {
