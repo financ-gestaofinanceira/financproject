@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import FncButton from "../../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
+import FncButton from "../../../props/FncButton/FncButton";
+import { TypeButton } from "../../../props/FncButton/TypeButton";
 import Conecta from "../../../services/api/apiConnect";
 import { AuthContext } from "../../../contexts/AuthContext";
-import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
-import TitleText from "../../../refatoracao/props/TitleText/TitleText";
-import InputTextAndColor from "../../../refatoracao/props/InputTextAndColor/InputTextAndColor";
+import ErrorText from "../../../props/ErrorText/ErrorText";
+import TitleText from "../../../props/TitleText/TitleText";
+import InputTextAndColor from "../../../props/InputTextAndColor/InputTextAndColor";
 import "./CadContaStyle.css";
 
 type conta = {
@@ -68,9 +68,11 @@ const CadContas: React.FC<Props> = ({ buscaContas, onClose }) => {
       <TitleText text="Nova Conta" />
 
       <div className="fnc-cad-conta">
-        <div className="fnc-name-conta" style={{ background: color }}>
-          <p style={{ color: getTextColor(color) }}>{inputTitulo}</p>
-        </div>
+        {inputTitulo && (
+          <div className="fnc-name-conta" style={{ background: color }}>
+            <p style={{ color: getTextColor(color) }}>{inputTitulo}</p>
+          </div>
+        )}
 
         <InputTextAndColor
           placeholder="Ex: Minha Conta"

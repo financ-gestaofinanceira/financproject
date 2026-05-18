@@ -6,13 +6,12 @@ import type {
   CategoriaResponse,
 } from "../../models/Categorias/Categorias";
 import "./CategoriasStyle.css";
-import FncButton from "../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
-import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
-import { TypeThemeButton } from "../../refatoracao/props/FncButton/TypeThemeButton";
-import InputTextAndColor from "../../refatoracao/props/InputTextAndColor/InputTextAndColor";
-import TitleText from "../../refatoracao/props/TitleText/TitleText";
-import { AuthContext } from "../../contexts/AuthContext";
+import FncButton from "../../props/FncButton/FncButton";
+import { TypeButton } from "../../props/FncButton/TypeButton";
+import ErrorText from "../../props/ErrorText/ErrorText";
+import { TypeThemeButton } from "../../props/FncButton/TypeThemeButton";
+import InputTextAndColor from "../../props/InputTextAndColor/InputTextAndColor";
+import TitleText from "../../props/TitleText/TitleText";
 
 interface PropCadMov {
   idConta: number;

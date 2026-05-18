@@ -8,14 +8,15 @@ import { useContext, useEffect, useState } from "react";
 import Modal from "../../componentes/Modal/Modal";
 
 import LandBotComponent from "../../componentes/LandBot/LandBotComponent";
-import FncButton from "../../refatoracao/props/FncButton/FncButton";
-import TitleText from "../../refatoracao/props/TitleText/TitleText";
-import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
+import FncButton from "../../props/FncButton/FncButton";
+import TitleText from "../../props/TitleText/TitleText";
+import SubtitleText from "../../props/SubtitleText/SubtitleText";
 import CadContas from "./CadConta/CadContas";
 import PatrimonioTotal from "./Componente/Patrimonio/PatrimonioTotal";
 import ContaComponent from "./Componente/ContaUnitaria/ContaComponent";
 import { AuthContext } from "../../contexts/AuthContext";
 import Carregamento from "../../componentes/Carregamento/Carregamento";
+import LabelText from "../../props/LabelText/LabelText";
 
 type Props = {
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
@@ -61,7 +62,7 @@ const Contas: React.FC<Props> = ({ setTelaAtual }) => {
         <>
           <div className="menu-superior">
             <div className="texto-superior">
-              <SubtitleText text={retornaBoasVindas()} />
+              <LabelText text={retornaBoasVindas()} />
               <TitleText text="Minhas Contas" />
             </div>
 

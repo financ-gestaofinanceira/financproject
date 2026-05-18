@@ -1,6 +1,6 @@
 import logoFnc from "../../assets/Logo.svg";
-import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
-import TitleText from "../../refatoracao/props/TitleText/TitleText";
+import SubtitleText from "../../props/SubtitleText/SubtitleText";
+import TitleText from "../../props/TitleText/TitleText";
 import "./CarregamentoStyle.css";
 const Carregamento = () => {
   return (

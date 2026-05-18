@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import api from "../../services/api/apiConnect";
-import TitleText from "../../refatoracao/props/TitleText/TitleText";
-import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
-import InputText from "../../refatoracao/props/InputText/InputText";
-import { TypeText } from "../../refatoracao/props/InputText/TypeText";
+import TitleText from "../../props/TitleText/TitleText";
+import SubtitleText from "../../props/SubtitleText/SubtitleText";
+import InputText from "../../props/InputText/InputText";
+import { TypeText } from "../../props/InputText/TypeText";
 import "./RegistrarUsuarioStyle.css";
-import SubtitleInteractive from "../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
-import FncButton from "../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../refatoracao/props/FncButton/TypeButton";
-import ErrorText from "../../refatoracao/props/ErrorText/ErrorText";
+import SubtitleInteractive from "../../props/SubtitleInteractive/SubtitleInteractive";
+import FncButton from "../../props/FncButton/FncButton";
+import { TypeButton } from "../../props/FncButton/TypeButton";
+import ErrorText from "../../props/ErrorText/ErrorText";
 interface RegisterProps {
   exibeCadastro: Boolean;
   setExibeCadastro: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,8 +58,10 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
 
   return (
     <div className="login-box">
-      <TitleText text="Vamos começar!" />
-      <SubtitleText text="O primeiro passo para sua educação financeira!" />
+      <div className="fnc-reguser-title">
+        <TitleText text="Vamos começar!" />
+        <SubtitleText text="O primeiro passo para sua educação financeira!" />
+      </div>
 
       <form className="fnc-form-register" onSubmit={cadastraUsuario}>
         <div className="row">

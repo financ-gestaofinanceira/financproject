@@ -43,7 +43,9 @@ const FncButton: React.FC<PropFncButton> = ({
         {!icon && title}
         {icon && (
           <div className="fnc-ctn-btn-icon">
-            <span className="material-icons">{icon}</span>
+            <div className="fnc-btn-size">
+              <span className="material-icons">{icon}</span>
+            </div>
             {title}
           </div>
         )}

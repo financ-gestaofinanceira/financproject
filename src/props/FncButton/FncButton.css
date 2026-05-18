@@ -1,19 +1,26 @@
 .fnc-ctn-btn-icon {
   display: flex;
   align-items: center;
-  flex-direction: column;
-  gap: 2px;
+  justify-content: center;
+  gap: 8px;
+}
+
+.fnc-btn-size {
+  width: 25px;
 }
 
 .fnc-btn-default {
+  height: 40px;
   width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
+  padding: 0 24px;
   background: linear-gradient(90deg, #2b7fff, #4f39f6);
+  border: none;
+  border-radius: 14px;
   color: white;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.25);
 }
 
 .fnc-btn-default:hover {

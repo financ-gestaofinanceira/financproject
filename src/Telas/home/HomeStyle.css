@@ -241,18 +241,6 @@ body {
   margin-bottom: 24px;
 }
 
-.texto-superior p {
-  color: #62748e;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.texto-superior h1 {
-  color: white;
-  font-size: 26px;
-  font-weight: 800;
-}
-
 .principal {
   display: flex;
   flex-direction: column;

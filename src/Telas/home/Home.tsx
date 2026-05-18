@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import "./HomeStyle.css";
 import Contas from "../ContasBancarias/Contas";
-import Movimentacoes from "../Movimentacoes/Movimentacoes";
 import { AuthContext } from "../../contexts/AuthContext";
 import Carregamento from "../../componentes/Carregamento/Carregamento";
-import MenuItem from "../../refatoracao/props/MenuItem/MenuItem";
+import MenuItem from "../../props/MenuItem/MenuItem";
 import { ContaContext } from "../../contexts/ContaContext";
+import Movimentacoes from "../Movimentacoes/Movimentacoes";
+import Convites from "../Convites/Convites";
 
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
@@ -69,6 +70,9 @@ export const Home: React.FC = () => {
     if (telaAtual === 1) {
       return <Movimentacoes />;
     }
+    if (telaAtual === 3) {
+      return <Convites />;
+    }
   };
 
   return (
@@ -117,6 +121,12 @@ export const Home: React.FC = () => {
                 disabled={telaAtual === 1}
               />
             )}
+            <MenuItem
+              title="Convites"
+              icon="person_add"
+              onClick={() => setTelaAtual(3)}
+              disabled={telaAtual === 3}
+            />
           </div>
           <div className="fnc-home-iten-secundary">
             {conta && telaAtual === 1 && (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { MovimentacaoPost } from "../../../models/Movimentacoes/MovimentacaoPost";
@@ -8,16 +8,15 @@ import type {
 } from "../../../models/Movimentacoes/GetMovimentacoes";
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 import "./CadMovStyle.css";
-import TitleText from "../../../refatoracao/props/TitleText/TitleText";
-import InputText from "../../../refatoracao/props/InputText/InputText";
-import InputPrice from "../../../refatoracao/props/InputPrice/InputPrice";
-import FncButton from "../../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
-import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
-import { AuthContext } from "../../../contexts/AuthContext";
-import InputDate from "../../../refatoracao/props/InputDate/InputDate";
-import InputCheckBox from "../../../refatoracao/props/InputCheckBox/InputCheckBox";
-import CheckBoxList from "../../../refatoracao/props/CheckBoxList/CheckBoxList";
+import TitleText from "../../../props/TitleText/TitleText";
+import InputText from "../../../props/InputText/InputText";
+import InputPrice from "../../../props/InputPrice/InputPrice";
+import FncButton from "../../../props/FncButton/FncButton";
+import { TypeButton } from "../../../props/FncButton/TypeButton";
+import ErrorText from "../../../props/ErrorText/ErrorText";
+import InputDate from "../../../props/InputDate/InputDate";
+import InputCheckBox from "../../../props/InputCheckBox/InputCheckBox";
+import CheckBoxList from "../../../props/CheckBoxList/CheckBoxList";
 
 interface PropCadMov {
   onClose: () => void;

@@ -2,18 +2,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./LoginComponentStyle.css";
-import { AuthContext, type TokenData } from "../../../contexts/AuthContext";
-import type { tokeRequest } from "../../../models/Autenticação/tokenRequest";
-import { GeraToken } from "../../../services/auth/tokenService";
-import TitleText from "../../../refatoracao/props/TitleText/TitleText";
-import SubtitleText from "../../../refatoracao/props/SubtitleText/SubtitleText";
-import InputText from "../../../refatoracao/props/InputText/InputText";
-import { TypeText } from "../../../refatoracao/props/InputText/TypeText";
-import FncButton from "../../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
-import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
-import SubtitleInteractive from "../../../refatoracao/props/SubtitleInteractive/SubtitleInteractive";
-import MsgBox from "../../../refatoracao/props/TextBox/MsgtBox";
+import { AuthContext, type TokenData } from "../../contexts/AuthContext";
+import type { tokeRequest } from "../../models/Autenticação/tokenRequest";
+import { GeraToken } from "../../services/auth/tokenService";
+import TitleText from "../../props/TitleText/TitleText";
+import SubtitleText from "../../props/SubtitleText/SubtitleText";
+import InputText from "../../props/InputText/InputText";
+import { TypeText } from "../../props/InputText/TypeText";
+import FncButton from "../../props/FncButton/FncButton";
+import { TypeButton } from "../../props/FncButton/TypeButton";
+import ErrorText from "../../props/ErrorText/ErrorText";
+import SubtitleInteractive from "../../props/SubtitleInteractive/SubtitleInteractive";
+import MsgBox from "../../props/TextBox/MsgtBox";
 
 interface LoginProps {
   exibeCadastro: Boolean;
@@ -78,8 +78,10 @@ const LoginComponent: React.FC<LoginProps> = ({
 
   return (
     <div className="login-box">
-      <TitleText text="Bem-vindo" />
-      <SubtitleText text="Entre na sua conta para continuar" />
+      <div className="fnc-login-title">
+        <TitleText text="Bem-vindo" />
+        <SubtitleText text="Entre na sua conta para continuar" />
+      </div>
 
       <form className="fnc-form-login" onSubmit={reqApi}>
         <InputText

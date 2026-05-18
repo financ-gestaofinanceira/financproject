@@ -4,7 +4,7 @@ import axios from "axios";
 // Os interceptors são registrados pelo AuthProvider (AuthContext.tsx),
 // pois só ele tem acesso ao estado de autenticação do React.
 const api = axios.create({
-  baseURL: "https://localhost:7147/api",
+  baseURL: "https://api.pldprojects.com.br/api",
   withCredentials: true, // envia o cookie de refresh token automaticamente
 });
 

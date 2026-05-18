@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
 import RegistrarUsuarioComponente from "../CadastroUsuario/RegistrarUsuarioComponente";
-import LoginComponent from "./Componentes/LoginComponent";
+import LoginComponent from "./LoginComponent";
 
 export const Login: React.FC = () => {
-  const navigate = useNavigate(); // Hook para navegação
-
   const [exibeCadastro, setExibeCadastro] = useState(Boolean || false);
   return (
     <>

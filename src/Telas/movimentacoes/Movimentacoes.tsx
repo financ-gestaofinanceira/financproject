@@ -1,42 +1,42 @@
-import type {
-  ContaResponse,
-  ContaBancaria,
-} from "../../models/ContasUsuarios/GetContasUsuarios";
-import TabelaMovimentacao from "./Tabela/TabelaMovimentacao";
 import api from "../../services/api/apiConnect";
 import "./MovimentacaoesStyle.css";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { use, useCallback, useContext, useEffect, useState } from "react";
 import type {
   Categoria,
   GetMovimentacoes,
 } from "../../models/Movimentacoes/GetMovimentacoes";
 import Modal from "../../componentes/Modal/Modal";
-import CadMov from "./CadMov/CadMov";
-import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import type { CategoriaResponse } from "../../models/Categorias/Categorias";
-import SubtitleText from "../../refatoracao/props/SubtitleText/SubtitleText";
-import TitleText from "../../refatoracao/props/TitleText/TitleText";
-import FncButton from "../../refatoracao/props/FncButton/FncButton";
+import SubtitleText from "../../props/SubtitleText/SubtitleText";
+import TitleText from "../../props/TitleText/TitleText";
+import FncButton from "../../props/FncButton/FncButton";
 import Categorias from "../Categorias/Categorias";
-import InputDate from "../../refatoracao/props/InputDate/InputDate";
-import CheckBoxList from "../../refatoracao/props/CheckBoxList/CheckBoxList";
+import InputDate from "../../props/InputDate/InputDate";
+import CheckBoxList from "../../props/CheckBoxList/CheckBoxList";
 import { ContaContext } from "../../contexts/ContaContext";
-import InputSelect from "../../refatoracao/props/InputSelect/InputSelect";
+import InputSelect from "../../props/InputSelect/InputSelect";
+import CadMov from "./CadMov/CadMov";
+import TabelaMovimentacao from "./Tabela/TabelaMovimentacao";
+import { AuthContext } from "../../contexts/AuthContext";
+import type { GetContaUsuario } from "../../models/ContasUsuarios/GetContaUsuario";
+import LabelText from "../../props/LabelText/LabelText";
+import CadConvite from "../Convites/CadConvite/CadConvite";
 
 type Props = {};
 
 const Movimentacoes: React.FC<Props> = ({}) => {
-  const { conta, setConta } = useContext(ContaContext);
+  const { conta, setContaUsuario, usuario } = useContext(ContaContext);
+  const { user } = useContext(AuthContext);
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
+  const [isCadInvite, setIsCadInvite] = useState(false);
+
   const [categorias, setCategorias] = useState<CategoriaResponse>();
-  const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [isCategoriaOpen, setIsCategoriaOpen] = useState(false);
   const [isConcluido, setIsConcluido] = useState<Boolean | null>(null);
   const [categoriasSelecionadas, setCategoriasSelecionadas] = useState<
     number[]
   >([]);
-  // Helper para datas
   const getNow = (isEnd: boolean = false) => {
     const now = new Date();
     let date: Date;
@@ -52,7 +52,6 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
-
   const [dataInicial, setDataInicial] = useState(getNow(false));
   const [dataFinal, setDataFinal] = useState(getNow(true));
 
@@ -80,7 +79,34 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     }
   }, [conta!.idConta]);
 
-  // 3. Busca de Movimentações (Memorizada)
+  const buscaContaUsuario = useCallback(async () => {
+    try {
+      const resposta = await api<GetContaUsuario>(
+        `/ContasUsuarios/${conta!.idConta}/associados?IdUsuario=${user!.id}`,
+        "GET",
+        undefined,
+      );
+      if (resposta.sucesso && resposta.dados) {
+        setContaUsuario(resposta.dados.conteudo[0]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar conta usuário:", error);
+    }
+  }, [conta!.idConta]);
+
+  const formatarData = (dataUtc: string) => {
+    const data = new Date(dataUtc);
+
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const ano = data.getFullYear();
+
+    const hora = String(data.getHours()).padStart(2, "0");
+    const min = String(data.getMinutes()).padStart(2, "0");
+
+    return `${dia}/${mes}/${ano} ${hora}:${min}`;
+  };
+
   const buscaMovimentacoes = useCallback(async () => {
     const toUTCISOString = (data: string) => new Date(data).toISOString();
 
@@ -116,29 +142,40 @@ const Movimentacoes: React.FC<Props> = ({}) => {
   ]);
 
   useEffect(() => {
+    buscaContaUsuario();
     buscaCategorias();
-    buscaMovimentacoes();
+    // buscaMovimentacoes();
   }, [buscaCategorias, buscaMovimentacoes]);
 
   return (
     <div className="transacoes-container">
       <div className="transacoes-header">
-        <div className="texto-superior">
-          <SubtitleText text="Gerencie todas as suas movimentações" />
+        <div>
           <TitleText text={`Transações - ${conta!.titulo}`} />
-        </div>
-
-        <div className="fnc-ctn-cads">
-          <FncButton
-            title="Categorias"
-            onClick={() => setIsCategoriaOpen(true)}
-          />
-
-          <FncButton
-            title="Nova Transação"
-            onClick={() => setIsCadMovOpen(true)}
+          <LabelText
+            text={`Acesso: ${usuario?.permissao === 0 ? "Mestre" : usuario?.permissao === 1 ? "Administrador" : "Visualizador"} ${usuario?.expiracao ? ` - Expiração: ${formatarData(usuario?.expiracao)}` : ""} `}
           />
         </div>
+
+        {usuario?.permissao !== 2 && (
+          <>
+            <div className="fnc-ctn-cads">
+              <FncButton
+                title="Categorias"
+                onClick={() => setIsCategoriaOpen(true)}
+              />
+
+              <FncButton
+                title="Nova Transação"
+                onClick={() => setIsCadMovOpen(true)}
+              />
+              <FncButton
+                title="Nova Convite"
+                onClick={() => setIsCadInvite(true)}
+              />
+            </div>
+          </>
+        )}
       </div>
 
       <div className="grid-cards">
@@ -237,6 +274,11 @@ const Movimentacoes: React.FC<Props> = ({}) => {
           buscaMovimentacoes={buscaMovimentacoes}
         />
       </Modal>
+
+      <Modal isOpen={isCadInvite} onClose={() => setIsCadInvite(false)}>
+        <CadConvite />
+      </Modal>
+
       <div className="fnc-ctn-filter">
         <InputDate
           label="Data inicial"

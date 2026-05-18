@@ -1,0 +1,33 @@
+.fnc-invite-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.fnc-tables-invite {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+}
+
+.fnc-ctn-aceept-invite {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.fnc-ctn-btn-invite-acept {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-top: 10px;
+}
+/* quando a tela ficar pequena */
+@media (max-width: 1300px) {
+  .fnc-tables-invite {
+    flex-direction: column;
+  }
+}

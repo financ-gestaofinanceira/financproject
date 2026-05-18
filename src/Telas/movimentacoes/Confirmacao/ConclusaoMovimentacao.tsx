@@ -5,13 +5,13 @@ import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoe
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
-import TitleText from "../../../refatoracao/props/TitleText/TitleText";
-import ErrorText from "../../../refatoracao/props/ErrorText/ErrorText";
-import FncButton from "../../../refatoracao/props/FncButton/FncButton";
-import { TypeButton } from "../../../refatoracao/props/FncButton/TypeButton";
-import { TypeThemeButton } from "../../../refatoracao/props/FncButton/TypeThemeButton";
+import TitleText from "../../../props/TitleText/TitleText";
+import ErrorText from "../../../props/ErrorText/ErrorText";
+import FncButton from "../../../props/FncButton/FncButton";
+import { TypeButton } from "../../../props/FncButton/TypeButton";
+import { TypeThemeButton } from "../../../props/FncButton/TypeThemeButton";
 import "./ConclusaoMovimentacao.css";
-import InputDate from "../../../refatoracao/props/InputDate/InputDate";
+import InputDate from "../../../props/InputDate/InputDate";
 
 interface PropAlteraMov {
   onClose: () => void;
@@ -60,7 +60,6 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
         `/Contas/Movimentacoes/${movimentacaoSelecionada.id}/${movimentacaoSelecionada.concluido ? "Extornar" : "Concluir"}`,
         "POST",
         movimentacaoSelecionada.concluido ? undefined : request,
-        tokenData?.token,
       );
 
       if (resposta.sucesso) {
@@ -83,7 +82,6 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
         `/Contas/Movimentacoes/${movimentacaoSelecionada.id}/Remover`,
         "DELETE",
         undefined,
-        tokenData?.token,
       );
 
       if (resposta.sucesso) {

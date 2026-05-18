@@ -43,6 +43,7 @@ export default async function Conecta<T>(
         ? erro.response.data
         : erro.response?.data?.mensagem;
 
+    console.log(msgErro);
     return {
       sucesso: false,
       erro: msgErro,
