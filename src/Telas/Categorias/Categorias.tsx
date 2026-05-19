@@ -12,6 +12,8 @@ import ErrorText from "../../props/ErrorText/ErrorText";
 import { TypeThemeButton } from "../../props/FncButton/TypeThemeButton";
 import InputTextAndColor from "../../props/InputTextAndColor/InputTextAndColor";
 import TitleText from "../../props/TitleText/TitleText";
+import type { FncTableColumn } from "../../props/FncTable/FncTable";
+import FncTable from "../../props/FncTable/FncTable";
 
 interface PropCadMov {
   idConta: number;
@@ -58,46 +60,43 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
     }
   }, [idConta]);
 
+  const handleCategoriaClick = async (objetoDaLinha: any) => {
+    console.log(objetoDaLinha);
+    setCategoriaSelecionada(objetoDaLinha.categoria);
+    setTituloEditor(objetoDaLinha.nome);
+    setCorEditor(objetoDaLinha.categoria.cor);
+    setEditOnly(true);
+  };
+
   const cadastraCategoria = () => {
+    interface IConvite {
+      id: number;
+      nome: string;
+      categoria: Categoria;
+    }
+    const colunas: FncTableColumn[] = [{ header: "Nome", key: "nome" }];
+
+    let convitesData: IConvite[] = [];
+    categorias?.conteudo.map((cat) => {
+      convitesData.push({
+        id: cat.idCategoria,
+        nome: cat.nome,
+        categoria: cat,
+      });
+    });
+
     return (
       <>
-        <TitleText text="Categorias" />
-
-        <form className="centraliza" onSubmit={criaCategoriaRequest}>
+        <form onSubmit={criaCategoriaRequest}>
+          <div className="fnc-table-categorias">
+            <TitleText text="Categorias" />
+            <FncTable
+              columns={colunas}
+              data={convitesData}
+              onRowClick={handleCategoriaClick}
+            />
+          </div>
           <div className="modal-body">
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>NOME</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categorias?.conteudo?.map((cat) => (
-                    <tr key={cat.idCategoria}>
-                      <td
-                        onClick={() => {
-                          setCategoriaSelecionada(cat);
-                          setTituloEditor(cat.nome);
-                          setCorEditor(cat.cor);
-                          setEditOnly(true);
-                        }}
-                      >
-                        <div
-                          className="categoria"
-                          style={{ background: cat.cor }}
-                        >
-                          <p style={{ color: getTextColor(cat.cor) }}>
-                            {cat.nome}
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
             <InputTextAndColor
               label="Nova Categoria"
               color={cor}
@@ -126,48 +125,48 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
 
     return (
       <>
-        <div className="modal-header">
+        <form className="fnc-ctn-categoria" onSubmit={EditaCategoriaRequest}>
           <TitleText text="Alterar Categoria" />
-        </div>
-        <div className="categoria" style={{ background: corEditor }}>
-          <p style={{ color: getTextColor(corEditor) }}>{tituloEditor}</p>
-        </div>
-        <form className="centraliza" onSubmit={EditaCategoriaRequest}>
-          <div className="modal-body">
-            <InputTextAndColor
-              label="Editar Categoria"
-              color={corEditor}
-              onChangeColor={setCorEditor}
-              placeholder="Ex: Alimentação"
-              text={tituloEditor}
-              setText={setTituloEditor}
-            />
 
-            {erroMsg && <ErrorText text={erroMsg} />}
-
-            <div className="fnc-btn-edit-cat">
-              <FncButton
-                type={TypeButton.Submit}
-                disabled={isLoading}
-                thema={TypeThemeButton.Cancel}
-                title="Cancelar"
-                onClick={() => {
-                  setErroMsg("");
-                  setEditOnly(false);
-                }}
-              />
-              <FncButton
-                type={TypeButton.Submit}
-                disabled={isLoading}
-                title={isLoading ? "Editando..." : "Editar"}
-              />
-              <FncButton
-                type={TypeButton.Submit}
-                thema={TypeThemeButton.Delete}
-                title="Deletar"
-                onClick={DeletarCategoriaRequest}
-              />
+          <div className="fnc-preview-name-cat">
+            <div className="categoria" style={{ background: corEditor }}>
+              <p style={{ color: getTextColor(corEditor) }}>{tituloEditor}</p>
             </div>
+          </div>
+
+          <InputTextAndColor
+            label="Editar Categoria"
+            color={corEditor}
+            onChangeColor={setCorEditor}
+            placeholder="Ex: Alimentação"
+            text={tituloEditor}
+            setText={setTituloEditor}
+          />
+
+          {erroMsg && <ErrorText text={erroMsg} />}
+
+          <div className="fnc-btn-edit-cat">
+            <FncButton
+              type={TypeButton.Submit}
+              disabled={isLoading}
+              thema={TypeThemeButton.Cancel}
+              title="Cancelar"
+              onClick={() => {
+                setErroMsg("");
+                setEditOnly(false);
+              }}
+            />
+            <FncButton
+              type={TypeButton.Submit}
+              disabled={isLoading}
+              title={isLoading ? "Editando..." : "Editar"}
+            />
+            <FncButton
+              type={TypeButton.Submit}
+              thema={TypeThemeButton.Delete}
+              title="Deletar"
+              onClick={DeletarCategoriaRequest}
+            />
           </div>
         </form>
       </>
@@ -201,10 +200,10 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         setTitulo("");
         setCor("#314158");
       } else {
-        setErroMsg(resposta.erro || "Erro ao cadastrar categoria.");
+        setErroMsg(resposta.erro);
       }
     } catch (error: any) {
-      setErroMsg(error.message || "Erro inesperado.");
+      setErroMsg(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -221,6 +220,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         cor: corEditor,
       };
 
+      console.log(categoriaSelecionada);
       const resposta = await api<ApiResult<CategoriaResponse>>(
         `/Contas/Categorias/${categoriaSelecionada?.idCategoria}/Alterar`,
         "PATCH",
@@ -232,7 +232,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         buscaMovimentacoes();
         setEditOnly(false);
       } else {
-        setErroMsg(resposta.erro || "Erro ao cadastrar categoria.");
+        setErroMsg(resposta!.erro);
       }
     } catch (error: any) {
       setErroMsg(error.message || "Erro inesperado.");
@@ -255,10 +255,10 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
         setEditOnly(false);
         buscaMovimentacoes();
       } else {
-        setErroMsg(resposta.erro || "Erro ao cadastrar categoria.");
+        setErroMsg(resposta.erro);
       }
     } catch (error: any) {
-      setErroMsg(error.message || "Erro inesperado.");
+      setErroMsg(error.message);
     } finally {
       setIsLoading(false);
     }

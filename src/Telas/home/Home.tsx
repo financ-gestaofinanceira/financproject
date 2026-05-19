@@ -13,6 +13,7 @@ import Movimentacoes from "../Movimentacoes/Movimentacoes";
 import Convites from "../Convites/Convites";
 import MsgBox from "../../props/MsgBox/MsgBox";
 import { TypeMsgBox } from "../../props/MsgBox/TypeMsgBox";
+import Membros from "../Membros/Membros";
 
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
@@ -22,9 +23,9 @@ export const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const [telaAtual, setTelaAtual] = useState(0);
-  const [abrirMsgBox, setAbrirMsgBox] = useState(false);
+  const [abrirMsgBoxExit, setAbrirMsgBoxExit] = useState(false);
   const [erroMsg, setErroMsg] = useState<string | null>(null);
-  
+
   const buscarUsuario = async () => {
     const resposta = await api<UsuarioResponse3>(
       "/Usuarios/me",
@@ -85,6 +86,9 @@ export const Home: React.FC = () => {
     if (telaAtual === 3) {
       return <Convites />;
     }
+    if (telaAtual === 4) {
+      return <Membros />;
+    }
   };
 
   return (
@@ -140,7 +144,7 @@ export const Home: React.FC = () => {
                 title={conta.titulo}
                 icon="wallet"
                 onClick={() => setTelaAtual(1)}
-                disabled={telaAtual === 1}
+                disabled={telaAtual === 1 || telaAtual === 4}
               />
             )}
             <MenuItem
@@ -151,18 +155,29 @@ export const Home: React.FC = () => {
             />
           </div>
           <div className="fnc-home-iten-secundary">
-            {conta && telaAtual === 1 && (
-              <MenuItem
-                title="Sair da Conta"
-                icon="exit_to_app"
-                onClick={() => setAbrirMsgBox(true)}
-                background="#ff4b4b"
-              />
+            {conta && (telaAtual === 1 || telaAtual === 4) && (
+              <>
+                <div className="fnc-home-itens">
+                  <MenuItem
+                    title="Membros da Conta"
+                    icon="group"
+                    onClick={() => setTelaAtual(4)}
+                    background="#4056f9"
+                    disabled={telaAtual === 4}
+                  />
+                  <MenuItem
+                    title="Sair da Conta"
+                    icon="exit_to_app"
+                    onClick={() => setAbrirMsgBoxExit(true)}
+                    background="#ff4b4b"
+                  />
+                </div>
+              </>
             )}
           </div>
         </nav>
 
-        {abrirMsgBox && (
+        {abrirMsgBoxExit && (
           <MsgBox
             title="Sair da Conta"
             description="Deseja realmente sair da conta?"
@@ -172,7 +187,7 @@ export const Home: React.FC = () => {
                 sairDaContaBancaria();
               }
 
-              setAbrirMsgBox(false);
+              setAbrirMsgBoxExit(false);
             }}
           />
         )}

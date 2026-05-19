@@ -11,9 +11,8 @@
 
 .fnc-btn-default {
   height: 40px;
-  width: auto;
-  min-width: 40px;
-  padding: 0px 10px 0 10px;
+  width: 100%;
+  padding: 0 24px;
   background: linear-gradient(90deg, #2b7fff, #4f39f6);
   border: none;
   border-radius: 14px;
@@ -28,11 +27,26 @@
   background: linear-gradient(90deg, #2623d2 0%, #3221c7 100%);
 }
 
+.fnc-btn-aceept {
+  height: 40px;
+  padding: 0 24px;
+  background: linear-gradient(90deg, #2b7fff, #4f39f6);
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.25);
+}
+
+.fnc-btn-aceept:hover {
+  background: linear-gradient(90deg, #2623d2 0%, #3221c7 100%);
+}
+
 .fnc-btn-cancel {
   height: 40px;
-  width: auto;
-  min-width: 40px;
-  padding: 0px 10px 0 10px;
+  padding: 0 24px;
   background: linear-gradient(90deg, #f8901a 0%, #ff531f 100%);
   border: none;
   border-radius: 14px;
@@ -49,9 +63,7 @@
 
 .fnc-btn-delete {
   height: 40px;
-  width: auto;
-  min-width: 40px;
-  padding: 0px 10px 0 10px;
+  padding: 0 24px;
   background: linear-gradient(90deg, #f81a1a 0%, #ff531f 100%);
   border: none;
   border-radius: 14px;
@@ -68,8 +80,7 @@
 
 .fnc-btn-icon {
   height: 40px;
-  width: 100%;
-  min-width: 40px;
+  padding: 0 24px;
   background: linear-gradient(90deg, #2b2929 0%, #423936 100%);
   border: none;
   border-radius: 14px;

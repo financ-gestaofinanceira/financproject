@@ -64,10 +64,10 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
         buscaMovimentacoes();
         onClose();
       } else {
-        setErroMsg(resposta.erro || "Erro ao cadastrar categoria.");
+        setErroMsg(resposta.erro);
       }
     } catch (error: any) {
-      setErroMsg(error.message || "Erro inesperado.");
+      setErroMsg(error.message);
     }
   };
 

@@ -27,6 +27,8 @@ const FncButton: React.FC<PropFncButton> = ({
         return "fnc-btn-delete";
       case TypeThemeButton.Icon:
         return "fnc-btn-icon";
+      case TypeThemeButton.Aceept:
+        return "fnc-btn-aceept";
       default:
         return "fnc-btn-default";
     }
@@ -43,9 +45,7 @@ const FncButton: React.FC<PropFncButton> = ({
         {!icon && title}
         {icon && (
           <div className="fnc-ctn-btn-icon">
-            <div className="fnc-btn-size">
-              <span className="material-icons">{icon}</span>
-            </div>
+            <span className="material-icons">{icon}</span>
             {title}
           </div>
         )}

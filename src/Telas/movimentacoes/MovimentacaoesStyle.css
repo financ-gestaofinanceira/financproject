@@ -25,18 +25,20 @@
   display: flex;
   gap: 5px;
   height: 40px;
-  width: 300px;
-  margin-right: 40px;
+  width: 40%;
 }
 
 .fnc-ctn-filter {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   flex-direction: row;
-  width: 80%;
   gap: 10px;
 }
-
+.fnc-ctn-filter > * {
+  width: auto;
+  flex: 1 1 250px;
+  min-width: 200px;
+}
 .transacoes-container {
   display: flex;
   flex-direction: column;

@@ -4,14 +4,36 @@
   border: 1px solid rgba(49, 65, 88, 0.5);
   overflow: auto;
   background: rgba(29, 41, 61, 0.7);
-  max-height: 300px;
+  max-height: 100px;
   width: 100%;
   margin-bottom: 20px;
 }
 
+.fnc-table-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: 300px;
+  min-height: 0;
+}
 .centraliza table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.fnc-ctn-categoria {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.fnc-preview-name-cat {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: start;
 }
 
 .centraliza th {

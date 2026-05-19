@@ -11,6 +11,7 @@
   align-items: flex-start;
   flex: 1;
   min-width: 350px;
+  min-height: 0;
 }
 
 .fnc-table-invite-wrapper {
@@ -89,10 +90,5 @@
 @media (max-width: 768px) {
   .fnc-tables-invite {
     flex-direction: column;
-  }
-
-  .fnc-ctn-table {
-    width: 100%;
-    min-width: 100%;
   }
 }

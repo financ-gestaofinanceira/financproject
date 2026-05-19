@@ -295,13 +295,20 @@ body {
   font-weight: 700;
   color: white;
 }
-
+.fnc-home-itens {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 5px;
+}
 /* Grid de Cards Secundários */
 .grid-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 24px;
   width: 100%;
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 .card-secundario-custom {
   border-radius: 16px;

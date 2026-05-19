@@ -24,7 +24,14 @@ const MsgBox: React.FC<PropMsgBox> = ({
 
   return (
     <>
-      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
+      <Modal
+        isOpen={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+          onQuestion ? onQuestion(false) : null;
+          setModalVisible(false);
+        }}
+      >
         <>
           <div className="fnc-ctn-msgbox">
             <TitleText text={title} />
@@ -36,7 +43,8 @@ const MsgBox: React.FC<PropMsgBox> = ({
                 <div className="fnc-ctn-btn-invite-aceept">
                   <FncButton
                     title="Sim"
-                    icon="check_small"
+                    icon="check"
+                    thema={TypeThemeButton.Aceept}
                     onClick={() => {
                       onQuestion ? onQuestion(true) : null;
                       setModalVisible(false);

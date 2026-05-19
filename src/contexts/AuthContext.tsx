@@ -49,11 +49,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const authenticated =
     tokenData !== null && Date.now() < new Date(tokenData.expiration).getTime();
 
-  const executarRefresh = (): Promise<string | null> => {
-    const temUsuario = !!localStorage.getItem("user");
-    if (!temUsuario) return Promise.resolve(null);
+  function estaNaHome() {
+    return window.location.pathname === "/";
+  }
 
-    if (refreshEmAndamento) return refreshEmAndamento;
+  const executarRefresh = async (): Promise<string | null> => {
+    // não faz refresh na home
+    if (estaNaHome()) {
+      return null;
+    }
+
+    const temUsuario = !!localStorage.getItem("user");
+
+    if (!temUsuario) {
+      return null;
+    }
+
+    if (refreshEmAndamento) {
+      return refreshEmAndamento;
+    }
 
     refreshEmAndamento = api
       .post("/Autenticacao/refresh")
@@ -62,11 +76,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const novaExpiracao: string = resp.data.expiracao;
 
         tokenRef.current = novoToken;
-        setTokenData({ token: novoToken, expiration: novaExpiracao });
+
+        setTokenData({
+          token: novoToken,
+          expiration: novaExpiracao,
+        });
 
         return novoToken;
       })
-      .catch(() => null)
+      .catch(() => {
+        _logout();
+        return null;
+      })
       .finally(() => {
         refreshEmAndamento = null;
       });
@@ -76,9 +97,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const userStorage = localStorage.getItem("user");
-    if (userStorage) setUserObj(JSON.parse(userStorage));
 
-    executarRefresh().finally(() => setInicializando(false));
+    if (userStorage) {
+      setUserObj(JSON.parse(userStorage));
+    }
+
+    // evita refresh na página inicial
+    if (estaNaHome()) {
+      setInicializando(false);
+      return;
+    }
+
+    executarRefresh().finally(() => {
+      setInicializando(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -86,6 +118,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (tokenRef.current) {
         config.headers.Authorization = `Bearer ${tokenRef.current}`;
       }
+
       return config;
     });
 
@@ -98,10 +131,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           "/Autenticacao/refresh",
         );
 
+        const estaNaPaginaInicial = estaNaHome();
+
         if (
           erro.response?.status === 401 &&
           !requisicaoOriginal._retry &&
-          !ehRotaDeRefresh
+          !ehRotaDeRefresh &&
+          !estaNaPaginaInicial
         ) {
           requisicaoOriginal._retry = true;
 
@@ -109,11 +145,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
           if (novoToken) {
             requisicaoOriginal.headers.Authorization = `Bearer ${novoToken}`;
+
             return api(requisicaoOriginal);
-          } else {
-            _logout();
-            window.location.href = "/";
           }
+
+          _logout();
+
+          window.location.replace("/");
+
+          return Promise.reject(erro);
         }
 
         return Promise.reject(erro);
@@ -128,22 +168,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   function login(novoTokenData: TokenData) {
     tokenRef.current = novoTokenData.token;
+
     setTokenData(novoTokenData);
   }
 
   function _logout() {
     tokenRef.current = null;
+
     setTokenData(null);
     setUserObj(null);
+
     localStorage.removeItem("user");
   }
 
   function logout() {
     _logout();
+
+    window.location.replace("/");
   }
 
   function setUser(u: User) {
     setUserObj(u);
+
     localStorage.setItem("user", JSON.stringify(u));
   }
 

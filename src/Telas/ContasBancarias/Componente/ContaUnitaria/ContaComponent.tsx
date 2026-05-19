@@ -15,6 +15,19 @@ const ContaComponent: React.FC<Props> = ({
   conta,
   buscaContas,
 }) => {
+  const formatarData = (dataUtc: string) => {
+    const data = new Date(dataUtc);
+
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const ano = data.getFullYear();
+
+    const hora = String(data.getHours()).padStart(2, "0");
+    const min = String(data.getMinutes()).padStart(2, "0");
+
+    return `${dia}/${mes}/${ano} ${hora}:${min}`;
+  };
+
   function getTextColor(bgColor: string) {
     const r = parseInt(bgColor.substr(1, 2), 16);
     const g = parseInt(bgColor.substr(3, 2), 16);
@@ -115,6 +128,11 @@ const ContaComponent: React.FC<Props> = ({
         </div>
         <div className="card-secundario__label">
           <p style={{ color: getTextColor(conta.cor) }}>{conta?.titulo}</p>
+          {conta.expiracao && (
+            <p style={{ color: getTextColor(conta.cor) }}>
+              Válida até {formatarData(conta.expiracao)}
+            </p>
+          )}
         </div>
         <div className="card-secundario__valor">
           <p

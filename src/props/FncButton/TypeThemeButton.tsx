@@ -3,6 +3,7 @@ export const TypeThemeButton = {
   Cancel: 1,
   Delete: 2,
   Icon: 3,
+  Aceept: 4,
 } as const;
 
 export type TypeThemeButton =

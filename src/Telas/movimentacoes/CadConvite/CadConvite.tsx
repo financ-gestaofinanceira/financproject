@@ -32,19 +32,21 @@ type PropCadConvite = {
 
 const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
   const { conta } = useContext(ContaContext);
-  const amanha = new Date(new Date().setDate(new Date().getDate() + 1))
-    .toISOString()
-    .slice(0, 10);
+
+  const dataAtual = new Date()
+    .toLocaleString("sv-SE")
+    .replace(" ", "T")
+    .slice(0, 16);
 
   const [email, setEmail] = useState("");
   const [acesso, setAcesso] = useState<number>(1);
   const [checkExpiracao, setCheckExpiracao] = useState(false);
-  const [dataExpiracao, setdataExpiracao] = useState<string>(amanha);
+  const [dataExpiracao, setdataExpiracao] = useState<string>(dataAtual);
   const [msgError, setMsgError] = useState<string | null>(null);
 
   function minutosDesde(): number {
     return Math.floor(
-      (Date.now() - new Date(dataExpiracao!).getTime()) / 1000 / 60,
+      (new Date(dataExpiracao!).getTime() - Date.now()) / 1000 / 60,
     );
   }
 
@@ -54,7 +56,7 @@ const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
         setMsgError("O email é obrigatório.");
         return;
       }
-
+      console.log(minutosDesde());
       let request: ConviteCadastroRequest = {
         acesso: acesso,
         emailDestinatario: email,

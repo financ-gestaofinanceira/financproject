@@ -20,6 +20,10 @@ import { AuthContext } from "../../contexts/AuthContext";
 import LabelText from "../../props/LabelText/LabelText";
 import CadConvite from "./CadConvite/CadConvite";
 import type { ContaResponse } from "../../models/ContasUsuarios/GetContasUsuarios";
+import type {
+  ContaUsuario,
+  GetContaUsuario,
+} from "../../models/ContasUsuarios/GetContaUsuario";
 
 type Props = {};
 
@@ -79,7 +83,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
 
   const buscaContaUsuario = useCallback(async () => {
     try {
-      const resposta = await api<ContaResponse>(
+      const resposta = await api<GetContaUsuario>(
         `/ContasUsuarios/${conta!.idConta}/associados?IdUsuario=${user!.id}`,
         "GET",
         undefined,
@@ -142,7 +146,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
   useEffect(() => {
     buscaContaUsuario();
     buscaCategorias();
-    buscaMovimentacoes();
+    // buscaMovimentacoes();
   }, [buscaCategorias, buscaMovimentacoes]);
 
   return (
@@ -159,19 +163,20 @@ const Movimentacoes: React.FC<Props> = ({}) => {
           <>
             <div className="fnc-ctn-cads">
               <FncButton
-                title="Categorias"
-                onClick={() => setIsCategoriaOpen(true)}
-              />
-
-              <FncButton
                 title="Nova Transação"
                 onClick={() => setIsCadMovOpen(true)}
               />
               {usuario?.permissao === 0 && (
-                <FncButton
-                  title="Novo Convite"
-                  onClick={() => setIsCadInvite(true)}
-                />
+                <>
+                  <FncButton
+                    title="Novo Convite"
+                    onClick={() => setIsCadInvite(true)}
+                  />
+                  <FncButton
+                    title="Categorias"
+                    onClick={() => setIsCategoriaOpen(true)}
+                  />
+                </>
               )}
             </div>
           </>

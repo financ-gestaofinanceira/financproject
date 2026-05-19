@@ -1,4 +1,6 @@
 .fnc-test-box {
+  display: flex;
+  flex-direction: column;
   background-color: #ffffff1a;
   border-radius: 10px;
   color: #155dfc;

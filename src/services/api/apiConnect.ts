@@ -18,8 +18,6 @@ export default async function Conecta<T>(
         break;
       case "GET":
         resposta = await api.get<T>(rota);
-        console.log(rota);
-        console.log(resposta);
         break;
       case "PATCH":
         resposta = await api.patch<T>(rota, objeto);
