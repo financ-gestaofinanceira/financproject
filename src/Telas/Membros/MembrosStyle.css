@@ -1,0 +1,23 @@
+.fnc-members-title {
+  width: 100%;
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+}
+
+.fnc-ctn-members {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.fnc-warning {
+  display: flex;
+  max-width: 500px;
+}
+
+.fnc-members-update {
+  display: flex;
+  width: 100%;
+  justify-content: end;
+}
