@@ -1,6 +1,7 @@
 .fnc-edit-mov-ctn-vertical {
   display: flex;
-  width: 50%;
+  width: 100%;
   flex-direction: row;
+  justify-content: center;
   gap: 12px;
 }

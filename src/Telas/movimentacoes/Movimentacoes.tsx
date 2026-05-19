@@ -7,7 +7,6 @@ import type {
 } from "../../models/Movimentacoes/GetMovimentacoes";
 import Modal from "../../componentes/Modal/Modal";
 import type { CategoriaResponse } from "../../models/Categorias/Categorias";
-import SubtitleText from "../../props/SubtitleText/SubtitleText";
 import TitleText from "../../props/TitleText/TitleText";
 import FncButton from "../../props/FncButton/FncButton";
 import Categorias from "../Categorias/Categorias";
@@ -18,9 +17,9 @@ import InputSelect from "../../props/InputSelect/InputSelect";
 import CadMov from "./CadMov/CadMov";
 import TabelaMovimentacao from "./Tabela/TabelaMovimentacao";
 import { AuthContext } from "../../contexts/AuthContext";
-import type { GetContaUsuario } from "../../models/ContasUsuarios/GetContaUsuario";
 import LabelText from "../../props/LabelText/LabelText";
-import CadConvite from "../Convites/CadConvite/CadConvite";
+import CadConvite from "./CadConvite/CadConvite";
+import type { ContaResponse } from "../../models/ContasUsuarios/GetContasUsuarios";
 
 type Props = {};
 
@@ -63,7 +62,6 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     }).format(valor);
   };
 
-  // 1. Busca de Categorias (Memorizada)
   const buscaCategorias = useCallback(async () => {
     try {
       const resposta = await api<CategoriaResponse>(
@@ -81,7 +79,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
 
   const buscaContaUsuario = useCallback(async () => {
     try {
-      const resposta = await api<GetContaUsuario>(
+      const resposta = await api<ContaResponse>(
         `/ContasUsuarios/${conta!.idConta}/associados?IdUsuario=${user!.id}`,
         "GET",
         undefined,
@@ -144,7 +142,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
   useEffect(() => {
     buscaContaUsuario();
     buscaCategorias();
-    // buscaMovimentacoes();
+    buscaMovimentacoes();
   }, [buscaCategorias, buscaMovimentacoes]);
 
   return (
@@ -169,10 +167,12 @@ const Movimentacoes: React.FC<Props> = ({}) => {
                 title="Nova Transação"
                 onClick={() => setIsCadMovOpen(true)}
               />
-              <FncButton
-                title="Nova Convite"
-                onClick={() => setIsCadInvite(true)}
-              />
+              {usuario?.permissao === 0 && (
+                <FncButton
+                  title="Novo Convite"
+                  onClick={() => setIsCadInvite(true)}
+                />
+              )}
             </div>
           </>
         )}
@@ -228,8 +228,6 @@ const Movimentacoes: React.FC<Props> = ({}) => {
         </div>
       </div>
 
-      <hr />
-
       <div className="grid-cards">
         <div className="card-secundario">
           <div className="card-secundario__label">Saldo no período</div>
@@ -276,7 +274,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
       </Modal>
 
       <Modal isOpen={isCadInvite} onClose={() => setIsCadInvite(false)}>
-        <CadConvite />
+        <CadConvite setIsCadInvite={setIsCadInvite} />
       </Modal>
 
       <div className="fnc-ctn-filter">

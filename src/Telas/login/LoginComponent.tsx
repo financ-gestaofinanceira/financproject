@@ -13,7 +13,7 @@ import FncButton from "../../props/FncButton/FncButton";
 import { TypeButton } from "../../props/FncButton/TypeButton";
 import ErrorText from "../../props/ErrorText/ErrorText";
 import SubtitleInteractive from "../../props/SubtitleInteractive/SubtitleInteractive";
-import MsgBox from "../../props/TextBox/MsgtBox";
+import MsgTextBox from "../../props/TextBox/MsgTextBox";
 
 interface LoginProps {
   exibeCadastro: Boolean;
@@ -60,11 +60,9 @@ const LoginComponent: React.FC<LoginProps> = ({
         return;
       }
 
-      if (!resposta.dados?.token && !resposta.dados?.expiracao) return;
-
       const tokenObj: TokenData = {
-        token: resposta.dados.token,
-        expiration: resposta.dados.expiracao,
+        token: resposta!.dados!.token,
+        expiration: resposta!.dados!.expiracao,
       };
 
       setErroMsg(null);
@@ -112,7 +110,7 @@ const LoginComponent: React.FC<LoginProps> = ({
         onClick={() => setExibeCadastro(!exibeCadastro)}
       />
 
-      <MsgBox
+      <MsgTextBox
         title="💡 Credenciais de teste:"
         description="Email: joao@exemplo.com | Senha: Arr0zD12@"
       />

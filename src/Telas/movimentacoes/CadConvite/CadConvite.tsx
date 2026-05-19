@@ -23,17 +23,31 @@ type ConviteCadastroRequest = {
   idConta: number;
   emailDestinatario: string;
   acesso: number;
-  expiracaoContaUsuario?: string | null;
+  expiracaoContaUsuario?: number | null;
 };
-const CadConvite = () => {
+
+type PropCadConvite = {
+  setIsCadInvite: (value: boolean) => void;
+};
+
+const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
   const { conta } = useContext(ContaContext);
-  const agora = new Date().toISOString().slice(0, 16);
+  const amanha = new Date(new Date().setDate(new Date().getDate() + 1))
+    .toISOString()
+    .slice(0, 10);
 
   const [email, setEmail] = useState("");
-  const [acesso, setAcesso] = useState<number>(0);
+  const [acesso, setAcesso] = useState<number>(1);
   const [checkExpiracao, setCheckExpiracao] = useState(false);
-  const [dataExpiracao, setdataExpiracao] = useState<string>(agora);
+  const [dataExpiracao, setdataExpiracao] = useState<string>(amanha);
   const [msgError, setMsgError] = useState<string | null>(null);
+
+  function minutosDesde(): number {
+    return Math.floor(
+      (Date.now() - new Date(dataExpiracao!).getTime()) / 1000 / 60,
+    );
+  }
+
   const cadastrarConvite = async () => {
     try {
       if (!email) {
@@ -45,7 +59,7 @@ const CadConvite = () => {
         acesso: acesso,
         emailDestinatario: email,
         idConta: conta!.idConta,
-        expiracaoContaUsuario: checkExpiracao ? dataExpiracao : null,
+        expiracaoContaUsuario: checkExpiracao ? minutosDesde() : null,
       };
 
       console.log(acesso);
@@ -56,7 +70,7 @@ const CadConvite = () => {
         request,
       );
       if (resposta.sucesso && resposta.dados) {
-        console.log("enviado");
+        setIsCadInvite(false);
       } else {
         setMsgError(resposta!.erro!);
       }

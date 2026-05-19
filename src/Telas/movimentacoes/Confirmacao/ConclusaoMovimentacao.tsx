@@ -25,8 +25,6 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
   buscaMovimentacoes,
   movimentacaoSelecionada,
 }) => {
-  const { tokenData } = useContext(AuthContext);
-
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");

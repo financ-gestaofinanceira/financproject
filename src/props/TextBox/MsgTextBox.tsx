@@ -1,12 +1,12 @@
 import SubtitleText from "../SubtitleText/SubtitleText";
-import "./MsgtBoxStyle.css";
+import "./MsgTextBoxStyle.css";
 interface PropMsgtBox {
   title: string;
   description: string;
   colorTitle?: string;
   colorDescriptio?: string;
 }
-const MsgBox: React.FC<PropMsgtBox> = ({
+const MsgTextBox: React.FC<PropMsgtBox> = ({
   title,
   description,
   colorTitle,
@@ -22,4 +22,4 @@ const MsgBox: React.FC<PropMsgtBox> = ({
   );
 };
 
-export default MsgBox;
+export default MsgTextBox;

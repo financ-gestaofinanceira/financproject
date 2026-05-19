@@ -14,6 +14,7 @@ import { ConviteContext } from "../../contexts/ConviteContext";
 import SubtitleText from "../../props/SubtitleText/SubtitleText";
 import FncButton from "../../props/FncButton/FncButton";
 import { TypeThemeButton } from "../../props/FncButton/TypeThemeButton";
+import ErrorText from "../../props/ErrorText/ErrorText";
 const Convites = () => {
   interface IConvite {
     id: number;
@@ -53,6 +54,8 @@ const Convites = () => {
 
   const [convitesEnviados, setConvitesEnviados] = React.useState<IConvite[]>();
   const [modalInvite, setIsModalInvite] = useState(false);
+  const [erroMsg, setErroMsg] = useState<string | null>(null);
+
   const [modalRevokeInvite, setIsModalRevokeInvite] = useState(false);
 
   const handleConviteClick = async (objetoDaLinha: any) => {
@@ -120,12 +123,14 @@ const Convites = () => {
         setConvitesRecebidos([]);
       }
 
+      const meusConvitesEnviados: IConvite[] = [];
+
       if (respConvitesEnviados.sucesso && respConvitesEnviados.dados) {
         respConvitesEnviados.dados.conteudo.map((invite) => {
-          meusConvites.push({
+          meusConvitesEnviados.push({
             id: invite.convite.idConvite,
             conta: invite.conta.titulo,
-            usuario: invite.usuarioRemetente.nomeCompleto,
+            usuario: invite.usuarioDestinatario.nomeCompleto,
             acesso: typePermission(invite.convite.acesso),
             status:
               invite.convite.aceito === null
@@ -139,7 +144,7 @@ const Convites = () => {
             convite: invite,
           });
 
-          setConvitesEnviados(meusConvites);
+          setConvitesEnviados(meusConvitesEnviados);
         });
       } else {
         setConvitesEnviados([]);
@@ -169,13 +174,15 @@ const Convites = () => {
         removeConvite();
         setIsModalInvite(false);
         buscaConvites();
+      } else {
+        setErroMsg(retorno!.erro!);
       }
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
     }
   };
 
-  const revogarConvite = async (value: boolean) => {
+  const revogarConvite = async () => {
     try {
       const retorno = await api<string>(
         `/Convites/${convite?.convite.idConvite}/Revogar`,
@@ -224,14 +231,15 @@ const Convites = () => {
                 <div className="fnc-ctn-aceept-invite">
                   <TitleText text={convite!.conta!.titulo} />
                   <SubtitleText text="Deseja entrar na conta?" />
+                  {erroMsg && <ErrorText text={erroMsg} />}
                   <div className="fnc-ctn-btn-invite-acept">
                     <FncButton
-                      title="Sim"
+                      title="Aceitar"
                       icon="check_small"
                       onClick={async () => await entrarNaConta(true)}
                     />
                     <FncButton
-                      title="Não"
+                      title="Recusar"
                       icon="close"
                       thema={TypeThemeButton.Delete}
                       onClick={async () => await entrarNaConta(false)}
@@ -255,7 +263,7 @@ const Convites = () => {
                     <FncButton
                       title="Sim"
                       icon="check_small"
-                      onClick={async () => await revogarConvite(true)}
+                      onClick={async () => await revogarConvite()}
                     />
                     <FncButton
                       title="Não"

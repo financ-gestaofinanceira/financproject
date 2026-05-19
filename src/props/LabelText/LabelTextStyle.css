@@ -1,10 +1,25 @@
 .fnc-lbl {
-  align-items: center;
+  display: block;
+
+  text-align: start;
+
   color: #90a1b9;
-  display: flex;
   font-family: Inter;
   font-size: 13px;
   font-weight: 600;
-  gap: 8px;
-  margin: 2px 0 0 2px;
+
+  margin-top: 2px;
+}
+
+.fnc-lbl-centerlize {
+  display: block;
+
+  text-align: center;
+
+  color: #90a1b9;
+  font-family: Inter;
+  font-size: 13px;
+  font-weight: 600;
+
+  margin-top: 2px;
 }

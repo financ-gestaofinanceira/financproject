@@ -17,6 +17,9 @@ import ContaComponent from "./Componente/ContaUnitaria/ContaComponent";
 import { AuthContext } from "../../contexts/AuthContext";
 import Carregamento from "../../componentes/Carregamento/Carregamento";
 import LabelText from "../../props/LabelText/LabelText";
+import MsgTextBox from "../../props/TextBox/MsgTextBox";
+import MsgBox from "../../props/MsgBox/MsgBox";
+import { TypeMsgBox } from "../../props/MsgBox/TypeMsgBox";
 
 type Props = {
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
@@ -55,7 +58,6 @@ const Contas: React.FC<Props> = ({ setTelaAtual }) => {
   return (
     <>
       {user !== null && <LandBotComponent usuario={user} />}
-
       {loading ? (
         <Carregamento />
       ) : (

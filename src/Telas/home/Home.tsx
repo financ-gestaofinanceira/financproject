@@ -11,6 +11,8 @@ import MenuItem from "../../props/MenuItem/MenuItem";
 import { ContaContext } from "../../contexts/ContaContext";
 import Movimentacoes from "../Movimentacoes/Movimentacoes";
 import Convites from "../Convites/Convites";
+import MsgBox from "../../props/MsgBox/MsgBox";
+import { TypeMsgBox } from "../../props/MsgBox/TypeMsgBox";
 
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
@@ -20,7 +22,9 @@ export const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const [telaAtual, setTelaAtual] = useState(0);
-
+  const [abrirMsgBox, setAbrirMsgBox] = useState(false);
+  const [erroMsg, setErroMsg] = useState<string | null>(null);
+  
   const buscarUsuario = async () => {
     const resposta = await api<UsuarioResponse3>(
       "/Usuarios/me",
@@ -41,9 +45,17 @@ export const Home: React.FC = () => {
   };
 
   const sairDaContaBancaria = async () => {
-    await api<string>(`/ContasUsuarios/${conta?.idConta}/sair`, "POST");
-    removeConta();
-    setTelaAtual(0);
+    const response = await api<string>(
+      `/ContasUsuarios/${conta?.idConta}/sair`,
+      "POST",
+    );
+
+    if (response!.sucesso) {
+      removeConta();
+      setTelaAtual(0);
+    } else {
+      setErroMsg(response!.erro!);
+    }
   };
 
   useEffect(() => {
@@ -77,6 +89,14 @@ export const Home: React.FC = () => {
 
   return (
     <div className="home-container">
+      {erroMsg && (
+        <MsgBox
+          title="Ocorreu um problema!"
+          description={erroMsg}
+          type={TypeMsgBox.Ok}
+          centerlize={true}
+        />
+      )}
       <aside className="sidebar">
         <div className="sidebar__header">
           <div className="sidebar__logo-icon">
@@ -104,7 +124,9 @@ export const Home: React.FC = () => {
           <p className="nav__title">Menu</p>
 
           <div className="fnc-home-iten-primary">
-            <MenuItem title="Dashboard" icon="dashboard" />
+            {
+              //<MenuItem title="Dashboard" icon="dashboard" />
+            }
 
             <MenuItem
               title="Contas"
@@ -133,12 +155,27 @@ export const Home: React.FC = () => {
               <MenuItem
                 title="Sair da Conta"
                 icon="exit_to_app"
-                onClick={() => sairDaContaBancaria()}
+                onClick={() => setAbrirMsgBox(true)}
                 background="#ff4b4b"
               />
             )}
           </div>
         </nav>
+
+        {abrirMsgBox && (
+          <MsgBox
+            title="Sair da Conta"
+            description="Deseja realmente sair da conta?"
+            type={TypeMsgBox.Question}
+            onQuestion={(confirmou: boolean) => {
+              if (confirmou) {
+                sairDaContaBancaria();
+              }
+
+              setAbrirMsgBox(false);
+            }}
+          />
+        )}
 
         <div className="sidebar__footer">
           <button className="logout__button" onClick={() => deslogar()}>
