@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  use,
+  useContext,
+} from "react";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { MovimentacaoPost } from "../../../models/Movimentacoes/MovimentacaoPost";
@@ -17,24 +23,25 @@ import ErrorText from "../../../props/ErrorText/ErrorText";
 import InputDate from "../../../props/InputDate/InputDate";
 import InputCheckBox from "../../../props/InputCheckBox/InputCheckBox";
 import CheckBoxList from "../../../props/CheckBoxList/CheckBoxList";
+import { MovimentacaoContext } from "../../../contexts/MovimentacaoContext";
+import { ContaContext } from "../../../contexts/ContaContext";
+import type { MovimentacaoPatch } from "../../../models/Movimentacoes/MovimentacaoPatch";
 
 interface PropCadMov {
   onClose: () => void;
-  idConta: number;
-  buscaMovimentacoes: () => void;
+  edit?: boolean;
 }
 
-const CadMov: React.FC<PropCadMov> = ({
-  onClose,
-  idConta,
-  buscaMovimentacoes,
-}) => {
+const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
+  const { conta } = useContext(ContaContext);
+
+  const { movimentacao } = useContext(MovimentacaoContext);
   const [type, setType] = useState("receita");
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -44,7 +51,6 @@ const CadMov: React.FC<PropCadMov> = ({
   const [dataConclusao, setDataConclusao] = useState(getNow);
   const [concluido, setConcluido] = useState(false);
   const [categorias, setCategorias] = useState<CategoriaResponse>();
-  const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
 
@@ -57,10 +63,11 @@ const CadMov: React.FC<PropCadMov> = ({
     setDataConclusao(value);
   };
 
-  const buscaCategorias = useCallback(async () => {
+  const buscaCategorias = async () => {
     try {
+      console.log("Mamei");
       const resposta = await api<CategoriaResponse>(
-        `/Contas/${idConta}/Categorias`,
+        `/Contas/${conta?.idConta}/Categorias`,
         "GET",
         undefined,
       );
@@ -70,42 +77,131 @@ const CadMov: React.FC<PropCadMov> = ({
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
     }
-  }, [idConta]);
+  };
 
   useEffect(() => {
     buscaCategorias();
-  }, [buscaCategorias]);
 
-  const criaMov = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (edit && movimentacao) {
+      const formatDataToInput = (data: string) => {
+        const dataUtc = new Date(data);
+
+        const offset = dataUtc.getTimezoneOffset();
+
+        const dataLocal = new Date(dataUtc.getTime() - offset * 60000);
+
+        return dataLocal.toISOString().slice(0, 16);
+      };
+      setType(movimentacao.tipo === 0 ? "receita" : "despesa");
+      setTitulo(movimentacao.titulo);
+      setDescricao(movimentacao.observacao ?? "");
+      setValor(movimentacao.valor);
+      setValorFormatado(
+        movimentacao.valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+      );
+      console.log(formatDataToInput(movimentacao.dthrMovimentacao));
+      setDataMovimentacao(formatDataToInput(movimentacao.dthrMovimentacao));
+      setDataConclusao(
+        movimentacao.dthrConclusao
+          ? formatDataToInput(movimentacao.dthrConclusao)
+          : dataMovimentacao,
+      );
+      setConcluido(movimentacao.concluido);
+
+      let editCatId: number[] = [];
+      movimentacao.categorias.map((cat) => {
+        editCatId.push(cat.idCategoria);
+      });
+      setCategoriasSelecionadas(editCatId);
+    }
+  }, [edit, movimentacao]);
+
+  const reqMov = async () => {
     setIsLoading(true);
     setErroMsg(undefined);
 
     const toUTCISOString = (data: string) => new Date(data).toISOString();
 
     try {
-      const request: MovimentacaoPost = {
-        tipo: type === "receita" ? 0 : 1,
-        valor: valor,
-        concluido: concluido,
-        titulo: titulo,
-        observacao: descricao,
-        dthrMovimentacao: toUTCISOString(dataMovimentacao),
-        dthrConclusao: concluido ? toUTCISOString(dataConclusao) : null,
-        idsCategoria: categoriasSelecionadas,
-      };
+      if (!edit) {
+        const request: MovimentacaoPost = {
+          tipo: type === "receita" ? 0 : 1,
+          valor: valor,
+          concluido: concluido,
+          titulo: titulo,
+          observacao: descricao,
+          dthrMovimentacao: toUTCISOString(dataMovimentacao),
+          dthrConclusao: concluido ? toUTCISOString(dataConclusao) : null,
+          idsCategoria: categoriasSelecionadas,
+        };
 
-      const resposta = await api<ApiResult<Movimentacao>>(
-        `/Contas/${idConta}/Movimentacoes`,
-        "POST",
-        request,
-      );
+        const resposta = await api<ApiResult<Movimentacao>>(
+          `/Contas/${conta?.idConta}/Movimentacoes`,
+          "POST",
+          request,
+        );
 
-      if (resposta.sucesso) {
-        buscaMovimentacoes();
-        onClose();
+        if (resposta.sucesso) {
+          onClose();
+        } else {
+          setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
+        }
       } else {
-        setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
+        const request: MovimentacaoPatch = {
+          tipo: concluido ? null : type === "receita" ? 0 : 1,
+          valor: movimentacao?.valor !== valor ? valor : null,
+          titulo: movimentacao?.titulo !== titulo ? titulo : null,
+          observacao: movimentacao?.observacao !== descricao ? descricao : null,
+          dthrMovimentacao:
+            movimentacao?.dthrMovimentacao !== dataMovimentacao
+              ? toUTCISOString(dataMovimentacao)
+              : null,
+          dthrConclusao: movimentacao?.concluido
+            ? movimentacao?.dthrMovimentacao !== toUTCISOString(dataConclusao)
+              ? toUTCISOString(dataConclusao)
+              : null
+            : null,
+        };
+        console.log(request);
+        const resposta = await api<ApiResult<Movimentacao>>(
+          `Contas/Movimentacoes/${movimentacao?.id}/Alterar`,
+          "PATCH",
+          request,
+        );
+
+        if (!resposta.sucesso) {
+          setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
+          return;
+        }
+
+        let catMov: number[] = [];
+        movimentacao!.categorias.map((cat) => catMov.push(cat.idCategoria));
+
+        console.log(
+          JSON.stringify(catMov.sort()) !==
+            JSON.stringify(categoriasSelecionadas.sort()),
+        );
+        if (
+          JSON.stringify(catMov.sort()) !==
+          JSON.stringify(categoriasSelecionadas.sort())
+        ) {
+          const resposta = await api<ApiResult<Movimentacao>>(
+            `Contas/Movimentacoes/${movimentacao?.id}/Alterar/Categoria`,
+            "PUT",
+            {
+              categorias: categoriasSelecionadas,
+            },
+          );
+
+          if (resposta.sucesso) {
+            onClose();
+          } else {
+            setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
+          }
+        } else onClose();
       }
     } catch (error: any) {
       setErroMsg(error.message || "Erro inesperado.");
@@ -119,14 +215,14 @@ const CadMov: React.FC<PropCadMov> = ({
 
   return (
     <>
-      <TitleText text="Nova Transação" />
+      <TitleText text={edit ? "Editar Transação" : "Nova Transação"} />
 
       <div className="fnc-transaction-type">
         <button
           type="button"
           className={`type-btn ${type === "receita" ? "active" : ""}`}
           data-type="receita"
-          onClick={() => setType("receita")}
+          onClick={() => (!movimentacao?.concluido ? setType("receita") : null)}
         >
           Receita
         </button>
@@ -135,14 +231,14 @@ const CadMov: React.FC<PropCadMov> = ({
           type="button"
           className={`type-btn ${type === "despesa" ? "active" : ""}`}
           data-type="despesa"
-          onClick={() => setType("despesa")}
+          onClick={() => (!movimentacao?.concluido ? setType("despesa") : null)}
         >
           Despesa
         </button>
       </div>
 
-      <form className="centraliza" onSubmit={criaMov}>
-        <div className="modal-body">
+      <form onSubmit={reqMov}>
+        <div className="fnc-ctn-cad">
           <InputText
             label="Título"
             text={titulo}
@@ -179,25 +275,45 @@ const CadMov: React.FC<PropCadMov> = ({
             setText={setDateMov}
           />
 
-          <InputCheckBox
-            label="Movimentação concluída"
-            checked={concluido}
-            setChecked={setConcluido}
-          />
+          {edit && movimentacao && concluido && (
+            <>
+              <InputDate
+                label="Data Conclusão"
+                text={dataConclusao}
+                setText={setDataConclusao}
+              />
+            </>
+          )}
+          {!edit && (
+            <>
+              <InputCheckBox
+                label="Movimentação concluída"
+                checked={concluido}
+                setChecked={setConcluido}
+              />
 
-          {concluido && (
-            <InputDate
-              label="Data Conclusão"
-              text={dataConclusao}
-              setText={setDataConclusao}
-            />
+              {concluido && (
+                <InputDate
+                  label="Data Conclusão"
+                  text={dataConclusao}
+                  setText={setDataConclusao}
+                />
+              )}
+            </>
           )}
 
           {erroMsg && <ErrorText text={erroMsg} />}
-
           <FncButton
             type={TypeButton.Submit}
-            title={isLoading ? "Cadastrando..." : "Cadastrar"}
+            title={
+              edit
+                ? isLoading
+                  ? "Editando..."
+                  : "Editar"
+                : isLoading
+                  ? "Cadastrando..."
+                  : "Cadastrar"
+            }
             disabled={isLoading}
           />
         </div>

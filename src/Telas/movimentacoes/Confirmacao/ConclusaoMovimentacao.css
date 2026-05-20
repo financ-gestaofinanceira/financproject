@@ -5,3 +5,14 @@
   justify-content: center;
   gap: 12px;
 }
+.fnc-ctn-opt-mov {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+}
+.fnc-inputs-opt-mov {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

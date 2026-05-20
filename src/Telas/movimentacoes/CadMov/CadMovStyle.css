@@ -3,7 +3,11 @@
   gap: 15px;
   margin: 5px;
 }
-
+.fnc-ctn-cad {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .type-btn {
   flex: 1;
   padding: 12px;

@@ -1,5 +1,5 @@
 import api from "../../services/api/apiConnect";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import type { FncTableColumn } from "../../props/FncTable/FncTable";
 import "./MembrosStyle.css";
@@ -24,7 +24,7 @@ const Membros = () => {
     dtExpiracao: string;
     usuario: ContaUsuario;
   }
-  const { conta, usuario } = useContext(ContaContext);
+  const { conta, usuario, setMembroConta } = useContext(ContaContext);
   const { user } = useContext(AuthContext);
 
   const colunas: FncTableColumn[] = [
@@ -57,7 +57,7 @@ const Membros = () => {
     });
   }
   const [membros, setMembros] = React.useState<IMembros[]>([]);
-
+  const [openEditUser, setOpenEditUser] = useState(false);
   // const [erroMsg, setErroMsg] = useState<string | null>(null);
 
   const buscaContaUsuario = async () => {
@@ -100,6 +100,10 @@ const Membros = () => {
     carregar();
   }, []);
 
+  const handleMemberClick = async (objetoDaLinha: any) => {
+    setMembroConta(objetoDaLinha);
+    console.log(objetoDaLinha);
+  };
   return (
     <>
       <div className="fnc-members-title">
@@ -120,7 +124,12 @@ const Membros = () => {
           )}
         </div>
 
-        <FncTable title="Membros" data={membros} columns={colunas} />
+        <FncTable
+          title="Membros"
+          data={membros}
+          columns={colunas}
+          onRowClick={handleMemberClick}
+        />
         <div className="fnc-members-update">
           <div>
             <FncButton title="Atualizar" onClick={buscaContaUsuario} />

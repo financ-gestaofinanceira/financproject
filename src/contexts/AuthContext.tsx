@@ -134,7 +134,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const ehRotaDeLogin = requisicaoOriginal.url?.includes(
           "/Autenticacao/login",
         );
-
         const estaNaPaginaInicial = estaNaHome();
 
         if (

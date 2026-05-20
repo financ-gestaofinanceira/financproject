@@ -22,6 +22,9 @@ export default async function Conecta<T>(
       case "PATCH":
         resposta = await api.patch<T>(rota, objeto);
         break;
+      case "PUT":
+        resposta = await api.put<T>(rota, objeto);
+        break;
       case "DELETE":
         resposta = await api.delete<T>(rota);
         break;

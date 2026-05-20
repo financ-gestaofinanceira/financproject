@@ -4,7 +4,6 @@ import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
 import type { CategoriaResponse } from "../../../models/Categorias/Categorias";
 import { useContext, useState } from "react";
-import { AuthContext } from "../../../contexts/AuthContext";
 import TitleText from "../../../props/TitleText/TitleText";
 import ErrorText from "../../../props/ErrorText/ErrorText";
 import FncButton from "../../../props/FncButton/FncButton";
@@ -12,6 +11,9 @@ import { TypeButton } from "../../../props/FncButton/TypeButton";
 import { TypeThemeButton } from "../../../props/FncButton/TypeThemeButton";
 import "./ConclusaoMovimentacao.css";
 import InputDate from "../../../props/InputDate/InputDate";
+import Modal from "../../../componentes/Modal/Modal";
+import { MovimentacaoContext } from "../../../contexts/MovimentacaoContext";
+import CadMov from "../CadMov/CadMov";
 
 interface PropAlteraMov {
   onClose: () => void;
@@ -31,9 +33,11 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
+  const { setMovimentacao } = useContext(MovimentacaoContext);
   const [dataConclusao, setDataConclusao] = useState(getNow);
 
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
+  const [alterarMovimentacao, setAlterarMovimentacao] = useState(false);
 
   const formataMoeda = (valor: number) => {
     let moeda = new Intl.NumberFormat("pt-BR", {
@@ -92,12 +96,17 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
       setErroMsg(error.message || "Erro inesperado.");
     }
   };
+
+  const AlterarMovimentacao = () => {
+    setMovimentacao(movimentacaoSelecionada);
+    setAlterarMovimentacao(true);
+  };
   return (
-    <div className="centraliza">
+    <div className="fnc-ctn-opt-mov">
       <TitleText text={`Alterar ${movimentacaoSelecionada.titulo}`} />
       <TitleText text={formataMoeda(movimentacaoSelecionada.valor)} />
 
-      <div className="modal-body">
+      <div className="fnc-inputs-opt-mov">
         {erroMsg && <ErrorText text={erroMsg} />}
 
         {!movimentacaoSelecionada.concluido && (
@@ -120,7 +129,26 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
             onClick={DeletarMovRequest}
             thema={TypeThemeButton.Delete}
           />
+          <FncButton
+            title="Alterar"
+            type={TypeButton.Submit}
+            onClick={AlterarMovimentacao}
+            thema={TypeThemeButton.Aceept}
+          />
         </div>
+
+        {alterarMovimentacao && (
+          <Modal isOpen={true} onClose={() => setAlterarMovimentacao(false)}>
+            <CadMov
+              onClose={() => {
+                setAlterarMovimentacao(false);
+                buscaMovimentacoes();
+                onClose();
+              }}
+              edit={true}
+            />
+          </Modal>
+        )}
       </div>
     </div>
   );

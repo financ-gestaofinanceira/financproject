@@ -269,9 +269,10 @@ const Movimentacoes: React.FC<Props> = ({}) => {
 
       <Modal isOpen={isCadMovOpen} onClose={() => setIsCadMovOpen(false)}>
         <CadMov
-          onClose={() => setIsCadMovOpen(false)}
-          idConta={conta!.idConta}
-          buscaMovimentacoes={buscaMovimentacoes}
+          onClose={() => {
+            setIsCadMovOpen(false);
+            buscaMovimentacoes();
+          }}
         />
       </Modal>
 
