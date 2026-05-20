@@ -1,7 +1,7 @@
 import type {
   ContaResponse,
   ContaBancaria,
-} from "../../models/ContasUsuarios/GetContasUsuarios";
+} from "../../models/ContasUsuarios/GetContasBancarias";
 import api from "../../services/api/apiConnect";
 
 import { useContext, useEffect, useState } from "react";

@@ -96,6 +96,7 @@ const LoginComponent: React.FC<LoginProps> = ({
           placeholder="••••••••"
           type={TypeText.Password}
           setText={setSenha}
+          maxLenght={16}
         ></InputText>
 
         <FncButton title="Entrar" type={TypeButton.Submit} />

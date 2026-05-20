@@ -6,18 +6,21 @@ import { Login } from "./Telas/Login/Login";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ContaProvider } from "./contexts/ContaContext";
 import { ConviteProvider } from "./contexts/ConviteContext";
+import { MovimentacaoProvider } from "./contexts/MovimentacaoContext";
 function App() {
   return (
     <AuthProvider>
       <ContaProvider>
-        <ConviteProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/home" element={<Home />} />
-            </Routes>
-          </Router>
-        </ConviteProvider>
+        <MovimentacaoProvider>
+          <ConviteProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/home" element={<Home />} />
+              </Routes>
+            </Router>
+          </ConviteProvider>
+        </MovimentacaoProvider>
       </ContaProvider>
     </AuthProvider>
   );

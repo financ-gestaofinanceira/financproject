@@ -131,12 +131,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
           "/Autenticacao/refresh",
         );
 
+        const ehRotaDeLogin = requisicaoOriginal.url?.includes(
+          "/Autenticacao/login",
+        );
+
         const estaNaPaginaInicial = estaNaHome();
 
         if (
           erro.response?.status === 401 &&
           !requisicaoOriginal._retry &&
           !ehRotaDeRefresh &&
+          !ehRotaDeLogin && // <-- adicionar aqui
           !estaNaPaginaInicial
         ) {
           requisicaoOriginal._retry = true;

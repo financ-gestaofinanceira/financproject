@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ContaContext } from "../../../../contexts/ContaContext";
-import type { ContaBancaria } from "../../../../models/ContasUsuarios/GetContasUsuarios";
+import type { ContaBancaria } from "../../../../models/ContasUsuarios/GetContasBancarias";
 import api from "../../../../services/api/apiConnect";
 import "./ContaComponentStyle.css";
 

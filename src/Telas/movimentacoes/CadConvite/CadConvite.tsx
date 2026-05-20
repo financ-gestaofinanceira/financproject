@@ -5,7 +5,6 @@ import { TypeText } from "../../../props/InputText/TypeText";
 import InputSelect from "../../../props/InputSelect/InputSelect";
 import FncButton from "../../../props/FncButton/FncButton";
 import InputCheckBox from "../../../props/InputCheckBox/InputCheckBox";
-import InputDate from "../../../props/InputDate/InputDate";
 import api from "../../../services/api/apiConnect";
 import { ContaContext } from "../../../contexts/ContaContext";
 import ErrorText from "../../../props/ErrorText/ErrorText";
@@ -33,22 +32,11 @@ type PropCadConvite = {
 const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
   const { conta } = useContext(ContaContext);
 
-  const dataAtual = new Date()
-    .toLocaleString("sv-SE")
-    .replace(" ", "T")
-    .slice(0, 16);
-
   const [email, setEmail] = useState("");
   const [acesso, setAcesso] = useState<number>(1);
   const [checkExpiracao, setCheckExpiracao] = useState(false);
-  const [dataExpiracao, setdataExpiracao] = useState<string>(dataAtual);
+  const [tempoExpiracao, setTempoExpiracao] = useState<string>("15");
   const [msgError, setMsgError] = useState<string | null>(null);
-
-  function minutosDesde(): number {
-    return Math.floor(
-      (new Date(dataExpiracao!).getTime() - Date.now()) / 1000 / 60,
-    );
-  }
 
   const cadastrarConvite = async () => {
     try {
@@ -56,15 +44,13 @@ const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
         setMsgError("O email é obrigatório.");
         return;
       }
-      console.log(minutosDesde());
       let request: ConviteCadastroRequest = {
         acesso: acesso,
         emailDestinatario: email,
         idConta: conta!.idConta,
-        expiracaoContaUsuario: checkExpiracao ? minutosDesde() : null,
+        expiracaoContaUsuario:
+          checkExpiracao === true ? parseInt(tempoExpiracao) : null,
       };
-
-      console.log(acesso);
 
       const resposta = await api<ConviteCadastroResponse>(
         `/Convites`,
@@ -110,10 +96,11 @@ const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
       />
 
       {checkExpiracao && (
-        <InputDate
-          label="Data Expiração"
-          text={dataExpiracao}
-          setText={setdataExpiracao}
+        <InputText
+          label="Email do usuário"
+          text={tempoExpiracao}
+          setText={setTempoExpiracao}
+          type={TypeText.Number}
         />
       )}
       {msgError && <ErrorText text={msgError} />}

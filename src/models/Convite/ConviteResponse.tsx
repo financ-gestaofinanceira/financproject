@@ -25,6 +25,7 @@ export type Conta = {
 
 export type Usuario = {
   idUsuario: string;
+  email: string;
   primeiroNome: string;
   segundoNome: string;
   nomeCompleto: string;

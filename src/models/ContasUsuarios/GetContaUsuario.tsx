@@ -1,8 +1,7 @@
-export type UsuarioConviteResponse = {
-  conteudo: UsuarioConvite[];
-};
+import type { Metadados } from "./GetContasBancarias";
 
-export type UsuarioConvite = {
+export type ContaUsuario = {
+  idContaUsuario: number;
   idUsuario: string;
   nome: string;
   email: string;
@@ -10,4 +9,9 @@ export type UsuarioConvite = {
   status: number;
   expiracao: string | null;
   expirado: boolean;
+};
+
+export type GetContaUsuario = {
+  conteudo: ContaUsuario[];
+  metadados: Metadados;
 };

@@ -103,7 +103,7 @@ const Convites = () => {
           meusConvites.push({
             id: invite.convite.idConvite,
             conta: invite.conta.titulo,
-            usuario: invite.usuarioRemetente.nomeCompleto,
+            usuario: invite.usuarioRemetente.email,
             acesso: typePermission(invite.convite.acesso),
             status:
               invite.convite.aceito === null
@@ -130,7 +130,7 @@ const Convites = () => {
           meusConvitesEnviados.push({
             id: invite.convite.idConvite,
             conta: invite.conta.titulo,
-            usuario: invite.usuarioDestinatario.nomeCompleto,
+            usuario: invite.usuarioDestinatario.email,
             acesso: typePermission(invite.convite.acesso),
             status:
               invite.convite.aceito === null
@@ -235,7 +235,7 @@ const Convites = () => {
                   <div className="fnc-ctn-btn-invite-acept">
                     <FncButton
                       title="Aceitar"
-                      icon="check_small"
+                      icon="check"
                       onClick={async () => await entrarNaConta(true)}
                     />
                     <FncButton
@@ -262,7 +262,7 @@ const Convites = () => {
                   <div className="fnc-ctn-btn-invite-acept">
                     <FncButton
                       title="Sim"
-                      icon="check_small"
+                      icon="check"
                       onClick={async () => await revogarConvite()}
                     />
                     <FncButton

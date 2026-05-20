@@ -1,6 +1,6 @@
 import api from "../../services/api/apiConnect";
 import "./MovimentacaoesStyle.css";
-import { use, useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import type {
   Categoria,
   GetMovimentacoes,
@@ -19,11 +19,7 @@ import TabelaMovimentacao from "./Tabela/TabelaMovimentacao";
 import { AuthContext } from "../../contexts/AuthContext";
 import LabelText from "../../props/LabelText/LabelText";
 import CadConvite from "./CadConvite/CadConvite";
-import type { ContaResponse } from "../../models/ContasUsuarios/GetContasUsuarios";
-import type {
-  ContaUsuario,
-  GetContaUsuario,
-} from "../../models/ContasUsuarios/GetContaUsuario";
+import type { GetContaUsuario } from "../../models/ContasUsuarios/GetContaUsuario";
 
 type Props = {};
 
@@ -37,9 +33,11 @@ const Movimentacoes: React.FC<Props> = ({}) => {
   const [categorias, setCategorias] = useState<CategoriaResponse>();
   const [isCategoriaOpen, setIsCategoriaOpen] = useState(false);
   const [isConcluido, setIsConcluido] = useState<Boolean | null>(null);
+  const [tipoMovimentacao, setTipoMovimentacao] = useState<number | null>(null);
   const [categoriasSelecionadas, setCategoriasSelecionadas] = useState<
     number[]
   >([]);
+
   const getNow = (isEnd: boolean = false) => {
     const now = new Date();
     let date: Date;
@@ -55,6 +53,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
+
   const [dataInicial, setDataInicial] = useState(getNow(false));
   const [dataFinal, setDataFinal] = useState(getNow(true));
 
@@ -125,6 +124,10 @@ const Movimentacoes: React.FC<Props> = ({}) => {
       params.append("Concluido", isConcluido.toString());
     }
 
+    if (tipoMovimentacao !== null) {
+      params.append("TipoMovimentacao", tipoMovimentacao.toString());
+    }
+
     const url = `/Contas/${conta!.idConta}/Movimentacoes/Retornar?${params.toString()}`;
 
     try {
@@ -141,12 +144,13 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     dataFinal,
     categoriasSelecionadas,
     isConcluido,
+    tipoMovimentacao,
   ]);
 
   useEffect(() => {
     buscaContaUsuario();
     buscaCategorias();
-    // buscaMovimentacoes();
+    buscaMovimentacoes();
   }, [buscaCategorias, buscaMovimentacoes]);
 
   return (
@@ -316,6 +320,20 @@ const Movimentacoes: React.FC<Props> = ({}) => {
           onChange={(valor) =>
             setIsConcluido(
               valor === "Todas" ? null : valor === "Pendente" ? false : true,
+            )
+          }
+        />
+
+        <InputSelect
+          label="Tipo Movimentação"
+          opcoes={[
+            { label: "Todas", value: "Todas" },
+            { label: "Entrada", value: "Entrada" },
+            { label: "Saída", value: "Saida" },
+          ]}
+          onChange={(valor) =>
+            setTipoMovimentacao(
+              valor === "Todas" ? null : valor === "Entrada" ? 0 : 1,
             )
           }
         />

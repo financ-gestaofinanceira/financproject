@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import api from "../../services/api/apiConnect";
-import type { ContaResponse } from "../../models/ContasUsuarios/GetContasUsuarios";
+import type { ContaResponse } from "../../models/ContasUsuarios/GetContasBancarias";
 import { useNavigate } from "react-router-dom";
 import type { UsuarioResponse3 } from "../../models/Usuario/UsuarioResponse";
 import "./HomeStyle.css";

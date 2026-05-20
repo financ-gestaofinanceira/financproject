@@ -1,9 +1,6 @@
 import api from "../../services/api/apiConnect";
 import React, { useContext, useEffect } from "react";
-import type {
-  ContaUsuario,
-  GetContaUsuario,
-} from "../../models/ContasUsuarios/GetContaUsuario";
+
 import type { FncTableColumn } from "../../props/FncTable/FncTable";
 import "./MembrosStyle.css";
 import TitleText from "../../props/TitleText/TitleText";
@@ -13,6 +10,10 @@ import { ContaContext } from "../../contexts/ContaContext";
 import { AuthContext } from "../../contexts/AuthContext";
 import MsgTextBox from "../../props/TextBox/MsgTextBox";
 import FncButton from "../../props/FncButton/FncButton";
+import type {
+  ContaUsuario,
+  GetContaUsuario,
+} from "../../models/ContasUsuarios/GetContaUsuario";
 
 const Membros = () => {
   interface IMembros {
