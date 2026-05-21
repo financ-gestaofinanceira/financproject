@@ -38,6 +38,8 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     number[]
   >([]);
 
+  const [statusSelect, setStatusSelect] = useState("Todas");
+
   const getNow = (isEnd: boolean = false) => {
     const now = new Date();
     let date: Date;
@@ -318,11 +320,14 @@ const Movimentacoes: React.FC<Props> = ({}) => {
             { label: "Pendente", value: "Pendente" },
             { label: "Concluído", value: "Concluido" },
           ]}
-          onChange={(valor) =>
+          value={statusSelect}
+          onChange={(valor) => {
+            setStatusSelect(valor);
+
             setIsConcluido(
               valor === "Todas" ? null : valor === "Pendente" ? false : true,
-            )
-          }
+            );
+          }}
         />
 
         <InputSelect
@@ -336,6 +341,13 @@ const Movimentacoes: React.FC<Props> = ({}) => {
             setTipoMovimentacao(
               valor === "Todas" ? null : valor === "Entrada" ? 0 : 1,
             )
+          }
+          value={
+            tipoMovimentacao === null
+              ? "Todas"
+              : tipoMovimentacao === 0
+                ? "Entrada"
+                : "Saida"
           }
         />
       </div>
