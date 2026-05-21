@@ -228,7 +228,13 @@ const Convites = () => {
           </div>
 
           {modalInvite && (
-            <Modal isOpen={modalInvite} onClose={() => setIsModalInvite(false)}>
+            <Modal
+              isOpen={modalInvite}
+              onClose={() => {
+                setIsModalInvite(false);
+                setErroMsg(null);
+              }}
+            >
               <>
                 <div className="fnc-ctn-aceept-invite">
                   <TitleText text={convite!.conta!.titulo} />
@@ -255,7 +261,10 @@ const Convites = () => {
           {modalRevokeInvite && (
             <Modal
               isOpen={modalRevokeInvite}
-              onClose={() => setIsModalRevokeInvite(false)}
+              onClose={() => {
+                setIsModalRevokeInvite(false);
+                setErroMsg(null);
+              }}
             >
               <>
                 <div className="fnc-ctn-aceept-invite">
