@@ -31,7 +31,6 @@ type PropCadConvite = {
 
 const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
   const { conta } = useContext(ContaContext);
-
   const [email, setEmail] = useState("");
   const [acesso, setAcesso] = useState<number>(1);
   const [checkExpiracao, setCheckExpiracao] = useState(false);
@@ -80,7 +79,7 @@ const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
       />
 
       <InputSelect
-        label="Status"
+        label="Permissão"
         opcoes={[
           { label: "Administrador", value: "1" },
           { label: "Visualizador", value: "2" },
@@ -97,7 +96,7 @@ const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
 
       {checkExpiracao && (
         <InputText
-          label="Email do usuário"
+          label="Tempo de expiração em minutos"
           text={tempoExpiracao}
           setText={setTempoExpiracao}
           type={TypeText.Number}

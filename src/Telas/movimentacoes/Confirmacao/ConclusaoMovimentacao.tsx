@@ -85,7 +85,6 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
         "DELETE",
         undefined,
       );
-
       if (resposta.sucesso) {
         buscaMovimentacoes();
         onClose();

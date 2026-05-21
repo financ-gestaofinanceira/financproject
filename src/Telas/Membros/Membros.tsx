@@ -14,6 +14,8 @@ import type {
   ContaUsuario,
   GetContaUsuario,
 } from "../../models/ContasUsuarios/GetContaUsuario";
+import Modal from "../../componentes/Modal/Modal";
+import EditMembro from "./EditMembro/EditMembro";
 
 const Membros = () => {
   interface IMembros {
@@ -57,8 +59,7 @@ const Membros = () => {
     });
   }
   const [membros, setMembros] = React.useState<IMembros[]>([]);
-  const [openEditUser, setOpenEditUser] = useState(false);
-  // const [erroMsg, setErroMsg] = useState<string | null>(null);
+  const [openEditUser, setOpenEditUser] = useState<boolean>(false);
 
   const buscaContaUsuario = async () => {
     try {
@@ -101,11 +102,27 @@ const Membros = () => {
   }, []);
 
   const handleMemberClick = async (objetoDaLinha: any) => {
-    setMembroConta(objetoDaLinha);
-    console.log(objetoDaLinha);
+    setMembroConta(objetoDaLinha.usuario);
+    console.log(usuario);
+    if (usuario?.permissao === 0) setOpenEditUser(true);
   };
+
   return (
     <>
+      <Modal
+        isOpen={openEditUser}
+        onClose={() => {
+          setOpenEditUser(false);
+        }}
+      >
+        <EditMembro
+          setOpen={async () => {
+            setOpenEditUser(false);
+            await buscaContaUsuario();
+          }}
+        />
+      </Modal>
+
       <div className="fnc-members-title">
         <TitleText text={`Membros da ${conta?.titulo}`} />
         <LabelText

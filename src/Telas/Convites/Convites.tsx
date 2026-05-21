@@ -178,7 +178,7 @@ const Convites = () => {
         setErroMsg(retorno!.erro!);
       }
     } catch (error) {
-      console.error("Erro ao buscar categorias:", error);
+      console.error("Erro ao buscar convites:", error);
     }
   };
 
@@ -196,7 +196,7 @@ const Convites = () => {
         buscaConvites();
       }
     } catch (error) {
-      console.error("Erro ao buscar categorias:", error);
+      console.error("Erro ao buscar convites:", error);
     }
   };
 

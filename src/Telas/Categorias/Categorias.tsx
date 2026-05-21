@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../.././services/api/apiConnect";
 import type { ApiResult } from "../../models/interface/ApiResult";
 import type {

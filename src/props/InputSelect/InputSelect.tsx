@@ -11,6 +11,7 @@ interface PropInputSelect {
   opcoes: OpcaoSelect[];
   onChange: (value: string) => void;
   placeholder?: string;
+  value?: string; // ← adiciona aqui
 }
 
 const InputSelect: React.FC<PropInputSelect> = ({
@@ -18,12 +19,16 @@ const InputSelect: React.FC<PropInputSelect> = ({
   opcoes,
   onChange,
   placeholder,
+  value, // ← e aqui
 }) => {
   return (
     <div className="fnc-input-select">
       {label && <LabelText text={label} />}
       <div className="fnc-input-select__wrapper">
-        <select onChange={(e) => onChange(e.target.value)} defaultValue="">
+        <select
+          onChange={(e) => onChange(e.target.value)}
+          value={value ?? ""} // ← troca defaultValue por value
+        >
           {placeholder && (
             <option value="" disabled>
               {placeholder}

@@ -1,6 +1,5 @@
 import type {
   ContaResponse,
-  ContaBancaria,
 } from "../../models/ContasUsuarios/GetContasBancarias";
 import api from "../../services/api/apiConnect";
 
@@ -10,16 +9,12 @@ import Modal from "../../componentes/Modal/Modal";
 import LandBotComponent from "../../componentes/LandBot/LandBotComponent";
 import FncButton from "../../props/FncButton/FncButton";
 import TitleText from "../../props/TitleText/TitleText";
-import SubtitleText from "../../props/SubtitleText/SubtitleText";
 import CadContas from "./CadConta/CadContas";
 import PatrimonioTotal from "./Componente/Patrimonio/PatrimonioTotal";
 import ContaComponent from "./Componente/ContaUnitaria/ContaComponent";
 import { AuthContext } from "../../contexts/AuthContext";
 import Carregamento from "../../componentes/Carregamento/Carregamento";
 import LabelText from "../../props/LabelText/LabelText";
-import MsgTextBox from "../../props/TextBox/MsgTextBox";
-import MsgBox from "../../props/MsgBox/MsgBox";
-import { TypeMsgBox } from "../../props/MsgBox/TypeMsgBox";
 
 type Props = {
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;

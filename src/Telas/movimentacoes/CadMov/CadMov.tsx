@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  use,
-  useContext,
-} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { MovimentacaoPost } from "../../../models/Movimentacoes/MovimentacaoPost";
@@ -119,7 +113,8 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
     }
   }, [edit, movimentacao]);
 
-  const reqMov = async () => {
+  const reqMov = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
     setErroMsg(undefined);
 

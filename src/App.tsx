@@ -1,12 +1,12 @@
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-import { Home } from "./Telas/Home/Home"; // Importa o componente Dashboard
-import { Login } from "./Telas/Login/Login";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ContaProvider } from "./contexts/ContaContext";
 import { ConviteProvider } from "./contexts/ConviteContext";
 import { MovimentacaoProvider } from "./contexts/MovimentacaoContext";
+import { Login } from "./Telas/login/Login";
+import { Home } from "./Telas/home/Home";
 function App() {
   return (
     <AuthProvider>

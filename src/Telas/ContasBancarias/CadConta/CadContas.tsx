@@ -1,12 +1,11 @@
-import { useContext, useState } from "react";
 import FncButton from "../../../props/FncButton/FncButton";
 import { TypeButton } from "../../../props/FncButton/TypeButton";
 import Conecta from "../../../services/api/apiConnect";
-import { AuthContext } from "../../../contexts/AuthContext";
 import ErrorText from "../../../props/ErrorText/ErrorText";
 import TitleText from "../../../props/TitleText/TitleText";
 import InputTextAndColor from "../../../props/InputTextAndColor/InputTextAndColor";
 import "./CadContaStyle.css";
+import { useState } from "react";
 
 type conta = {
   titulo: string;

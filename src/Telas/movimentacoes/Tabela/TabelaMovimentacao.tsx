@@ -86,6 +86,7 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
                   <div className="fnc-cnt-cat-mov">
                     {mov.categorias.map((cat) => (
                       <div
+                        key={cat.idCategoria}
                         className="categoria"
                         style={{ background: cat.cor }}
                       >

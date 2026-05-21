@@ -1,8 +1,8 @@
-import type { GetContasUsuarios } from "../../../../../models/ContasUsuarios/GetContasUsuarios";
+import type { ContaBancaria } from "../../../../models/ContasUsuarios/GetContasBancarias";
 import "./PatrimonioStyle.css";
 
 type Props = {
-  contaBancaria: GetContasUsuarios[];
+  contaBancaria: ContaBancaria[];
 };
 
 const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
