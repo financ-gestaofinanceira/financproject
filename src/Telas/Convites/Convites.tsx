@@ -194,6 +194,8 @@ const Convites = () => {
         removeConvite();
         setIsModalRevokeInvite(false);
         buscaConvites();
+      } else {
+        setErroMsg(retorno!.erro!);
       }
     } catch (error) {
       console.error("Erro ao buscar convites:", error);
@@ -259,6 +261,7 @@ const Convites = () => {
                 <div className="fnc-ctn-aceept-invite">
                   <TitleText text={convite!.conta!.titulo} />
                   <SubtitleText text="Deseja revogar o convite?" />
+                  {erroMsg && <ErrorText text={erroMsg} />}
                   <div className="fnc-ctn-btn-invite-acept">
                     <FncButton
                       title="Sim"
