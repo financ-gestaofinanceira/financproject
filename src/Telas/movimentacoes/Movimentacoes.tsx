@@ -90,6 +90,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
         undefined,
       );
       if (resposta.sucesso && resposta.dados) {
+        console.log(resposta.dados);
         setContaUsuario(resposta.dados.conteudo[0]);
       }
     } catch (error) {

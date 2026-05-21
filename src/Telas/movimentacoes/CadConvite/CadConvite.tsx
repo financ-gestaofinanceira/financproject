@@ -86,6 +86,7 @@ const CadConvite: React.FC<PropCadConvite> = ({ setIsCadInvite }) => {
           { label: "Mestre", value: "0" },
         ]}
         onChange={(valor) => setAcesso(parseInt(valor))}
+        value={String(acesso)}
       />
 
       <InputCheckBox
