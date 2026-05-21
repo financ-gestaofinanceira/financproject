@@ -39,6 +39,8 @@ export const AuthContext = createContext({} as AuthContextType);
 
 let refreshEmAndamento: Promise<string | null> | null = null;
 
+const BASE_URL = import.meta.env.BASE_URL;
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const [user, setUserObj] = useState<User | null>(null);
@@ -49,24 +51,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const authenticated =
     tokenData !== null && Date.now() < new Date(tokenData.expiration).getTime();
 
-  // HashRouter: a rota fica em window.location.hash — ex: "#/" ou "#/home"
-  // pathname é sempre o caminho do servidor (ex: /financproject/), não a rota do app
-  function rotaAtualHash() {
-    // hash vem como "#/" ou "#/home", remove o "#" para comparar
-    return window.location.hash.replace(/^#/, "") || "/";
-  }
-
-  function estaNaTelaDeLogin() {
-    const rota = rotaAtualHash();
-    return rota === "/" || rota === "";
+  function estaNaHome() {
+    return (
+      window.location.pathname === BASE_URL || window.location.pathname === "/"
+    );
   }
 
   const executarRefresh = async (): Promise<string | null> => {
-    if (estaNaTelaDeLogin()) {
+    // não faz refresh na home
+    if (estaNaHome()) {
       return null;
     }
 
     const temUsuario = !!localStorage.getItem("user");
+
     if (!temUsuario) {
       return null;
     }
@@ -82,7 +80,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const novaExpiracao: string = resp.data.expiracao;
 
         tokenRef.current = novoToken;
-        setTokenData({ token: novoToken, expiration: novaExpiracao });
+
+        setTokenData({
+          token: novoToken,
+          expiration: novaExpiracao,
+        });
 
         return novoToken;
       })
@@ -99,11 +101,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const userStorage = localStorage.getItem("user");
+
     if (userStorage) {
       setUserObj(JSON.parse(userStorage));
     }
 
-    if (estaNaTelaDeLogin()) {
+    // evita refresh na página inicial
+    if (estaNaHome()) {
       setInicializando(false);
       return;
     }
@@ -118,6 +122,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (tokenRef.current) {
         config.headers.Authorization = `Bearer ${tokenRef.current}`;
       }
+
       return config;
     });
 
@@ -125,29 +130,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
       (response) => response,
       async (erro) => {
         const requisicaoOriginal = erro.config;
-        const url = requisicaoOriginal?.url ?? "";
-        const status = erro.response?.status;
 
-        const ehRotaDeLogin = url.includes("Autenticacao/login");
-        const ehRotaDeRefresh = url.includes("Autenticacao/refresh");
+        const ehRotaDeRefresh = requisicaoOriginal.url?.includes(
+          "Autenticacao/refresh",
+        );
 
-        // Rotas de autenticação: nunca interceptar, erro vai direto para o chamador
-        if (ehRotaDeLogin || ehRotaDeRefresh) {
-          return Promise.reject(erro);
-        }
+        const ehRotaDeLogin =
+          requisicaoOriginal.url?.includes("Autenticacao/login");
+        const estaNaPaginaInicial = estaNaHome();
 
-        if (status === 401 && !requisicaoOriginal._retry) {
+        if (
+          erro.response?.status === 401 &&
+          !requisicaoOriginal._retry &&
+          !ehRotaDeRefresh &&
+          !ehRotaDeLogin &&
+          !estaNaPaginaInicial
+        ) {
           requisicaoOriginal._retry = true;
 
           const novoToken = await executarRefresh();
 
           if (novoToken) {
             requisicaoOriginal.headers.Authorization = `Bearer ${novoToken}`;
+
             return api(requisicaoOriginal);
           }
 
           _logout();
-          window.location.replace("/");
+
+          window.location.replace(BASE_URL);
+
           return Promise.reject(erro);
         }
 
@@ -163,23 +175,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   function login(novoTokenData: TokenData) {
     tokenRef.current = novoTokenData.token;
+
     setTokenData(novoTokenData);
   }
 
   function _logout() {
     tokenRef.current = null;
+
     setTokenData(null);
     setUserObj(null);
+
     localStorage.removeItem("user");
   }
 
   function logout() {
     _logout();
-    window.location.replace("/");
+
+    window.location.replace(BASE_URL);
   }
 
   function setUser(u: User) {
     setUserObj(u);
+
     localStorage.setItem("user", JSON.stringify(u));
   }
 

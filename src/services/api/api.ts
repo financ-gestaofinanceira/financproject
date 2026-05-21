@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:7147/api",
+  baseURL: "https://api.pldprojects.com.br/api",
   withCredentials: true,
 });
 
