@@ -39,8 +39,6 @@ export const AuthContext = createContext({} as AuthContextType);
 
 let refreshEmAndamento: Promise<string | null> | null = null;
 
-const BASE_URL = import.meta.env.BASE_URL;
-
 export function AuthProvider({ children }: AuthProviderProps) {
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const [user, setUserObj] = useState<User | null>(null);
@@ -51,15 +49,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const authenticated =
     tokenData !== null && Date.now() < new Date(tokenData.expiration).getTime();
 
-  function estaNaHome() {
-    return (
-      window.location.pathname === BASE_URL || window.location.pathname === "/"
-    );
+  // Com HashRouter, a rota fica no hash (#/login, #/home...)
+  // O pathname nunca muda — só o hash muda entre as telas
+  function estaNaTelaDeLogin() {
+    const hash = window.location.hash;
+    return hash === "#/" || hash === "" || hash === "#";
   }
 
   const executarRefresh = async (): Promise<string | null> => {
-    // não faz refresh na home
-    if (estaNaHome()) {
+    // não faz refresh na tela de login
+    if (estaNaTelaDeLogin()) {
       return null;
     }
 
@@ -106,8 +105,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUserObj(JSON.parse(userStorage));
     }
 
-    // evita refresh na página inicial
-    if (estaNaHome()) {
+    // evita refresh na tela de login
+    if (estaNaTelaDeLogin()) {
       setInicializando(false);
       return;
     }
@@ -137,7 +136,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         const ehRotaDeLogin =
           requisicaoOriginal.url?.includes("Autenticacao/login");
-        const estaNaPaginaInicial = estaNaHome();
+
+        const estaNaPaginaInicial = estaNaTelaDeLogin();
 
         if (
           erro.response?.status === 401 &&
@@ -158,7 +158,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
           _logout();
 
-          window.location.replace(BASE_URL);
+          // Com HashRouter, redireciona trocando apenas o hash
+          window.location.hash = "#/";
 
           return Promise.reject(erro);
         }
@@ -191,7 +192,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   function logout() {
     _logout();
 
-    window.location.replace(BASE_URL);
+    // Com HashRouter, basta trocar o hash — o pathname (/financproject/) não muda
+    window.location.hash = "#/";
   }
 
   function setUser(u: User) {
