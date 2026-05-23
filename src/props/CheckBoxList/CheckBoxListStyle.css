@@ -168,3 +168,25 @@
   padding: 20px;
   margin: 0;
 }
+.fnc-cblist__trigger-acoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.fnc-cblist__limpar {
+  color: #62748e;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 2px;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.fnc-cblist__limpar:hover {
+  color: #fff;
+  background: rgba(255, 75, 75, 0.2);
+}

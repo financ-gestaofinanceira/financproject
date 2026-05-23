@@ -20,11 +20,13 @@ import { AuthContext } from "../../contexts/AuthContext";
 import LabelText from "../../props/LabelText/LabelText";
 import CadConvite from "./CadConvite/CadConvite";
 import type { GetContaUsuario } from "../../models/ContasUsuarios/GetContaUsuario";
+import type { ContaResponse } from "../../models/ContasUsuarios/GetContasBancarias";
 
 type Props = {};
 
 const Movimentacoes: React.FC<Props> = ({}) => {
-  const { conta, setContaUsuario, usuario } = useContext(ContaContext);
+  const { conta, setConta, setContaUsuario, usuario } =
+    useContext(ContaContext);
   const { user } = useContext(AuthContext);
   const [movimentacoes, setMovimentacoes] = useState<GetMovimentacoes>();
   const [isCadMovOpen, setIsCadMovOpen] = useState(false);
@@ -65,6 +67,19 @@ const Movimentacoes: React.FC<Props> = ({}) => {
       style: "currency",
       currency: "BRL",
     }).format(valor);
+  };
+
+  const buscaContas = async () => {
+    let resposta = await api<ContaResponse>(
+      `/ContasUsuarios?id=${conta!.idConta}`,
+      "GET",
+    );
+    console.log(`/ContasUsuarios?id=${conta!.idConta}`);
+
+    console.log(resposta!.dados!.conteudo[0]);
+    if (resposta.sucesso && resposta.dados) {
+      setConta(resposta.dados.conteudo[0]);
+    }
   };
 
   const buscaCategorias = useCallback(async () => {
@@ -112,6 +127,8 @@ const Movimentacoes: React.FC<Props> = ({}) => {
   };
 
   const buscaMovimentacoes = useCallback(async () => {
+    await buscaContas();
+
     const toUTCISOString = (data: string) => new Date(data).toISOString();
 
     const params = new URLSearchParams({
@@ -181,7 +198,9 @@ const Movimentacoes: React.FC<Props> = ({}) => {
                   />
                   <FncButton
                     title="Categorias"
-                    onClick={() => setIsCategoriaOpen(true)}
+                    onClick={() => {
+                      setIsCategoriaOpen(true);
+                    }}
                   />
                 </>
               )}
@@ -275,18 +294,32 @@ const Movimentacoes: React.FC<Props> = ({}) => {
           onClose={() => {
             setIsCadMovOpen(false);
             buscaMovimentacoes();
+            buscaContaUsuario();
           }}
         />
       </Modal>
 
-      <Modal isOpen={isCategoriaOpen} onClose={() => setIsCategoriaOpen(false)}>
+      <Modal
+        isOpen={isCategoriaOpen}
+        onClose={async () => {
+          {
+            setIsCategoriaOpen(false);
+            await buscaCategorias();
+          }
+        }}
+      >
         <Categorias
           idConta={conta!.idConta}
           buscaMovimentacoes={buscaMovimentacoes}
         />
       </Modal>
 
-      <Modal isOpen={isCadInvite} onClose={() => setIsCadInvite(false)}>
+      <Modal
+        isOpen={isCadInvite}
+        onClose={() => {
+          setIsCadInvite(false);
+        }}
+      >
         <CadConvite setIsCadInvite={setIsCadInvite} />
       </Modal>
 
