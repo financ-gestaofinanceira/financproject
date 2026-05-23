@@ -18,7 +18,63 @@ body {
   display: flex;
   width: 100%;
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden; /* Mantém hidden para que apenas a main e a sidebar rolem independentemente */
+  flex-direction: row;
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    flex-direction: column;
+  }
+}
+
+/* ── Header Mobile ── */
+.mobile-header {
+  display: none;
+  height: 60px;
+  background: #0f172b;
+  border-bottom: 1px solid #1d293d;
+  padding: 0 20px;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 80; /* Menor que o da sidebar e overlay */
+}
+
+.mobile-header__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.mobile-header__logo .material-icons {
+  color: #2b7fff;
+}
+
+.mobile-header__menu-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .mobile-header {
+    display: flex;
+  }
+}
+
+/* ── Overlay ── */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 150; /* Entre o conteúdo e a sidebar */
 }
 
 /* ── Sidebar ── */
@@ -26,7 +82,7 @@ body {
   width: 260px;
   min-width: 260px;
   height: 100%;
-  background: rgba(15, 23, 43, 0.8);
+  background: rgba(15, 23, 43, 0.95);
   border-right: 1px #1d293d solid;
   display: flex;
   flex-direction: column;
@@ -34,8 +90,90 @@ body {
   position: relative;
   transition:
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+    min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s ease;
+  overflow-y: auto; /* Permite rolagem vertical se necessário */
+  overflow-x: hidden;
+  z-index: 200; /* Garante que fique por cima de tudo */
+}
+
+/* Estilização da barra lateral (scrollbar) da sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 6px; /* Largura um pouco maior para ser visível */
+  display: block !important;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #2b7fff; /* Cor azul para destacar a barra */
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #4f39f6;
+}
+
+/* Garante que a barra apareça no Firefox */
+.sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #2b7fff rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    width: 85%; /* Ocupa 85% da largura no mobile */
+    max-width: 300px;
+    min-width: unset; /* Remove min-width fixo que pode causar quebra */
+    background: #0f172b; /* Fundo sólido para não confundir com o conteúdo */
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    height: 100dvh; /* Usa a altura dinâmica do viewport para mobile */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar--mobile-aberto {
+    transform: translateX(0);
+    display: flex;
+    overflow-y: auto; /* Força a rolagem vertical */
+  }
+
+  .sidebar__toggle {
+    display: none !important;
+  }
+
+  /* Garante que os elementos internos não tentem se comportar como recolhidos no mobile */
+  .sidebar .sidebar__logo-text,
+  .sidebar .user__info,
+  .sidebar .nav__title,
+  .sidebar .nav__item-texto {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .sidebar .sidebar__header {
+    padding-left: 20px;
+    justify-content: flex-start;
+  }
+
+  .sidebar .sidebar__user {
+    margin: 0 15px;
+    padding: 15px;
+    justify-content: flex-start;
+  }
+
+  .sidebar .logout__button {
+    justify-content: flex-start;
+    padding-left: 20px;
+  }
 }
 
 .sidebar--recolhida {
@@ -186,11 +324,12 @@ body {
 
 /* ── Nav ── */
 .sidebar__nav {
-  flex: 1;
+  flex: 1; /* Faz o menu ocupar o espaço central e empurrar o footer para baixo */
   padding: 20px 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-height: min-content; /* Garante que o conteúdo não seja esmagado */
 }
 
 .nav__title {
@@ -265,8 +404,17 @@ body {
   flex: 1;
   padding: 32px;
   background: linear-gradient(135deg, #020618 0%, #0f172b 50%, #020618 100%);
-  overflow-y: auto;
+  overflow-y: auto; /* Permite rolagem no conteúdo principal */
+  overflow-x: hidden;
   transition: padding 0.3s;
+}
+
+@media (max-width: 768px) {
+  .pagina-central {
+    height: calc(100dvh - 60px); /* Usa dvh para mobile */
+    padding: 20px 16px;
+    overflow-y: auto;
+  }
 }
 
 /* ── Scrollbar ── */
@@ -317,6 +465,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-height: min-content; /* Garante que o conteúdo não seja cortado */
 }
 .patrimonio-header {
   display: flex;

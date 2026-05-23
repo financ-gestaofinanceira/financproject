@@ -21,6 +21,16 @@ export const Home: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [recolhida, setRecolhida] = useState(false);
+  const [mobileAberto, setMobileAberto] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [telaAtual, setTelaAtual] = useState(0);
   const [abrirMsgBoxExit, setAbrirMsgBoxExit] = useState(false);
@@ -73,7 +83,8 @@ export const Home: React.FC = () => {
   }
 
   const retornaTelas = () => {
-    if (telaAtual === 0 && user !== null) return <Contas setTelaAtual={setTelaAtual} />;
+    if (telaAtual === 0 && user !== null)
+      return <Contas setTelaAtual={setTelaAtual} />;
     if (telaAtual === 1) return <Movimentacoes />;
     if (telaAtual === 3) return <Convites />;
     if (telaAtual === 4) return <Membros />;
@@ -90,8 +101,36 @@ export const Home: React.FC = () => {
         />
       )}
 
-      <aside className={`sidebar ${recolhida ? "sidebar--recolhida" : ""}`}>
-        {/* Botão toggle */}
+      {/* Header Mobile */}
+      <header className="mobile-header">
+        <div className="mobile-header__logo">
+          <span className="material-icons">account_balance_wallet</span>
+          <span>FinanceHub</span>
+        </div>
+        <button
+          className="mobile-header__menu-btn"
+          onClick={() => setMobileAberto(!mobileAberto)}
+        >
+          <span className="material-icons">
+            {mobileAberto ? "close" : "menu"}
+          </span>
+        </button>
+      </header>
+
+      {/* Overlay para fechar o menu mobile ao clicar fora */}
+      {mobileAberto && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setMobileAberto(false)}
+        />
+      )}
+
+      <aside
+        className={`sidebar ${recolhida ? "sidebar--recolhida" : ""} ${
+          mobileAberto ? "sidebar--mobile-aberto" : ""
+        }`}
+      >
+        {/* Botão toggle (apenas desktop) */}
         <button
           className="sidebar__toggle"
           onClick={() => setRecolhida((v) => !v)}
@@ -108,7 +147,7 @@ export const Home: React.FC = () => {
               account_balance_wallet
             </span>
           </div>
-          {!recolhida && (
+          {(!recolhida || isMobile) && (
             <div className="sidebar__logo-text">
               <h1 className="sidebar__title">FinanceHub</h1>
               <p className="sidebar__subtitle">Gestão Inteligente</p>
@@ -120,40 +159,51 @@ export const Home: React.FC = () => {
           <div className="user__avatar">
             {user?.nomeCompleto?.charAt(0) || "U"}
           </div>
-          {!recolhida && (
+          {(!recolhida || isMobile) && (
             <div className="user__info">
               <p className="user__name">{user?.nomeCompleto || "Usuário"}</p>
-              <p className="user__email">{user?.email || "email@exemplo.com"}</p>
+              <p className="user__email">
+                {user?.email || "email@exemplo.com"}
+              </p>
             </div>
           )}
         </div>
 
         <nav className="sidebar__nav">
-          {!recolhida && <p className="nav__title">Menu</p>}
+          {(!recolhida || isMobile) && <p className="nav__title">Menu</p>}
 
           <div className="fnc-home-iten-primary">
             <MenuItem
-              title={recolhida ? undefined : "Contas"}
+              title={recolhida && !isMobile ? undefined : "Contas"}
               icon="account_balance"
-              onClick={() => setTelaAtual(0)}
+              onClick={() => {
+                setTelaAtual(0);
+                setMobileAberto(false);
+              }}
               disabled={telaAtual === 0}
               tooltip="Contas"
             />
 
             {conta && (
               <MenuItem
-                title={recolhida ? undefined : conta.titulo}
+                title={recolhida && !isMobile ? undefined : conta.titulo}
                 icon="wallet"
-                onClick={() => setTelaAtual(1)}
+                onClick={() => {
+                  setTelaAtual(1);
+                  setMobileAberto(false);
+                }}
                 disabled={telaAtual === 1 || telaAtual === 4}
                 tooltip={conta.titulo}
               />
             )}
 
             <MenuItem
-              title={recolhida ? undefined : "Convites"}
+              title={recolhida && !isMobile ? undefined : "Convites"}
               icon="person_add"
-              onClick={() => setTelaAtual(3)}
+              onClick={() => {
+                setTelaAtual(3);
+                setMobileAberto(false);
+              }}
               disabled={telaAtual === 3}
               tooltip="Convites"
             />
@@ -163,15 +213,20 @@ export const Home: React.FC = () => {
             {conta && (telaAtual === 1 || telaAtual === 4) && (
               <div className="fnc-home-itens">
                 <MenuItem
-                  title={recolhida ? undefined : "Membros da Conta"}
+                  title={
+                    recolhida && !isMobile ? undefined : "Membros da Conta"
+                  }
                   icon="group"
-                  onClick={() => setTelaAtual(4)}
+                  onClick={() => {
+                    setTelaAtual(4);
+                    setMobileAberto(false);
+                  }}
                   background="#4056f9"
                   disabled={telaAtual === 4}
                   tooltip="Membros da Conta"
                 />
                 <MenuItem
-                  title={recolhida ? undefined : "Sair da Conta"}
+                  title={recolhida && !isMobile ? undefined : "Sair da Conta"}
                   icon="exit_to_app"
                   onClick={() => setAbrirMsgBoxExit(true)}
                   background="#ff4b4b"
@@ -197,7 +252,7 @@ export const Home: React.FC = () => {
         <div className="sidebar__footer">
           <button className="logout__button" onClick={() => deslogar()}>
             <span className="material-icons">exit_to_app</span>
-            {!recolhida && "Deslogar"}
+            {(!recolhida || isMobile) && "Deslogar"}
           </button>
         </div>
       </aside>
