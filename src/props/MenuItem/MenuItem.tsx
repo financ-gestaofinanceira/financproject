@@ -6,6 +6,7 @@ interface PropMenuItem {
   icon: string;
   background?: string;
   onClick?: () => void;
+  tooltip?: string;
 }
 
 const MenuItem: React.FC<PropMenuItem> = ({
@@ -14,19 +15,21 @@ const MenuItem: React.FC<PropMenuItem> = ({
   icon,
   background,
   onClick,
+  tooltip,
 }) => {
   return (
     <div
-      className={disabled ? "nav__item active" : "nav__item"}
+      className={`nav__item ${disabled ? "active" : ""} ${!title ? "nav__item--icone" : ""}`}
       style={
         {
           "--hover-bg": background || "rgba(255, 255, 255, 0.05)",
         } as React.CSSProperties
       }
       onClick={onClick}
+      title={tooltip}
     >
       <span className="material-icons">{icon}</span>
-      {title}
+      {title && <span className="nav__item-texto">{title}</span>}
     </div>
   );
 };

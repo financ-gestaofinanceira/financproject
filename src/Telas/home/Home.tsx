@@ -17,10 +17,10 @@ import Membros from "../Membros/Membros";
 
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
-
   const { conta, removeConta } = useContext(ContaContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [recolhida, setRecolhida] = useState(false);
 
   const [telaAtual, setTelaAtual] = useState(0);
   const [abrirMsgBoxExit, setAbrirMsgBoxExit] = useState(false);
@@ -32,7 +32,6 @@ export const Home: React.FC = () => {
       "GET",
       undefined,
     );
-
     if (resposta.sucesso && resposta.dados) {
       setUser(resposta.dados);
     }
@@ -50,7 +49,6 @@ export const Home: React.FC = () => {
       `/ContasUsuarios/${conta?.idConta}/sair`,
       "POST",
     );
-
     if (response!.sucesso) {
       removeConta();
       setTelaAtual(0);
@@ -61,14 +59,12 @@ export const Home: React.FC = () => {
 
   useEffect(() => {
     if (inicializando) return;
-
     const init = async () => {
       if (!user) {
         await buscarUsuario();
       }
       setLoading(false);
     };
-
     init();
   }, [inicializando]);
 
@@ -77,18 +73,10 @@ export const Home: React.FC = () => {
   }
 
   const retornaTelas = () => {
-    if (telaAtual === 0 && user !== null) {
-      return <Contas setTelaAtual={setTelaAtual} />;
-    }
-    if (telaAtual === 1) {
-      return <Movimentacoes />;
-    }
-    if (telaAtual === 3) {
-      return <Convites />;
-    }
-    if (telaAtual === 4) {
-      return <Membros />;
-    }
+    if (telaAtual === 0 && user !== null) return <Contas setTelaAtual={setTelaAtual} />;
+    if (telaAtual === 1) return <Movimentacoes />;
+    if (telaAtual === 3) return <Convites />;
+    if (telaAtual === 4) return <Membros />;
   };
 
   return (
@@ -101,78 +89,95 @@ export const Home: React.FC = () => {
           centerlize={true}
         />
       )}
-      <aside className="sidebar">
+
+      <aside className={`sidebar ${recolhida ? "sidebar--recolhida" : ""}`}>
+        {/* Botão toggle */}
+        <button
+          className="sidebar__toggle"
+          onClick={() => setRecolhida((v) => !v)}
+          title={recolhida ? "Expandir menu" : "Recolher menu"}
+        >
+          <span className="material-icons">
+            {recolhida ? "chevron_right" : "chevron_left"}
+          </span>
+        </button>
+
         <div className="sidebar__header">
           <div className="sidebar__logo-icon">
             <span className="material-icons" style={{ color: "white" }}>
               account_balance_wallet
             </span>
           </div>
-          <div className="sidebar__logo-text">
-            <h1 className="sidebar__title">FinanceHub</h1>
-            <p className="sidebar__subtitle">Gestão Inteligente</p>
-          </div>
+          {!recolhida && (
+            <div className="sidebar__logo-text">
+              <h1 className="sidebar__title">FinanceHub</h1>
+              <p className="sidebar__subtitle">Gestão Inteligente</p>
+            </div>
+          )}
         </div>
 
         <div className="sidebar__user">
           <div className="user__avatar">
             {user?.nomeCompleto?.charAt(0) || "U"}
           </div>
-          <div className="user__info">
-            <p className="user__name">{user?.nomeCompleto || "Usuário"}</p>
-            <p className="user__email">{user?.email || "email@exemplo.com"}</p>
-          </div>
+          {!recolhida && (
+            <div className="user__info">
+              <p className="user__name">{user?.nomeCompleto || "Usuário"}</p>
+              <p className="user__email">{user?.email || "email@exemplo.com"}</p>
+            </div>
+          )}
         </div>
 
         <nav className="sidebar__nav">
-          <p className="nav__title">Menu</p>
+          {!recolhida && <p className="nav__title">Menu</p>}
 
           <div className="fnc-home-iten-primary">
-            {
-              //<MenuItem title="Dashboard" icon="dashboard" />
-            }
-
             <MenuItem
-              title="Contas"
+              title={recolhida ? undefined : "Contas"}
               icon="account_balance"
               onClick={() => setTelaAtual(0)}
               disabled={telaAtual === 0}
+              tooltip="Contas"
             />
 
             {conta && (
               <MenuItem
-                title={conta.titulo}
+                title={recolhida ? undefined : conta.titulo}
                 icon="wallet"
                 onClick={() => setTelaAtual(1)}
                 disabled={telaAtual === 1 || telaAtual === 4}
+                tooltip={conta.titulo}
               />
             )}
+
             <MenuItem
-              title="Convites"
+              title={recolhida ? undefined : "Convites"}
               icon="person_add"
               onClick={() => setTelaAtual(3)}
               disabled={telaAtual === 3}
+              tooltip="Convites"
             />
           </div>
+
           <div className="fnc-home-iten-secundary">
             {conta && (telaAtual === 1 || telaAtual === 4) && (
-              <>
-                <div className="fnc-home-itens">
-                  <MenuItem
-                    title="Membros da Conta"
-                    icon="group"
-                    onClick={() => setTelaAtual(4)}
-                    background="#4056f9"
-                    disabled={telaAtual === 4}
-                  />
-                  <MenuItem
-                    title="Sair da Conta"
-                    icon="exit_to_app"
-                    onClick={() => setAbrirMsgBoxExit(true)}
-                    background="#ff4b4b"
-                  />
-                </div>
-              </>
+              <div className="fnc-home-itens">
+                <MenuItem
+                  title={recolhida ? undefined : "Membros da Conta"}
+                  icon="group"
+                  onClick={() => setTelaAtual(4)}
+                  background="#4056f9"
+                  disabled={telaAtual === 4}
+                  tooltip="Membros da Conta"
+                />
+                <MenuItem
+                  title={recolhida ? undefined : "Sair da Conta"}
+                  icon="exit_to_app"
+                  onClick={() => setAbrirMsgBoxExit(true)}
+                  background="#ff4b4b"
+                  tooltip="Sair da Conta"
+                />
+              </div>
             )}
           </div>
         </nav>
@@ -183,10 +188,7 @@ export const Home: React.FC = () => {
             description="Deseja realmente sair da conta?"
             type={TypeMsgBox.Question}
             onQuestion={(confirmou: boolean) => {
-              if (confirmou) {
-                sairDaContaBancaria();
-              }
-
+              if (confirmou) sairDaContaBancaria();
               setAbrirMsgBoxExit(false);
             }}
           />
@@ -195,7 +197,7 @@ export const Home: React.FC = () => {
         <div className="sidebar__footer">
           <button className="logout__button" onClick={() => deslogar()}>
             <span className="material-icons">exit_to_app</span>
-            Deslogar
+            {!recolhida && "Deslogar"}
           </button>
         </div>
       </aside>

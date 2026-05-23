@@ -11,6 +11,14 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Quando só tem ícone (sidebar recolhida) */
+.nav__item--icone {
+  padding-left: 0;
+  justify-content: center;
 }
 
 .nav__item:hover {
@@ -22,4 +30,9 @@
   background: linear-gradient(90deg, #2b7fff 0%, #4f39f6 100%);
   color: white;
   box-shadow: 0px 4px 6px -4px rgba(43, 127, 255, 0.25);
+}
+
+.nav__item-texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
