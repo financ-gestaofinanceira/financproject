@@ -105,7 +105,7 @@ export const Home: React.FC = () => {
       <header className="mobile-header">
         <div className="mobile-header__logo">
           <span className="material-icons">account_balance_wallet</span>
-          <span>FinanceHub</span>
+          <span onClick={() => setTelaAtual(0)}>FinancHub</span>
         </div>
         <button
           className="mobile-header__menu-btn"

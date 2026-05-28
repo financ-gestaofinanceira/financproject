@@ -12,9 +12,9 @@
 .fnc-table-categorias {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+
   height: 300px;
-  min-height: 0;
+  width: 200px;
 }
 .centraliza table {
   width: 100%;

@@ -515,6 +515,7 @@ body {
   width: 100%;
   max-width: 100%;
   flex-wrap: wrap;
+  padding-bottom: 50px;
 }
 .card-secundario-custom {
   border-radius: 16px;

@@ -3,28 +3,33 @@
   flex-wrap: wrap;
   gap: 20px;
   width: 100%;
+  overflow: hidden;
 }
 
 .fnc-ctn-table {
   display: flex;
   flex-direction: column;
+  /* Mantém o título e o conteúdo alinhados à esquerda */
   align-items: flex-start;
   flex: 1;
-  min-width: 350px;
-  min-height: 0;
+  min-width: 0;
+  width: 100%;
 }
 
 .fnc-table-invite-wrapper {
+  /* Força o wrapper a ocupar 100% da largura do pai, mesmo com align-items: flex-start */
   width: 100%;
+  max-width: 100%;
   border-radius: 16px;
   border: 1px solid rgba(49, 65, 88, 0.5);
   overflow-x: auto;
   overflow-y: auto;
   background: rgba(29, 41, 61, 0.7);
   max-height: 500px;
+  display: block;
 }
 
-/* scrollbar */
+/* Scrollbar */
 .fnc-table-invite-wrapper::-webkit-scrollbar {
   height: 8px;
   width: 8px;
@@ -39,16 +44,14 @@
   border-radius: 10px;
 }
 
-.fnc-table-invite-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #3e536e;
-}
-
 .fnc-table-invite-wrapper table {
   width: 100%;
   border-collapse: collapse;
+  /* Mantém a largura mínima para forçar a rolagem em telas pequenas */
+  min-width: 700px;
 }
 
-/* header */
+/* Cabeçalho */
 .fnc-table-invite-wrapper thead {
   background: rgb(49, 65, 88);
   position: sticky;
@@ -61,11 +64,22 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 1px;
-  text-align: center;
+  /* Alinhado à esquerda conforme solicitado */
+  text-align: left;
   padding: 16px 24px;
+  white-space: nowrap;
 }
 
-/* linhas */
+/* Células */
+.fnc-table-invite-wrapper td {
+  font-size: 13px;
+  color: white;
+  padding: 20px 24px;
+  /* Alinhado à esquerda conforme solicitado */
+  text-align: left;
+  white-space: nowrap;
+}
+
 .fnc-table-invite-wrapper tr {
   border-bottom: 1px solid rgba(49, 65, 88, 0.5);
   transition: background 0.2s;
@@ -79,16 +93,13 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-/* células */
-.fnc-table-invite-wrapper td {
-  font-size: 13px;
-  color: white;
-  padding: 20px 24px;
-  text-align: center;
-}
-
-@media (max-width: 768px) {
+/* Responsivo */
+@media (max-width: 1300px) {
   .fnc-tables-invite {
     flex-direction: column;
+  }
+  .fnc-ctn-table {
+    width: 100%;
+    flex: none;
   }
 }

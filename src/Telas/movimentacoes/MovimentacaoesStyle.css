@@ -44,6 +44,7 @@
   flex-direction: column;
   gap: 24px;
   animation: fadeIn 0.3s ease;
+  padding-bottom: 50px;
 }
 
 @keyframes fadeIn {
