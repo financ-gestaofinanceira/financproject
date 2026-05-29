@@ -1,0 +1,139 @@
+/* ─── SelectList ─────────────────────────────────────── */
+.fnc-slist {
+  width: 100%;
+  font-family: "Inter", sans-serif;
+}
+
+.fnc-slist__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #90a1b9;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* Container principal — parece uma tabela */
+.fnc-slist__container {
+  width: 100%;
+  border: 1px solid #101825;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1d293d;
+}
+
+/* Barra de pesquisa — cabeçalho da tabela */
+.fnc-slist__search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: #314158;
+  border-bottom: 1px solid #1e2d47;
+}
+
+.fnc-slist__search-icon {
+  color: #4a5568;
+  flex-shrink: 0;
+}
+
+.fnc-slist__search {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #717477;
+  font-family: inherit;
+}
+
+.fnc-slist__search::placeholder {
+  color: #5f5f5f;
+}
+
+.fnc-slist__search-clear {
+  font-size: 11px;
+  color: #4a5568;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  line-height: 1;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.fnc-slist__search-clear:hover {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Lista / corpo da tabela */
+.fnc-slist__lista {
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1e2d47 transparent;
+}
+
+.fnc-slist__lista::-webkit-scrollbar {
+  width: 4px;
+}
+.fnc-slist__lista::-webkit-scrollbar-track {
+  background: transparent;
+}
+.fnc-slist__lista::-webkit-scrollbar-thumb {
+  background: #1e2d47;
+  border-radius: 99px;
+}
+
+/* Linha da tabela */
+.fnc-slist__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #101825;
+  transition: background 0.12s;
+}
+
+.fnc-slist__item:last-child {
+  border-bottom: none;
+}
+
+.fnc-slist__item:hover {
+  background: rgba(21, 93, 252, 0.07);
+}
+
+.fnc-slist__item--ativo {
+  background: rgba(21, 93, 252, 0.13);
+}
+
+.fnc-slist__item--ativo:hover {
+  background: rgba(21, 93, 252, 0.18);
+}
+
+.fnc-slist__item-texto {
+  font-size: 13.5px;
+  color: #cbd5e1;
+}
+
+.fnc-slist__item--ativo .fnc-slist__item-texto {
+  color: #155dfc;
+  font-weight: 500;
+}
+
+.fnc-slist__item-check {
+  color: #155dfc;
+  flex-shrink: 0;
+}
+
+/* Vazio */
+.fnc-slist__empty {
+  font-size: 13px;
+  color: #4a5568;
+  text-align: center;
+  padding: 20px 12px;
+}

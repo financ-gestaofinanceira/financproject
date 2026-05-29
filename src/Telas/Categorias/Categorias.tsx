@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useId } from "react";
 import api from "../.././services/api/apiConnect";
 import type { ApiResult } from "../../models/interface/ApiResult";
 import type {
@@ -14,6 +14,7 @@ import InputTextAndColor from "../../props/InputTextAndColor/InputTextAndColor";
 import TitleText from "../../props/TitleText/TitleText";
 import type { FncTableColumn } from "../../props/FncTable/FncTable";
 import FncTable from "../../props/FncTable/FncTable";
+import SelectList from "../../props/SelectList/SelectList";
 
 interface PropCadMov {
   idConta: number;
@@ -60,14 +61,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
     }
   }, [idConta]);
 
-  const handleCategoriaClick = async (objetoDaLinha: any) => {
-    console.log(objetoDaLinha);
-    setCategoriaSelecionada(objetoDaLinha.categoria);
-    setTituloEditor(objetoDaLinha.nome);
-    setCorEditor(objetoDaLinha.categoria.cor);
-    setEditOnly(true);
-  };
-
   const cadastraCategoria = () => {
     interface IConvite {
       id: number;
@@ -88,14 +81,23 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
     return (
       <>
         <form onSubmit={criaCategoriaRequest}>
-          <div className="fnc-table-categorias">
-            <TitleText text="Categorias" />
-            <FncTable
-              columns={colunas}
-              data={convitesData}
-              onRowClick={handleCategoriaClick}
+          {categorias !== undefined && (
+            <SelectList
+              itens={categorias.conteudo}
+              idKey="idCategoria"
+              labelKey="nome"
+              selecionado={categoriaSelecionada?.idCategoria ?? null}
+              onSelect={(id, item) => {
+                setCategoriaSelecionada(item);
+                setTituloEditor(item.nome);
+                setCorEditor(item.cor);
+                setEditOnly(true);
+              }}
+              label="Categoria"
+              placeholder="Selecione uma categoria..."
             />
-          </div>
+          )}
+
           <div className="modal-body">
             <InputTextAndColor
               label="Nova Categoria"

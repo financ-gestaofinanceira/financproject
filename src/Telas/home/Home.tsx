@@ -249,7 +249,7 @@ export const Home: React.FC = () => {
           />
         )}
 
-        <div className="sidebar__footer">
+        <div className="sidebar__footer" title="Deslogar">
           <button className="logout__button" onClick={() => deslogar()}>
             <span className="material-icons">exit_to_app</span>
             {(!recolhida || isMobile) && "Deslogar"}
