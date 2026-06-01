@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useId } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../.././services/api/apiConnect";
 import type { ApiResult } from "../../models/interface/ApiResult";
 import type {
@@ -12,8 +12,6 @@ import ErrorText from "../../props/ErrorText/ErrorText";
 import { TypeThemeButton } from "../../props/FncButton/TypeThemeButton";
 import InputTextAndColor from "../../props/InputTextAndColor/InputTextAndColor";
 import TitleText from "../../props/TitleText/TitleText";
-import type { FncTableColumn } from "../../props/FncTable/FncTable";
-import FncTable from "../../props/FncTable/FncTable";
 import SelectList from "../../props/SelectList/SelectList";
 
 interface PropCadMov {
@@ -67,7 +65,6 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
       nome: string;
       categoria: Categoria;
     }
-    const colunas: FncTableColumn[] = [{ header: "Nome", key: "nome" }];
 
     let convitesData: IConvite[] = [];
     categorias?.conteudo.map((cat) => {
@@ -88,6 +85,7 @@ const Categorias: React.FC<PropCadMov> = ({ buscaMovimentacoes, idConta }) => {
               labelKey="nome"
               selecionado={categoriaSelecionada?.idCategoria ?? null}
               onSelect={(id, item) => {
+                id;
                 setCategoriaSelecionada(item);
                 setTituloEditor(item.nome);
                 setCorEditor(item.cor);

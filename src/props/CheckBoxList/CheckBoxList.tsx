@@ -25,6 +25,7 @@ function CheckBoxList<T extends object>({
   const [busca, setBusca] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const checkTodosRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleClickFora = (e: MouseEvent) => {
@@ -55,8 +56,35 @@ function CheckBoxList<T extends object>({
     onChange(novosIds);
   };
 
+  // IDs de todos os itens exceto o primeiro
+  const idsSemPrimeiro = itens.slice(1).map((item) => item[idKey] as number);
+
+  const todosSelecionados =
+    idsSemPrimeiro.length > 0 &&
+    idsSemPrimeiro.every((id) => selecionados.includes(id)) &&
+    !selecionados.includes(itens[0]?.[idKey] as number);
+
+  // Atualiza o estado indeterminate do "Selecionar tudo"
+  useEffect(() => {
+    if (checkTodosRef.current) {
+      const algumSelecionado = selecionados.length > 0;
+      checkTodosRef.current.indeterminate =
+        algumSelecionado && !todosSelecionados;
+    }
+  }, [selecionados, itens, todosSelecionados]);
+
+  const toggleTodos = () => {
+    if (todosSelecionados) {
+      onChange([]);
+    } else {
+      // Seleciona todos exceto o primeiro
+      onChange(idsSemPrimeiro);
+    }
+  };
+
   const textoResumo = () => {
     if (selecionados.length === 0) return null;
+    if (todosSelecionados) return "Todos selecionados";
     const nomes = itens
       .filter((item) => selecionados.includes(item[idKey] as number))
       .map((item) => String(item[labelKey]));
@@ -140,6 +168,26 @@ function CheckBoxList<T extends object>({
               </span>
             )}
           </div>
+
+          {/* Opção "Selecionar tudo" — só aparece sem busca ativa */}
+          {!busca && itens.length > 0 && (
+            <div
+              className={`fnc-cblist__item fnc-cblist__item--selecionar-todos ${todosSelecionados ? "fnc-cblist__item--selecionado" : ""}`}
+              onClick={toggleTodos}
+            >
+              <input
+                ref={checkTodosRef}
+                type="checkbox"
+                checked={todosSelecionados}
+                onChange={toggleTodos}
+                onClick={(e) => e.stopPropagation()}
+                className="fnc-cblist__check"
+              />
+              <span className="fnc-cblist__item-texto fnc-cblist__item-texto--selecionar-todos">
+                Selecionar tudo
+              </span>
+            </div>
+          )}
 
           {itensFiltrados.length === 0 && (
             <p className="fnc-cblist__empty">Nenhum item encontrado</p>
