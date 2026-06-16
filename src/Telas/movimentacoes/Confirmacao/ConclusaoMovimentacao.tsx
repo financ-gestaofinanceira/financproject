@@ -35,33 +35,73 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
 
   const { setMovimentacao } = useContext(MovimentacaoContext);
   const [dataConclusao, setDataConclusao] = useState(getNow);
-
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // id real após materialização
+  const [idMovAtual, setIdMovAtual] = useState<number>(
+    movimentacaoSelecionada.id,
+  );
+  const [movAtual, setMovAtual] = useState<Movimentacao>(
+    movimentacaoSelecionada,
+  );
+
+  // ── ações pós-materialização ──────────────────────────────────────────────
+  const [acaoPendente, setAcaoPendente] = useState<
+    "concluir" | "deletar" | "alterar" | null
+  >(null);
   const [alterarMovimentacao, setAlterarMovimentacao] = useState(false);
 
-  const formataMoeda = (valor: number) => {
-    let moeda = new Intl.NumberFormat("pt-BR", {
+  const formataMoeda = (valor: number) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(valor);
 
-    return moeda;
+  // ── materializa se necessário e executa ação ──────────────────────────────
+
+  const materializar = async (): Promise<number | null> => {
+    if (idMovAtual > 0) return idMovAtual;
+
+    try {
+      const resposta = await api<any>(
+        `/Contas/${movimentacaoSelecionada.idConta}/Movimentacoes/Fixa/${movimentacaoSelecionada.idFixo}/Materializa`,
+        "POST",
+        { dataMovimentacao: movimentacaoSelecionada.dthrMovimentacao },
+      );
+      if (resposta.sucesso && resposta.dados) {
+        const mov: Movimentacao = resposta.dados.valor;
+        setIdMovAtual(mov.id);
+        setMovAtual(mov);
+        return mov.id;
+      } else {
+        setErroMsg(resposta.erro || "Erro ao materializar movimentação.");
+        return null;
+      }
+    } catch (error: any) {
+      setErroMsg(error.message || "Erro inesperado.");
+      return null;
+    }
   };
+
+  // ── concluir / extornar ───────────────────────────────────────────────────
 
   const ExecutarMovRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setErroMsg(undefined);
-
+    setIsLoading(true);
     try {
       const toUTCISOString = (data: string) => new Date(data).toISOString();
-      const request = {
-        dthrConclusao: toUTCISOString(dataConclusao),
-      };
+
+      const idMov = await materializar();
+      if (idMov === null) return;
 
       const resposta = await api<ApiResult<CategoriaResponse>>(
-        `/Contas/Movimentacoes/${movimentacaoSelecionada.id}/${movimentacaoSelecionada.concluido ? "Extornar" : "Concluir"}`,
+        `/Contas/Movimentacoes/${idMov}/${movAtual.concluido ? "Extornar" : "Concluir"}`,
         "POST",
-        movimentacaoSelecionada.concluido ? undefined : request,
+        movAtual.concluido
+          ? undefined
+          : { dthrConclusao: toUTCISOString(dataConclusao) },
       );
 
       if (resposta.sucesso) {
@@ -72,19 +112,27 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
       }
     } catch (error: any) {
       setErroMsg(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // ── deletar ───────────────────────────────────────────────────────────────
 
   const DeletarMovRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setErroMsg(undefined);
-
+    setIsLoading(true);
     try {
+      const idMov = await materializar();
+      if (idMov === null) return;
+
       const resposta = await api<ApiResult<CategoriaResponse>>(
-        `/Contas/Movimentacoes/${movimentacaoSelecionada.id}/Remover`,
+        `/Contas/Movimentacoes/${idMov}/Remover`,
         "DELETE",
         undefined,
       );
+
       if (resposta.sucesso) {
         buscaMovimentacoes();
         onClose();
@@ -93,13 +141,29 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
       }
     } catch (error: any) {
       setErroMsg(error.message || "Erro inesperado.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const AlterarMovimentacao = () => {
-    setMovimentacao(movimentacaoSelecionada);
-    setAlterarMovimentacao(true);
+  // ── alterar ───────────────────────────────────────────────────────────────
+
+  const AlterarMovimentacao = async () => {
+    setErroMsg(undefined);
+    setIsLoading(true);
+    try {
+      const idMov = await materializar();
+      if (idMov === null) return;
+
+      setMovimentacao({ ...movAtual, id: idMov });
+      setAlterarMovimentacao(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // ── render ────────────────────────────────────────────────────────────────
+
   return (
     <div className="fnc-ctn-opt-mov">
       <TitleText text={`Alterar ${movimentacaoSelecionada.titulo}`} />
@@ -108,7 +172,7 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
       <div className="fnc-inputs-opt-mov">
         {erroMsg && <ErrorText text={erroMsg} />}
 
-        {!movimentacaoSelecionada.concluido && (
+        {!movAtual.concluido && (
           <InputDate
             text={dataConclusao}
             label="Data Conclusão"
@@ -118,21 +182,24 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
 
         <div className="fnc-edit-mov-ctn-vertical">
           <FncButton
-            title={movimentacaoSelecionada.concluido ? "Extornar" : "Concluir"}
+            title={movAtual.concluido ? "Extornar" : "Concluir"}
             type={TypeButton.Submit}
             onClick={ExecutarMovRequest}
+            disabled={isLoading}
           />
           <FncButton
             title="Deletar"
             type={TypeButton.Submit}
             onClick={DeletarMovRequest}
             thema={TypeThemeButton.Delete}
+            disabled={isLoading}
           />
           <FncButton
             title="Alterar"
             type={TypeButton.Submit}
             onClick={AlterarMovimentacao}
             thema={TypeThemeButton.Aceept}
+            disabled={isLoading}
           />
         </div>
 

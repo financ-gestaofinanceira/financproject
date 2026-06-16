@@ -1,8 +1,8 @@
-import type { ContaBancaria } from "../../../../models/ContasUsuarios/GetContasBancarias";
+import { ConteudoContas } from "../../../../models/ContasUsuarios/GetContasBancarias";
 import "./PatrimonioStyle.css";
 
 type Props = {
-  contaBancaria: ContaBancaria[];
+  contaBancaria: ConteudoContas;
 };
 
 const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
@@ -12,26 +12,6 @@ const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
       currency: "BRL",
     }).format(valor);
   };
-
-  const saldoTotal = contaBancaria.reduce(
-    (acc, conta) => acc + conta.saldoAtual,
-    0,
-  );
-
-  const saldoTotalProjetado = contaBancaria.reduce(
-    (acc, conta) => acc + conta.saldoProjetado,
-    0,
-  );
-
-  const receitaTotal = contaBancaria.reduce(
-    (acc, conta) => acc + conta.entradaPendente,
-    0,
-  );
-
-  const despesaTotal = contaBancaria.reduce(
-    (acc, conta) => acc + conta.saidaPendente,
-    0,
-  );
 
   return (
     <div className="card-patrimonio">
@@ -45,7 +25,9 @@ const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
       </div>
 
       <div className="patrimonio-valor">
-        <p className="saldo_total">{formataMoeda(saldoTotal)}</p>
+        <p className="saldo_total">
+          {formataMoeda(contaBancaria.saldoRealizado)}
+        </p>
       </div>
 
       <div className="patrimonio-header">
@@ -56,7 +38,7 @@ const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
 
       <div className="patrimonio-valor">
         <p className="saldo_total_projetado">
-          {formataMoeda(saldoTotalProjetado)}
+          {formataMoeda(contaBancaria.saldoProjetado)}
         </p>
       </div>
 
@@ -67,7 +49,7 @@ const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
           </div>
           <div className="stat-info">
             <p>Receitas</p>
-            <h2>{formataMoeda(receitaTotal)}</h2>
+            <h2>{formataMoeda(contaBancaria.entradaPendente)}</h2>
           </div>
         </div>
 
@@ -77,7 +59,7 @@ const ContaPrincipalComponent: React.FC<Props> = ({ contaBancaria }) => {
           </div>
           <div className="stat-info">
             <p>Despesas</p>
-            <h2>{formataMoeda(despesaTotal)}</h2>
+            <h2>{formataMoeda(contaBancaria.saidaPendente)}</h2>
           </div>
         </div>
       </div>

@@ -59,7 +59,6 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
 
   const buscaCategorias = async () => {
     try {
-      console.log("Mamei");
       const resposta = await api<CategoriaResponse>(
         `/Contas/${conta?.idConta}/Categorias`,
         "GET",
@@ -204,9 +203,6 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
       setIsLoading(false);
     }
   };
-  {
-    console.log(categoriasSelecionadas);
-  }
 
   return (
     <>

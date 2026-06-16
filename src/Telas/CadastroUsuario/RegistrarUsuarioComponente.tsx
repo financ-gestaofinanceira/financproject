@@ -46,14 +46,12 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
       senha: senha,
       confirmarSenha: confirmaSenha,
     };
-    console.log(request);
     var retorno = await api<string>("Usuarios/registrar", "POST", request);
     if (!retorno.sucesso) setErroMsg(retorno.erro);
     else {
       setErroMsg(undefined);
       setExibeCadastro(false);
     }
-    console.log(retorno);
   };
 
   return (

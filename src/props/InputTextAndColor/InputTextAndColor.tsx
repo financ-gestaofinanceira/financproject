@@ -9,6 +9,8 @@ interface PropInputTextAndColor {
   placeholder?: string;
   text: string;
   setText: React.Dispatch<React.SetStateAction<string>>;
+  disable?: boolean;
+  maxLenght?: number;
 }
 const InputTextAndColor: React.FC<PropInputTextAndColor> = ({
   label,
@@ -17,15 +19,26 @@ const InputTextAndColor: React.FC<PropInputTextAndColor> = ({
   placeholder,
   text,
   setText,
+  maxLenght,
+  disable = false,
 }) => {
-  console.log(label);
   return (
     <>
       <div className="fnc-ctn-txt-color">
         {label && <LabelText text={label} />}
         <div className="fnc-input-txt-color">
-          <InputColor color={color} onChange={onChangeColor} />
-          <InputText placeholder={placeholder} text={text} setText={setText} />
+          <InputColor
+            disable={disable}
+            color={color}
+            onChange={onChangeColor}
+          />
+          <InputText
+            disable={disable}
+            placeholder={placeholder}
+            text={text}
+            setText={setText}
+            maxLenght={maxLenght}
+          />
         </div>
       </div>
     </>

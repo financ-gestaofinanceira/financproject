@@ -14,6 +14,9 @@ import Convites from "../Convites/Convites";
 import MsgBox from "../../props/MsgBox/MsgBox";
 import { TypeMsgBox } from "../../props/MsgBox/TypeMsgBox";
 import Membros from "../Membros/Membros";
+import EditaConta from "../ContasBancarias/EditaConta/EditaConta";
+import MovimentacaoFixa from "../Movimentacoes/Fixas/MovimentacaoFixa";
+import LabelText from "../../props/LabelText/LabelText";
 
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
@@ -88,6 +91,8 @@ export const Home: React.FC = () => {
     if (telaAtual === 1) return <Movimentacoes />;
     if (telaAtual === 3) return <Convites />;
     if (telaAtual === 4) return <Membros />;
+    if (telaAtual === 5) return <EditaConta setRetorno={setTelaAtual} />;
+    if (telaAtual === 6) return <MovimentacaoFixa />;
   };
 
   return (
@@ -210,30 +215,59 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="fnc-home-iten-secundary">
-            {conta && (telaAtual === 1 || telaAtual === 4) && (
-              <div className="fnc-home-itens">
-                <MenuItem
-                  title={
-                    recolhida && !isMobile ? undefined : "Membros da Conta"
-                  }
-                  icon="group"
-                  onClick={() => {
-                    setTelaAtual(4);
-                    setMobileAberto(false);
-                  }}
-                  background="#4056f9"
-                  disabled={telaAtual === 4}
-                  tooltip="Membros da Conta"
-                />
-                <MenuItem
-                  title={recolhida && !isMobile ? undefined : "Sair da Conta"}
-                  icon="exit_to_app"
-                  onClick={() => setAbrirMsgBoxExit(true)}
-                  background="#ff4b4b"
-                  tooltip="Sair da Conta"
-                />
-              </div>
-            )}
+            {conta &&
+              (telaAtual === 1 ||
+                telaAtual === 4 ||
+                telaAtual === 5 ||
+                telaAtual === 6) && (
+                <div className="fnc-home-itens">
+                  <MenuItem
+                    title={recolhida && !isMobile ? undefined : "Agendadas"}
+                    icon="browse_gallery"
+                    onClick={() => {
+                      setTelaAtual(6);
+                      setMobileAberto(false);
+                    }}
+                    background="#4056f9"
+                    disabled={telaAtual === 6}
+                    tooltip="Membros da Conta"
+                  />
+
+                  <MenuItem
+                    title={
+                      recolhida && !isMobile ? undefined : "Membros da Conta"
+                    }
+                    icon="group"
+                    onClick={() => {
+                      setTelaAtual(4);
+                      setMobileAberto(false);
+                    }}
+                    background="#4056f9"
+                    disabled={telaAtual === 4}
+                    tooltip="Membros da Conta"
+                  />
+
+                  <MenuItem
+                    title={recolhida && !isMobile ? undefined : "Configurações"}
+                    icon="settings"
+                    onClick={() => {
+                      setTelaAtual(5);
+                      setMobileAberto(false);
+                    }}
+                    background="#4056f9"
+                    disabled={telaAtual === 5}
+                    tooltip="Membros da Conta"
+                  />
+
+                  <MenuItem
+                    title={recolhida && !isMobile ? undefined : "Sair da Conta"}
+                    icon="exit_to_app"
+                    onClick={() => setAbrirMsgBoxExit(true)}
+                    background="#ff4b4b"
+                    tooltip="Sair da Conta"
+                  />
+                </div>
+              )}
           </div>
         </nav>
 
@@ -249,6 +283,9 @@ export const Home: React.FC = () => {
           />
         )}
 
+        <div className="fnc-version">
+          <LabelText text="Alpha v1.0.0.0" />
+        </div>
         <div className="sidebar__footer" title="Deslogar">
           <button className="logout__button" onClick={() => deslogar()}>
             <span className="material-icons">exit_to_app</span>

@@ -1,4 +1,6 @@
 export type Resumo = {
+  saldoReal: number;
+  saldoRealProjetado: number;
   saldoRealizado: number;
   saldoProjetado: number;
   entrada: {

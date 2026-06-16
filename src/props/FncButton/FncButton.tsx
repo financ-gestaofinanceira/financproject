@@ -7,6 +7,7 @@ interface PropFncButton {
   thema?: TypeThemeButton;
   disabled?: boolean;
   icon?: string;
+  colorIcon?: string | null;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 const FncButton: React.FC<PropFncButton> = ({
@@ -15,6 +16,7 @@ const FncButton: React.FC<PropFncButton> = ({
   type = TypeButton.Button,
   disabled = false,
   icon,
+  colorIcon,
   onClick,
 }) => {
   const selectTheme = () => {
@@ -45,7 +47,12 @@ const FncButton: React.FC<PropFncButton> = ({
         {!icon && title}
         {icon && (
           <div className="fnc-ctn-btn-icon">
-            <span className="material-icons">{icon}</span>
+            <span
+              className="material-icons"
+              style={colorIcon !== null ? { color: colorIcon } : undefined}
+            >
+              {icon}
+            </span>
             {title}
           </div>
         )}

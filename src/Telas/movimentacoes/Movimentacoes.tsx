@@ -21,6 +21,8 @@ import LabelText from "../../props/LabelText/LabelText";
 import CadConvite from "./CadConvite/CadConvite";
 import type { GetContaUsuario } from "../../models/ContasUsuarios/GetContaUsuario";
 import type { ContaResponse } from "../../models/ContasUsuarios/GetContasBancarias";
+import CtnFncMov from "../../props/CtnFncMov/CtnFncMov";
+import InputCheckBox from "../../props/InputCheckBox/InputCheckBox";
 
 type Props = {};
 
@@ -40,6 +42,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     number[]
   >([]);
 
+  const [mostraResumo, setmostraResumo] = useState<boolean>(false);
   const [statusSelect, setStatusSelect] = useState("Todas");
 
   const getNow = (isEnd: boolean = false) => {
@@ -76,9 +79,8 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     );
     console.log(`/ContasUsuarios?id=${conta!.idConta}`);
 
-    console.log(resposta!.dados!.conteudo[0]);
     if (resposta.sucesso && resposta.dados) {
-      setConta(resposta.dados.conteudo[0]);
+      setConta(resposta.dados.conteudo.contas[0]);
     }
   };
 
@@ -129,7 +131,11 @@ const Movimentacoes: React.FC<Props> = ({}) => {
   const buscaMovimentacoes = useCallback(async () => {
     await buscaContas();
 
-    const toUTCISOString = (data: string) => new Date(data).toISOString();
+    const toUTCISOString = (data: string) => {
+      const local = new Date(data);
+      const offsetMs = local.getTimezoneOffset() * 60 * 1000;
+      return new Date(local.getTime() - offsetMs).toISOString();
+    };
 
     const params = new URLSearchParams({
       DthrMovimentacaoInicial: toUTCISOString(dataInicial),
@@ -147,6 +153,8 @@ const Movimentacoes: React.FC<Props> = ({}) => {
     if (tipoMovimentacao !== null) {
       params.append("TipoMovimentacao", tipoMovimentacao.toString());
     }
+
+    params.append("RetornaFixos", "true");
 
     const url = `/Contas/${conta!.idConta}/Movimentacoes/Retornar?${params.toString()}`;
 
@@ -259,35 +267,92 @@ const Movimentacoes: React.FC<Props> = ({}) => {
         </div>
       </div>
 
-      <div className="grid-cards">
-        <div className="card-secundario">
-          <div className="card-secundario__label">Saldo no período</div>
-          <div className="card-secundario__valor" style={{ color: "#2B7FFF" }}>
-            {formataMoeda(movimentacoes?.conteudo.resumo.saldoRealizado)}
-          </div>
-        </div>
-
-        <div className="card-secundario">
-          <div className="card-secundario__label">Saldo no projetado</div>
-          <div className="card-secundario__valor" style={{ color: "#2B7FFF" }}>
-            {formataMoeda(movimentacoes?.conteudo.resumo.saldoProjetado)}
-          </div>
-        </div>
-
-        <div className="card-secundario">
-          <div className="card-secundario__label">Receitas no período</div>
-          <div className="card-secundario__valor" style={{ color: "#00D492" }}>
-            {formataMoeda(movimentacoes?.conteudo.resumo.entrada.projetado)}
-          </div>
-        </div>
-
-        <div className="card-secundario">
-          <div className="card-secundario__label">Despesas no período</div>
-          <div className="card-secundario__valor" style={{ color: "#FF4B4B" }}>
-            {formataMoeda(movimentacoes?.conteudo.resumo.saida.projetado)}
-          </div>
-        </div>
+      <div className="fnc-grid-cards-mov">
+        <CtnFncMov
+          title="Saldo Conta"
+          subtitle_1="Real"
+          value_1={formataMoeda(movimentacoes?.conteudo.resumo.saldoReal)}
+          type_1={true}
+          subtitle_2="Projetado"
+          value_2={formataMoeda(
+            movimentacoes?.conteudo.resumo.saldoRealProjetado,
+          )}
+        />
       </div>
+      <InputCheckBox
+        label="Ver detalhes"
+        setChecked={() => setmostraResumo(!mostraResumo)}
+        checked={mostraResumo}
+      />
+      {mostraResumo && (
+        <>
+          <div className="fnc-grid-cards-mov">
+            <CtnFncMov
+              title="Geral Período"
+              subtitle_1="Entrada"
+              value_1={formataMoeda(
+                movimentacoes?.conteudo.resumo.entrada.projetado,
+              )}
+              type_1={true}
+              subtitle_2="Saída"
+              value_2={formataMoeda(
+                movimentacoes?.conteudo.resumo.saida.projetado,
+              )}
+              type_2={false}
+            />
+
+            <CtnFncMov
+              title="Resto Período"
+              subtitle_1="Saldo"
+              value_1={formataMoeda(
+                movimentacoes?.conteudo.resumo.saldoRealizado,
+              )}
+              type_1={true}
+              subtitle_2="Projetado"
+              value_2={formataMoeda(
+                movimentacoes?.conteudo.resumo.saldoProjetado,
+              )}
+            />
+          </div>
+          <div className="fnc-grid-cards-mov">
+            <CtnFncMov
+              title="Entradas Período"
+              subtitle_1="Realizadas"
+              value_1={formataMoeda(
+                movimentacoes?.conteudo.resumo.entrada.concluidos,
+              )}
+              type_1={true}
+              subtitle_2="Projetado"
+              value_2={formataMoeda(
+                movimentacoes?.conteudo.resumo.entrada.projetado,
+              )}
+              subtitle_3="Pendentes"
+              value_3={formataMoeda(
+                movimentacoes?.conteudo.resumo.entrada.pendentes,
+              )}
+              type_3={false}
+            />
+
+            <CtnFncMov
+              title="Saídas Período"
+              subtitle_1="Realizadas"
+              value_1={formataMoeda(
+                movimentacoes?.conteudo.resumo.saida.concluidos,
+              )}
+              type_1={false}
+              subtitle_2="Projetado"
+              value_2={formataMoeda(
+                movimentacoes?.conteudo.resumo.saida.projetado,
+              )}
+              subtitle_3="Pendentes"
+              value_3={formataMoeda(
+                movimentacoes?.conteudo.resumo.saida.pendentes,
+              )}
+              type_3={false}
+            />
+          </div>
+        </>
+      )}
 
       <Modal isOpen={isCadMovOpen} onClose={() => setIsCadMovOpen(false)}>
         <CadMov
@@ -345,6 +410,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
           selecionados={categoriasSelecionadas}
           onChange={setCategoriasSelecionadas}
           label="Categorias"
+          ignorarPrimeiroItem={true}
         />
 
         <InputSelect

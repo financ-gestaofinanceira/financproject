@@ -10,6 +10,7 @@ interface PropCheckBoxList<T extends object> {
   onChange: (ids: number[]) => void;
   label?: string;
   placeholder?: string;
+  ignorarPrimeiroItem?: boolean;
 }
 
 function CheckBoxList<T extends object>({
@@ -20,9 +21,11 @@ function CheckBoxList<T extends object>({
   onChange,
   label,
   placeholder = "Selecione...",
+  ignorarPrimeiroItem = false,
 }: PropCheckBoxList<T>) {
   const [aberto, setAberto] = useState(false);
   const [busca, setBusca] = useState("");
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const checkTodosRef = useRef<HTMLInputElement>(null);
@@ -37,7 +40,9 @@ function CheckBoxList<T extends object>({
         setBusca("");
       }
     };
+
     document.addEventListener("mousedown", handleClickFora);
+
     return () => document.removeEventListener("mousedown", handleClickFora);
   }, []);
 
@@ -53,42 +58,54 @@ function CheckBoxList<T extends object>({
     const novosIds = selecionados.includes(id)
       ? selecionados.filter((s) => s !== id)
       : [...selecionados, id];
+
     onChange(novosIds);
   };
 
-  // IDs de todos os itens exceto o primeiro
-  const idsSemPrimeiro = itens.slice(1).map((item) => item[idKey] as number);
+  const idsSelecionaveis = (ignorarPrimeiroItem ? itens.slice(1) : itens).map(
+    (item) => item[idKey] as number,
+  );
 
   const todosSelecionados =
-    idsSemPrimeiro.length > 0 &&
-    idsSemPrimeiro.every((id) => selecionados.includes(id)) &&
-    !selecionados.includes(itens[0]?.[idKey] as number);
+    idsSelecionaveis.length > 0 &&
+    idsSelecionaveis.every((id) => selecionados.includes(id));
 
-  // Atualiza o estado indeterminate do "Selecionar tudo"
   useEffect(() => {
     if (checkTodosRef.current) {
-      const algumSelecionado = selecionados.length > 0;
+      const algumSelecionado = selecionados.some((id) =>
+        idsSelecionaveis.includes(id),
+      );
+
       checkTodosRef.current.indeterminate =
         algumSelecionado && !todosSelecionados;
     }
-  }, [selecionados, itens, todosSelecionados]);
+  }, [selecionados, idsSelecionaveis, todosSelecionados]);
 
   const toggleTodos = () => {
     if (todosSelecionados) {
       onChange([]);
     } else {
-      // Seleciona todos exceto o primeiro
-      onChange(idsSemPrimeiro);
+      onChange(idsSelecionaveis);
     }
   };
 
   const textoResumo = () => {
-    if (selecionados.length === 0) return null;
-    if (todosSelecionados) return "Todos selecionados";
+    if (selecionados.length === 0) {
+      return null;
+    }
+
+    if (todosSelecionados) {
+      return "Todos selecionados";
+    }
+
     const nomes = itens
       .filter((item) => selecionados.includes(item[idKey] as number))
       .map((item) => String(item[labelKey]));
-    if (nomes.length <= 2) return nomes.join(", ");
+
+    if (nomes.length <= 2) {
+      return nomes.join(", ");
+    }
+
     return `${nomes[0]}, ${nomes[1]} +${nomes.length - 2}`;
   };
 
@@ -103,11 +120,15 @@ function CheckBoxList<T extends object>({
       {label && <LabelText text={label} />}
 
       <div
-        className={`fnc-cblist__trigger ${aberto ? "fnc-cblist__trigger--aberto" : ""}`}
+        className={`fnc-cblist__trigger ${
+          aberto ? "fnc-cblist__trigger--aberto" : ""
+        }`}
         onClick={() => setAberto((v) => !v)}
       >
         <span
-          className={`fnc-cblist__trigger-texto ${!resumo ? "fnc-cblist__trigger-texto--placeholder" : ""}`}
+          className={`fnc-cblist__trigger-texto ${
+            !resumo ? "fnc-cblist__trigger-texto--placeholder" : ""
+          }`}
         >
           {resumo ?? placeholder}
         </span>
@@ -125,8 +146,11 @@ function CheckBoxList<T extends object>({
               close
             </span>
           )}
+
           <svg
-            className={`fnc-cblist__chevron ${aberto ? "fnc-cblist__chevron--aberto" : ""}`}
+            className={`fnc-cblist__chevron ${
+              aberto ? "fnc-cblist__chevron--aberto" : ""
+            }`}
             width="16"
             height="16"
             viewBox="0 0 24 24"
@@ -147,6 +171,7 @@ function CheckBoxList<T extends object>({
             <span className="fnc-cblist__search-icon material-icons">
               search
             </span>
+
             <input
               ref={inputRef}
               type="text"
@@ -156,6 +181,7 @@ function CheckBoxList<T extends object>({
               onChange={(e) => setBusca(e.target.value)}
               onClick={(e) => e.stopPropagation()}
             />
+
             {busca && (
               <span
                 className="fnc-cblist__search-clear material-icons"
@@ -169,10 +195,11 @@ function CheckBoxList<T extends object>({
             )}
           </div>
 
-          {/* Opção "Selecionar tudo" — só aparece sem busca ativa */}
           {!busca && itens.length > 0 && (
             <div
-              className={`fnc-cblist__item fnc-cblist__item--selecionar-todos ${todosSelecionados ? "fnc-cblist__item--selecionado" : ""}`}
+              className={`fnc-cblist__item fnc-cblist__item--selecionar-todos ${
+                todosSelecionados ? "fnc-cblist__item--selecionado" : ""
+              }`}
               onClick={toggleTodos}
             >
               <input
@@ -183,6 +210,7 @@ function CheckBoxList<T extends object>({
                 onClick={(e) => e.stopPropagation()}
                 className="fnc-cblist__check"
               />
+
               <span className="fnc-cblist__item-texto fnc-cblist__item-texto--selecionar-todos">
                 Selecionar tudo
               </span>
@@ -201,7 +229,9 @@ function CheckBoxList<T extends object>({
             return (
               <div
                 key={id}
-                className={`fnc-cblist__item ${marcado ? "fnc-cblist__item--selecionado" : ""}`}
+                className={`fnc-cblist__item ${
+                  marcado ? "fnc-cblist__item--selecionado" : ""
+                }`}
                 onClick={() => toggle(id)}
               >
                 <input
@@ -211,6 +241,7 @@ function CheckBoxList<T extends object>({
                   onClick={(e) => e.stopPropagation()}
                   className="fnc-cblist__check"
                 />
+
                 <span className="fnc-cblist__item-texto">{texto}</span>
               </div>
             );

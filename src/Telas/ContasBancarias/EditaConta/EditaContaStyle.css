@@ -1,0 +1,21 @@
+.fnc-ctn-edit-conta {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 30%;
+}
+
+.fnc-sub-edit-conta {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fnc-ctn-btn-edit-conta {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+}

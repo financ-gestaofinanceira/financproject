@@ -58,6 +58,11 @@
   }
 }
 
+.fnc-grid-cards-mov {
+  display: flex;
+  align-items: start;
+  gap: 15px;
+}
 .transacoes-header {
   display: flex;
   justify-content: space-between;

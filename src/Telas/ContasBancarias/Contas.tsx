@@ -1,6 +1,4 @@
-import type {
-  ContaResponse,
-} from "../../models/ContasUsuarios/GetContasBancarias";
+import type { ContaResponse } from "../../models/ContasUsuarios/GetContasBancarias";
 import api from "../../services/api/apiConnect";
 
 import { useContext, useEffect, useState } from "react";
@@ -77,7 +75,7 @@ const Contas: React.FC<Props> = ({ setTelaAtual }) => {
             )}
 
             <div className="grid-cards">
-              {contasObtidas?.conteudo.map((conta) => (
+              {contasObtidas?.conteudo.contas.map((conta) => (
                 <ContaComponent
                   key={conta.idConta}
                   setTelaAtual={setTelaAtual}

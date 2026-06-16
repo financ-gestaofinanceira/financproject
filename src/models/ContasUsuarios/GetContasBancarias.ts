@@ -1,15 +1,23 @@
 export type ContaBancaria = {
   idConta: number;
   titulo: string;
-  contaFavorita: true;
+  contaFavorita: boolean;
+  somaSaldo: boolean;
   status: number;
   saldoAtual: number;
   saldoProjetado: number;
   entradaPendente: number;
   saidaPendente: number;
-  expirado: boolean | null;
-  expiracao: string | null; // pode ajustar para Date se converter depois
+  expiracao: string | null;
   cor: string;
+};
+
+export type ConteudoContas = {
+  saldoRealizado: number;
+  saldoProjetado: number;
+  entradaPendente: number;
+  saidaPendente: number;
+  contas: ContaBancaria[];
 };
 
 export type Filtros = {
@@ -27,6 +35,6 @@ export type Metadados = {
 };
 
 export type ContaResponse = {
-  conteudo: ContaBancaria[];
+  conteudo: ConteudoContas;
   metadados: Metadados;
 };

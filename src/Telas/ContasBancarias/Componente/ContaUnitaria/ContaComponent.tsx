@@ -3,6 +3,7 @@ import { ContaContext } from "../../../../contexts/ContaContext";
 import type { ContaBancaria } from "../../../../models/ContasUsuarios/GetContasBancarias";
 import api from "../../../../services/api/apiConnect";
 import "./ContaComponentStyle.css";
+import SubtitleText from "../../../../props/SubtitleText/SubtitleText";
 
 type Props = {
   setTelaAtual: React.Dispatch<React.SetStateAction<number>>;
@@ -111,7 +112,6 @@ const ContaComponent: React.FC<Props> = ({
             >
               account_balance_wallet
             </span>
-
             <span
               style={conta.contaFavorita ? { color: "#e2c20c" } : undefined}
               className="material-icons icon-favorite"
@@ -124,6 +124,12 @@ const ContaComponent: React.FC<Props> = ({
             >
               star
             </span>
+            {!conta.somaSaldo && (
+              <SubtitleText
+                text="Não contabilizado"
+                color={getTextColor(conta.cor)}
+              />
+            )}
           </div>
         </div>
         <div className="card-secundario__label">
@@ -157,7 +163,7 @@ const ContaComponent: React.FC<Props> = ({
           <div className="status-dot dot-blue"></div>
         </div>
 
-        {conta?.status === 0 && !conta?.expirado && retornaReceitas()}
+        {conta?.status === 0 && !conta?.expiracao && retornaReceitas()}
       </div>
     </>
   );

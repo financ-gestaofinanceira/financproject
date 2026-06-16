@@ -9,6 +9,7 @@ interface PropInputText {
   type?: TypeText;
   maxLenght?: number;
   setText: (value: string) => void;
+  disable?: boolean;
 }
 const InputText: React.FC<PropInputText> = ({
   label,
@@ -17,6 +18,7 @@ const InputText: React.FC<PropInputText> = ({
   maxLenght = undefined,
   placeholder,
   setText,
+  disable,
 }) => {
   const id = useId();
   return (
@@ -26,6 +28,7 @@ const InputText: React.FC<PropInputText> = ({
         <input
           type={type}
           id={id}
+          disabled={disable ?? disable}
           placeholder={placeholder}
           value={text}
           maxLength={maxLenght}

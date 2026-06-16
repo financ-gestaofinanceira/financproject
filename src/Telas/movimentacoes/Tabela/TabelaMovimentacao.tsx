@@ -35,7 +35,14 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
   };
 
   const formataData = (data: string) => {
-    return `${new Date(data).toLocaleDateString("pt-BR")} ${new Date(data).toLocaleTimeString("pt-BR")}`;
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // 00-23
+    }).format(new Date(data));
   };
 
   function getTextColor(bgColor: string) {
@@ -60,11 +67,11 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
           <thead>
             <tr>
               <th>TITULO</th>
-              <th>OBSERVACAO</th>
-              <th>CATEGORIA</th>
-              <th>DATA MOV</th>
               <th>VALOR</th>
+              <th>CATEGORIA</th>
               <th>STATUS</th>
+              <th>DATA MOV</th>
+              <th>OBSERVACAO</th>
               <th>DATA CONCLUSÃO</th>
               <th>USU CAD</th>
               <th>USU EXE</th>
@@ -73,7 +80,9 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
           <tbody>
             {movimentacao?.conteudo?.movimentacaos?.map((mov) => (
               <tr
-                key={mov.id}
+                key={
+                  mov.id > 0 ? mov.id : `${mov.idFixo} ${mov.dthrMovimentacao}`
+                }
                 onClick={() => {
                   setMovSelecionada(mov);
                   setIsAlterMovOpen(true);
@@ -81,7 +90,7 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
                 }}
               >
                 <td>{mov.titulo}</td>
-                <td>{mov.observacao}</td>
+                <td>{formataMoeda(mov.valor, mov.tipo)}</td>
                 <td>
                   <div className="fnc-cnt-cat-mov">
                     {mov.categorias.map((cat) => (
@@ -97,9 +106,9 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
                     ))}
                   </div>
                 </td>
-                <td>{formataData(mov.dthrMovimentacao)}</td>
-                <td>{formataMoeda(mov.valor, mov.tipo)}</td>
                 <td>{mov.concluido ? "Concluido" : "Pendente"}</td>
+                <td>{formataData(mov.dthrMovimentacao)}</td>
+                <td>{mov.observacao}</td>
                 <td>
                   {mov.dthrConclusao !== null && formataData(mov.dthrConclusao)}
                 </td>
