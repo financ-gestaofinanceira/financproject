@@ -1,8 +1,4 @@
-import React, { useState } from "react";
-import Modal from "../../componentes/Modal/Modal";
-import TitleText from "../TitleText/TitleText";
-import FncButton from "../FncButton/FncButton";
-import { TypeThemeButton } from "../FncButton/TypeThemeButton";
+import React from "react";
 import LabelText from "../LabelText/LabelText";
 import "./CtnFncMov.css";
 import SubtitleText from "../SubtitleText/SubtitleText";

@@ -21,6 +21,7 @@ import LabelText from "../../props/LabelText/LabelText";
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
   const { conta, removeConta } = useContext(ContaContext);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [recolhida, setRecolhida] = useState(false);
@@ -154,7 +155,7 @@ export const Home: React.FC = () => {
           </div>
           {(!recolhida || isMobile) && (
             <div className="sidebar__logo-text">
-              <h1 className="sidebar__title">FinanceHub</h1>
+              <h1 className="sidebar__title">FinancHub</h1>
               <p className="sidebar__subtitle">Gestão Inteligente</p>
             </div>
           )}
@@ -221,17 +222,19 @@ export const Home: React.FC = () => {
                 telaAtual === 5 ||
                 telaAtual === 6) && (
                 <div className="fnc-home-itens">
-                  <MenuItem
-                    title={recolhida && !isMobile ? undefined : "Agendadas"}
-                    icon="browse_gallery"
-                    onClick={() => {
-                      setTelaAtual(6);
-                      setMobileAberto(false);
-                    }}
-                    background="#4056f9"
-                    disabled={telaAtual === 6}
-                    tooltip="Membros da Conta"
-                  />
+                  {/* {usuario?.permissao !== 2 && (
+                    <MenuItem
+                      title={recolhida && !isMobile ? undefined : "Agendadas"}
+                      icon="browse_gallery"
+                      onClick={() => {
+                        setTelaAtual(6);
+                        setMobileAberto(false);
+                      }}
+                      background="#4056f9"
+                      disabled={telaAtual === 6}
+                      tooltip="Membros da Conta"
+                    />
+                  )} */}
 
                   <MenuItem
                     title={

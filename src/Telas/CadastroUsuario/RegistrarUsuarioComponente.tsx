@@ -9,6 +9,7 @@ import SubtitleInteractive from "../../props/SubtitleInteractive/SubtitleInterac
 import FncButton from "../../props/FncButton/FncButton";
 import { TypeButton } from "../../props/FncButton/TypeButton";
 import ErrorText from "../../props/ErrorText/ErrorText";
+
 interface RegisterProps {
   exibeCadastro: Boolean;
   setExibeCadastro: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,6 +22,7 @@ type registesUser = {
   senha: string;
   confirmarSenha: string;
 };
+
 const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
   setExibeCadastro,
 }) => {
@@ -37,18 +39,24 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
       return;
     }
 
-    console.log("Usuário cadastrado");
+    if (senha !== confirmaSenha) {
+      setErroMsg("As senhas não coincidem");
+      return;
+    }
 
     const request: registesUser = {
-      primeiroNome: primeiroNome,
-      segundoNome: segundoNome,
-      email: email,
-      senha: senha,
+      primeiroNome,
+      segundoNome,
+      email,
+      senha,
       confirmarSenha: confirmaSenha,
     };
-    var retorno = await api<string>("Usuarios/registrar", "POST", request);
-    if (!retorno.sucesso) setErroMsg(retorno.erro);
-    else {
+
+    const retorno = await api<string>("Usuarios/registrar", "POST", request);
+
+    if (!retorno.sucesso) {
+      setErroMsg(retorno.erro);
+    } else {
       setErroMsg(undefined);
       setExibeCadastro(false);
     }
@@ -61,7 +69,7 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
         <SubtitleText text="O primeiro passo para sua educação financeira!" />
       </div>
 
-      <form className="fnc-form-register" onSubmit={cadastraUsuario}>
+      <div className="fnc-form-register">
         <div className="row">
           <InputText
             label="Primeiro Nome"
@@ -99,8 +107,8 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
             setText={setConfirmaSenha}
           />
         </div>
-        <FncButton type={TypeButton.Submit} title="Criar conta" />
-      </form>
+        <FncButton type={TypeButton.Button} onClick={cadastraUsuario} title="Criar conta" />
+      </div>
 
       {erroMsg && <ErrorText text={erroMsg} />}
 

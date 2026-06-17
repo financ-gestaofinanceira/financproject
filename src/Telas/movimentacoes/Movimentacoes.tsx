@@ -248,7 +248,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
               <span className="material-icons">trending_up</span>
             </div>
           </div>
-          <div className="card-secundario__label">Receitas</div>
+          <div className="card-secundario__label">Receitas Pendentes</div>
           <div className="card-secundario__valor" style={{ color: "#00D492" }}>
             {formataMoeda(conta!.entradaPendente)}
           </div>
@@ -260,7 +260,7 @@ const Movimentacoes: React.FC<Props> = ({}) => {
               <span className="material-icons">trending_down</span>
             </div>
           </div>
-          <div className="card-secundario__label">Despesas</div>
+          <div className="card-secundario__label">Despesas Pendentes</div>
           <div className="card-secundario__valor" style={{ color: "#FF4B4B" }}>
             {formataMoeda(conta!.saidaPendente)}
           </div>

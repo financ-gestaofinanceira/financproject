@@ -344,7 +344,6 @@ const MovimentacaoFixa: React.FC<Props> = () => {
     let erro: string | undefined = undefined;
 
     const toISOString = (data: string) => new Date(data).toISOString();
-    const toDateOnly = (data: string) => data.split("T")[0];
 
     try {
       if (!habilitaEdicao) {
@@ -522,18 +521,19 @@ const MovimentacaoFixa: React.FC<Props> = () => {
           <InputSelect
             label="Tipo de Ocorrência"
             opcoes={
-              ocorrencia === "0"
-                ? [{ label: "Semanal", value: "0" }]
-                : [
-                    ...((habilitaEdicao
-                      ? []
-                      : [{ label: "Semanal", value: "0" }]) as {
-                      label: string;
-                      value: string;
-                    }[]),
-                    { label: "Mensal", value: "1" },
-                    { label: "Anual", value: "2" },
-                  ]
+              [{ label: "Mensal", value: "1" }]
+              // ocorrencia === "0"
+              //   ? [{ label: "Semanal", value: "0" }]
+              //   : [
+              //       ...((habilitaEdicao
+              //         ? []
+              //         : [{ label: "Semanal", value: "0" }]) as {
+              //         label: string;
+              //         value: string;
+              //       }[]),
+              //       { label: "Mensal", value: "1" },
+              //       { label: "Anual", value: "2" },
+              //     ]
             }
             value={ocorrencia}
             onChange={setOcorrencia}

@@ -14,6 +14,7 @@ import InputDate from "../../../props/InputDate/InputDate";
 import Modal from "../../../componentes/Modal/Modal";
 import { MovimentacaoContext } from "../../../contexts/MovimentacaoContext";
 import CadMov from "../CadMov/CadMov";
+import SubtitleText from "../../../props/SubtitleText/SubtitleText";
 
 interface PropAlteraMov {
   onClose: () => void;
@@ -47,9 +48,6 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
   );
 
   // ── ações pós-materialização ──────────────────────────────────────────────
-  const [acaoPendente, setAcaoPendente] = useState<
-    "concluir" | "deletar" | "alterar" | null
-  >(null);
   const [alterarMovimentacao, setAlterarMovimentacao] = useState(false);
 
   const formataMoeda = (valor: number) =>
@@ -179,7 +177,9 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
             setText={setDataConclusao}
           />
         )}
-
+        {idMovAtual === 0 && (
+          <SubtitleText text="Esta movimentação foi criada a partir de um agendamento. Alterações futuras no agendamento não afetarão esta movimentação." />
+        )}
         <div className="fnc-edit-mov-ctn-vertical">
           <FncButton
             title={movAtual.concluido ? "Extornar" : "Concluir"}

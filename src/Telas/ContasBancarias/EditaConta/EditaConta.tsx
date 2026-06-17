@@ -1,18 +1,12 @@
 import FncButton from "../../../props/FncButton/FncButton";
-import { TypeButton } from "../../../props/FncButton/TypeButton";
-import Conecta from "../../../services/api/apiConnect";
 import ErrorText from "../../../props/ErrorText/ErrorText";
 import TitleText from "../../../props/TitleText/TitleText";
 import InputTextAndColor from "../../../props/InputTextAndColor/InputTextAndColor";
 import { useContext, useState } from "react";
 import { ContaContext } from "../../../contexts/ContaContext";
-import InputText from "../../../props/InputText/InputText";
-import InputColor from "../../../props/InputColor/InputColor";
 import "./EditaContaStyle.css";
 import InputCheckBox from "../../../props/InputCheckBox/InputCheckBox";
 import api from "../../../services/api/apiConnect";
-
-import { TypeThemeButton } from "../../../props/FncButton/TypeThemeButton";
 import { ApiResult } from "../../../models/interface/ApiResult";
 import { ContaResponse } from "../../../models/ContasUsuarios/GetContasBancarias";
 

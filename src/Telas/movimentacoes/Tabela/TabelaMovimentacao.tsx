@@ -75,6 +75,7 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
               <th>DATA CONCLUSÃO</th>
               <th>USU CAD</th>
               <th>USU EXE</th>
+              <th>AGENDADA</th>
             </tr>
           </thead>
           <tbody>
@@ -113,8 +114,9 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
                   {mov.dthrConclusao !== null && formataData(mov.dthrConclusao)}
                 </td>
 
-                <td>{mov.usarioCriador.email}</td>
+                <td>{mov.usarioCriador?.email}</td>
                 <td>{mov.usuarioExecutor?.email}</td>
+                <td>{mov.idFixo ? "Sim" : "Não"}</td>
               </tr>
             ))}
           </tbody>

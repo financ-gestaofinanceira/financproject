@@ -163,7 +163,7 @@ const ContaComponent: React.FC<Props> = ({
           <div className="status-dot dot-blue"></div>
         </div>
 
-        {conta?.status === 0 && !conta?.expiracao && retornaReceitas()}
+        {conta?.status === 0 && retornaReceitas()}
       </div>
     </>
   );
