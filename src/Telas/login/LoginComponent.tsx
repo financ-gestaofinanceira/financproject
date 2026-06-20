@@ -14,6 +14,7 @@ import { TypeButton } from "../../props/FncButton/TypeButton";
 import ErrorText from "../../props/ErrorText/ErrorText";
 import SubtitleInteractive from "../../props/SubtitleInteractive/SubtitleInteractive";
 import MsgTextBox from "../../props/TextBox/MsgTextBox";
+import InputCheckBox from "../../props/InputCheckBox/InputCheckBox";
 
 interface LoginProps {
   exibeCadastro: Boolean;
@@ -29,6 +30,7 @@ const LoginComponent: React.FC<LoginProps> = ({
   const [erroMsg, setErroMsg] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   useEffect(() => {
     console.log(user);
@@ -38,7 +40,7 @@ const LoginComponent: React.FC<LoginProps> = ({
     }
   }, [user]);
 
-  const navigate = useNavigate(); // Hook para navegação
+  const navigate = useNavigate();
 
   const reqApi = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,16 +90,22 @@ const LoginComponent: React.FC<LoginProps> = ({
           placeholder="seu@email.com"
           type={TypeText.Email}
           setText={setEmail}
-        ></InputText>
+        />
 
         <InputText
           label="Senha"
           text={senha}
           placeholder="••••••••"
-          type={TypeText.Password}
+          type={mostrarSenha ? TypeText.Text : TypeText.Password}
           setText={setSenha}
           maxLenght={16}
-        ></InputText>
+        />
+
+        <InputCheckBox
+          label="Mostrar senha"
+          checked={mostrarSenha}
+          setChecked={setMostrarSenha}
+        />
 
         <FncButton title="Entrar" type={TypeButton.Submit} />
       </form>

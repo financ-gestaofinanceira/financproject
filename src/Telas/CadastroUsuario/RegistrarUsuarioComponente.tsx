@@ -9,6 +9,7 @@ import SubtitleInteractive from "../../props/SubtitleInteractive/SubtitleInterac
 import FncButton from "../../props/FncButton/FncButton";
 import { TypeButton } from "../../props/FncButton/TypeButton";
 import ErrorText from "../../props/ErrorText/ErrorText";
+import InputCheckBox from "../../props/InputCheckBox/InputCheckBox";
 
 interface RegisterProps {
   exibeCadastro: Boolean;
@@ -32,6 +33,7 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
   const [confirmaSenha, setConfirmaSenha] = useState<string>("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const cadastraUsuario = async () => {
     if (!primeiroNome || !segundoNome || !email || !senha || !confirmaSenha) {
@@ -96,18 +98,27 @@ const RegistrarUsuarioComponente: React.FC<RegisterProps> = ({
             label="Senha"
             text={senha}
             placeholder="••••••••"
-            type={TypeText.Password}
+            type={mostrarSenha ? TypeText.Text : TypeText.Password}
             setText={setSenha}
           />
           <InputText
             label="Confirmar Senha"
             text={confirmaSenha}
             placeholder="••••••••"
-            type={TypeText.Password}
+            type={mostrarSenha ? TypeText.Text : TypeText.Password}
             setText={setConfirmaSenha}
           />
+          <InputCheckBox
+            label="Mostrar senha"
+            checked={mostrarSenha}
+            setChecked={setMostrarSenha}
+          />
         </div>
-        <FncButton type={TypeButton.Button} onClick={cadastraUsuario} title="Criar conta" />
+        <FncButton
+          type={TypeButton.Button}
+          onClick={cadastraUsuario}
+          title="Criar conta"
+        />
       </div>
 
       {erroMsg && <ErrorText text={erroMsg} />}

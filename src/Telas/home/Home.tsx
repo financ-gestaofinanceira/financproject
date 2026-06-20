@@ -17,6 +17,9 @@ import Membros from "../Membros/Membros";
 import EditaConta from "../ContasBancarias/EditaConta/EditaConta";
 import MovimentacaoFixa from "../Movimentacoes/Fixas/MovimentacaoFixa";
 import LabelText from "../../props/LabelText/LabelText";
+import MsgTextBox from "../../props/TextBox/MsgTextBox";
+import SubtitleText from "../../props/SubtitleText/SubtitleText";
+import OpcoesUsuario from "../Usuario/OpcoesUsuario";
 
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
@@ -94,6 +97,7 @@ export const Home: React.FC = () => {
     if (telaAtual === 4) return <Membros />;
     if (telaAtual === 5) return <EditaConta setRetorno={setTelaAtual} />;
     if (telaAtual === 6) return <MovimentacaoFixa />;
+    if (telaAtual === 7) return <OpcoesUsuario />;
   };
 
   return (
@@ -176,9 +180,20 @@ export const Home: React.FC = () => {
         </div>
 
         <nav className="sidebar__nav">
-          {(!recolhida || isMobile) && <p className="nav__title">Menu</p>}
-
+          {(!recolhida || isMobile) && <p className="nav__title">Usuário</p>}
           <div className="fnc-home-iten-primary">
+            <MenuItem
+              title={recolhida && !isMobile ? undefined : "Opções de Usuário"}
+              icon="manage_accounts"
+              onClick={() => {
+                setTelaAtual(7);
+                setMobileAberto(false);
+              }}
+              background="#4056f9"
+              disabled={telaAtual === 7}
+              tooltip="Opções de Usuário"
+            />
+            {(!recolhida || isMobile) && <p className="nav__title">Menu</p>}
             <MenuItem
               title={recolhida && !isMobile ? undefined : "Contas"}
               icon="account_balance"
