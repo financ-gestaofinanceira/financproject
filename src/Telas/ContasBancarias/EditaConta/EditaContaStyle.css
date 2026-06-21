@@ -1,21 +1,99 @@
+/* ── container principal ─────────────────────────────────────────────────── */
 .fnc-ctn-edit-conta {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 30%;
+  gap: 24px;
+  padding: 8px 0 4px;
 }
 
+/* ── seção de controles (checkbox + favoritar) ───────────────────────────── */
 .fnc-sub-edit-conta {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
+/* ── linha de toggle (checkbox estilo card) ──────────────────────────────── */
+.fnc-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.fnc-toggle-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* ── linha do botão favoritar ────────────────────────────────────────────── */
+.fnc-favoritar-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.fnc-favoritar-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* ── divider entre controles básicos e edição avançada ──────────────────── */
+.fnc-edit-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 4px 0;
+}
+
+/* ── preview do nome da conta ────────────────────────────────────────────── */
+.fnc-name-conta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background 0.2s;
+}
+
+.fnc-name-conta p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* ── label de seção ──────────────────────────────────────────────────────── */
+.fnc-section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  padding: 0 2px;
+  margin-bottom: -2px;
+}
+
+/* ── botão salvar ────────────────────────────────────────────────────────── */
 .fnc-ctn-btn-edit-conta {
   width: 100%;
   display: flex;
-  justify-content: end;
-  align-items: end;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }

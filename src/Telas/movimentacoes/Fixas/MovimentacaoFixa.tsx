@@ -562,7 +562,7 @@ const MovimentacaoFixa: React.FC<Props> = () => {
         )}
         {ocorrencia === "1" && (
           <InputSelect
-            label="Dia"
+            label="Dia em que ocorrerá a movimentação"
             opcoes={dias}
             value={dia}
             onChange={setDia}

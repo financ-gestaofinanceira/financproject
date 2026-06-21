@@ -17,13 +17,11 @@ import Membros from "../Membros/Membros";
 import EditaConta from "../ContasBancarias/EditaConta/EditaConta";
 import MovimentacaoFixa from "../Movimentacoes/Fixas/MovimentacaoFixa";
 import LabelText from "../../props/LabelText/LabelText";
-import MsgTextBox from "../../props/TextBox/MsgTextBox";
-import SubtitleText from "../../props/SubtitleText/SubtitleText";
 import OpcoesUsuario from "../Usuario/OpcoesUsuario";
 
 export const Home: React.FC = () => {
   const { user, logout, setUser, inicializando } = useContext(AuthContext);
-  const { conta, removeConta } = useContext(ContaContext);
+  const { conta, usuario, removeConta } = useContext(ContaContext);
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -237,7 +235,7 @@ export const Home: React.FC = () => {
                 telaAtual === 5 ||
                 telaAtual === 6) && (
                 <div className="fnc-home-itens">
-                  {/* {usuario?.permissao !== 2 && (
+                  {usuario?.permissao !== 2 && (
                     <MenuItem
                       title={recolhida && !isMobile ? undefined : "Agendadas"}
                       icon="browse_gallery"
@@ -249,7 +247,7 @@ export const Home: React.FC = () => {
                       disabled={telaAtual === 6}
                       tooltip="Membros da Conta"
                     />
-                  )} */}
+                  )}
 
                   <MenuItem
                     title={

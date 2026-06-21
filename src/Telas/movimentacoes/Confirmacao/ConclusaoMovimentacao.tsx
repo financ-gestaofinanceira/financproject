@@ -1,4 +1,3 @@
-// import React, { useEffect, useState, useCallback } from "react";
 import api from "../../../services/api/apiConnect";
 import type { ApiResult } from "../../../models/interface/ApiResult";
 import type { Movimentacao } from "../../../models/Movimentacoes/GetMovimentacoes";
@@ -11,10 +10,15 @@ import { TypeButton } from "../../../props/FncButton/TypeButton";
 import { TypeThemeButton } from "../../../props/FncButton/TypeThemeButton";
 import "./ConclusaoMovimentacao.css";
 import InputDate from "../../../props/InputDate/InputDate";
+import InputCheckBox from "../../../props/InputCheckBox/InputCheckBox";
 import Modal from "../../../componentes/Modal/Modal";
 import { MovimentacaoContext } from "../../../contexts/MovimentacaoContext";
 import CadMov from "../CadMov/CadMov";
 import SubtitleText from "../../../props/SubtitleText/SubtitleText";
+
+// Converte "YYYY-MM-DDTHH:mm" (input UTC) ou string ISO para UTC ISO string
+const toUTCISOString = (data: string): string =>
+  new Date(data.length === 16 ? data + ":00.000Z" : data).toISOString();
 
 interface PropAlteraMov {
   onClose: () => void;
@@ -28,18 +32,31 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
   buscaMovimentacoes,
   movimentacaoSelecionada,
 }) => {
+  // Formato "YYYY-MM-DDTHH:mm" em UTC — compatível com input datetime-local
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    return `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}`;
   };
 
+  const utcISOParaInput = (data: string) => data.substring(0, 16);
+
   const { setMovimentacao } = useContext(MovimentacaoContext);
+  const [usarDataMovimentacao, setUsarDataMovimentacao] = useState(false);
   const [dataConclusao, setDataConclusao] = useState(getNow);
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
-  // id real após materialização
+  const toggleUsarDataMovimentacao = () => {
+    const novo = !usarDataMovimentacao;
+    setUsarDataMovimentacao(novo);
+    setDataConclusao(
+      novo
+        ? utcISOParaInput(movimentacaoSelecionada.dthrMovimentacao)
+        : getNow(),
+    );
+  };
+
   const [idMovAtual, setIdMovAtual] = useState<number>(
     movimentacaoSelecionada.id,
   );
@@ -47,7 +64,6 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
     movimentacaoSelecionada,
   );
 
-  // ── ações pós-materialização ──────────────────────────────────────────────
   const [alterarMovimentacao, setAlterarMovimentacao] = useState(false);
 
   const formataMoeda = (valor: number) =>
@@ -56,16 +72,18 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
       currency: "BRL",
     }).format(valor);
 
-  // ── materializa se necessário e executa ação ──────────────────────────────
-
+  // Materializa apenas para Concluir e Deletar — nunca para Alterar
   const materializar = async (): Promise<number | null> => {
     if (idMovAtual > 0) return idMovAtual;
-
     try {
       const resposta = await api<any>(
         `/Contas/${movimentacaoSelecionada.idConta}/Movimentacoes/Fixa/${movimentacaoSelecionada.idFixo}/Materializa`,
         "POST",
-        { dataMovimentacao: movimentacaoSelecionada.dthrMovimentacao },
+        {
+          dataMovimentacao: toUTCISOString(
+            movimentacaoSelecionada.dthrMovimentacao,
+          ),
+        },
       );
       if (resposta.sucesso && resposta.dados) {
         const mov: Movimentacao = resposta.dados.valor;
@@ -89,8 +107,6 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
     setErroMsg(undefined);
     setIsLoading(true);
     try {
-      const toUTCISOString = (data: string) => new Date(data).toISOString();
-
       const idMov = await materializar();
       if (idMov === null) return;
 
@@ -144,20 +160,13 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
     }
   };
 
-  // ── alterar ───────────────────────────────────────────────────────────────
+  // ── alterar — NÃO materializa; o CadMov cuida disso se necessário ─────────
 
-  const AlterarMovimentacao = async () => {
-    setErroMsg(undefined);
-    setIsLoading(true);
-    try {
-      const idMov = await materializar();
-      if (idMov === null) return;
-
-      setMovimentacao({ ...movAtual, id: idMov });
-      setAlterarMovimentacao(true);
-    } finally {
-      setIsLoading(false);
-    }
+  const AlterarMovimentacao = () => {
+    // Passa a movimentação original para o contexto (com id=0 se for virtual)
+    // O CadMov em modo edição detecta idFixo > 0 && id === 0 e materializa antes do PATCH
+    setMovimentacao(movimentacaoSelecionada);
+    setAlterarMovimentacao(true);
   };
 
   // ── render ────────────────────────────────────────────────────────────────
@@ -171,13 +180,20 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
         {erroMsg && <ErrorText text={erroMsg} />}
 
         {!movAtual.concluido && (
-          <InputDate
-            text={dataConclusao}
-            label="Data Conclusão"
-            setText={setDataConclusao}
-          />
+          <>
+            <InputCheckBox
+              checked={usarDataMovimentacao}
+              label="Usar data da movimentação"
+              setChecked={toggleUsarDataMovimentacao}
+            />
+            <InputDate
+              text={dataConclusao}
+              label="Data Conclusão"
+              setText={setDataConclusao}
+            />
+          </>
         )}
-        {idMovAtual === 0 && (
+        {movimentacaoSelecionada.id === 0 && (
           <SubtitleText text="Esta movimentação foi criada a partir de um agendamento. Alterações futuras no agendamento não afetarão esta movimentação." />
         )}
         <div className="fnc-edit-mov-ctn-vertical">

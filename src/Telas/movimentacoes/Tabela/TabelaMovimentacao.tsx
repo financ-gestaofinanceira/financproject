@@ -22,7 +22,7 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
   const [isAlterMovOpen, setIsAlterMovOpen] = useState(false);
 
   const formataMoeda = (valor: number, movTipo: number) => {
-    let moeda = new Intl.NumberFormat("pt-BR", {
+    const moeda = new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(valor);
@@ -34,25 +34,22 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
     );
   };
 
-  const formataData = (data: string) => {
-    return new Intl.DateTimeFormat("pt-BR", {
+  const formataData = (data: string) =>
+    new Intl.DateTimeFormat("pt-BR", {
+      timeZone: "America/Sao_Paulo",
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false, // 00-23
+      hour12: false,
     }).format(new Date(data));
-  };
 
   function getTextColor(bgColor: string) {
     const r = parseInt(bgColor.substr(1, 2), 16);
     const g = parseInt(bgColor.substr(3, 2), 16);
     const b = parseInt(bgColor.substr(5, 2), 16);
-
-    // fórmula de luminância simplificada
     const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-
     return luminance > 186 ? "#000000" : "#FFFFFF";
   }
 
@@ -110,10 +107,7 @@ const TabelaMovimentacao: React.FC<PropMov> = ({
                 <td>{mov.concluido ? "Concluido" : "Pendente"}</td>
                 <td>{formataData(mov.dthrMovimentacao)}</td>
                 <td>{mov.observacao}</td>
-                <td>
-                  {mov.dthrConclusao !== null && formataData(mov.dthrConclusao)}
-                </td>
-
+                <td>{mov.dthrConclusao && formataData(mov.dthrConclusao)}</td>
                 <td>{mov.usarioCriador?.email}</td>
                 <td>{mov.usuarioExecutor?.email}</td>
                 <td>{mov.idFixo ? "Sim" : "Não"}</td>

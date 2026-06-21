@@ -26,27 +26,38 @@ interface PropCadMov {
   edit?: boolean;
 }
 
+// "2026-09-10T01:32:00Z" → "2026-09-10T01:32"
+const utcISOParaInputLocal = (data: string): string =>
+  data.substring(0, 16).replace("Z", "");
+
+// "2026-09-10T01:32" → "2026-09-10T01:32:00.000Z"
+const inputParaUTCISO = (data: string): string =>
+  new Date(data + ":00.000Z").toISOString();
+
+const getNowUTC = (): string => {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}`;
+};
+
 const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
-  const getNow = () => {
-    const now = new Date();
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  };
-
   const { conta } = useContext(ContaContext);
-
   const { movimentacao } = useContext(MovimentacaoContext);
+
   const [type, setType] = useState("receita");
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [valorFormatado, setValorFormatado] = useState("");
   const [valor, setValor] = useState(0);
-  const [dataMovimentacao, setDataMovimentacao] = useState(getNow);
-  const [dataConclusao, setDataConclusao] = useState(getNow);
+  const [dataMovimentacao, setDataMovimentacao] = useState(getNowUTC);
+  const [dataConclusao, setDataConclusao] = useState(getNowUTC);
   const [concluido, setConcluido] = useState(false);
   const [categorias, setCategorias] = useState<CategoriaResponse>();
   const [isLoading, setIsLoading] = useState(false);
   const [erroMsg, setErroMsg] = useState<string | undefined>(undefined);
+
+  const [dataMovOriginal, setDataMovOriginal] = useState("");
+  const [dataConclusaoOriginal, setDataConclusaoOriginal] = useState("");
 
   const [categoriasSelecionadas, setCategoriasSelecionadas] = useState<
     number[]
@@ -76,15 +87,6 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
     buscaCategorias();
 
     if (edit && movimentacao) {
-      const formatDataToInput = (data: string) => {
-        const dataUtc = new Date(data);
-
-        const offset = dataUtc.getTimezoneOffset();
-
-        const dataLocal = new Date(dataUtc.getTime() - offset * 60000);
-
-        return dataLocal.toISOString().slice(0, 16);
-      };
       setType(movimentacao.tipo === 0 ? "receita" : "despesa");
       setTitulo(movimentacao.titulo);
       setDescricao(movimentacao.observacao ?? "");
@@ -95,29 +97,67 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
           currency: "BRL",
         }),
       );
-      console.log(formatDataToInput(movimentacao.dthrMovimentacao));
-      setDataMovimentacao(formatDataToInput(movimentacao.dthrMovimentacao));
-      setDataConclusao(
-        movimentacao.dthrConclusao
-          ? formatDataToInput(movimentacao.dthrConclusao)
-          : dataMovimentacao,
-      );
+
+      const dataMov = utcISOParaInputLocal(movimentacao.dthrMovimentacao);
+      setDataMovimentacao(dataMov);
+      setDataMovOriginal(movimentacao.dthrMovimentacao);
+
+      if (movimentacao.dthrConclusao) {
+        const dataCon = utcISOParaInputLocal(movimentacao.dthrConclusao);
+        setDataConclusao(dataCon);
+        setDataConclusaoOriginal(movimentacao.dthrConclusao);
+      } else {
+        setDataConclusao(dataMov);
+        setDataConclusaoOriginal("");
+      }
+
       setConcluido(movimentacao.concluido);
 
-      let editCatId: number[] = [];
-      movimentacao.categorias.map((cat) => {
-        editCatId.push(cat.idCategoria);
-      });
+      const editCatId = movimentacao.categorias.map((cat) => cat.idCategoria);
       setCategoriasSelecionadas(editCatId);
     }
   }, [edit, movimentacao]);
+
+  // Materializa a movimentação virtual (id=0 com idFixo) antes de editar.
+  // Retorna o id real, ou null em caso de erro.
+  const materializarSeNecessario = async (): Promise<number | null> => {
+    if (!movimentacao) return null;
+
+    // Movimentação real — usa o id direto
+    if (movimentacao.id > 0) return movimentacao.id;
+
+    // Movimentação virtual gerada por agendamento — precisa materializar antes do PATCH
+    if (movimentacao.idFixo && movimentacao.id === 0) {
+      try {
+        const resposta = await api<any>(
+          `/Contas/${movimentacao.idConta}/Movimentacoes/Fixa/${movimentacao.idFixo}/Materializa`,
+          "POST",
+          {
+            dataMovimentacao: new Date(
+              movimentacao.dthrMovimentacao,
+            ).toISOString(),
+          },
+        );
+        if (resposta.sucesso && resposta.dados) {
+          const mov: Movimentacao = resposta.dados.valor;
+          return mov.id;
+        } else {
+          setErroMsg(resposta.erro || "Erro ao materializar movimentação.");
+          return null;
+        }
+      } catch (error: any) {
+        setErroMsg(error.message || "Erro inesperado.");
+        return null;
+      }
+    }
+
+    return null;
+  };
 
   const reqMov = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setErroMsg(undefined);
-
-    const toUTCISOString = (data: string) => new Date(data).toISOString();
 
     try {
       if (!edit) {
@@ -127,8 +167,8 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
           concluido: concluido,
           titulo: titulo,
           observacao: descricao,
-          dthrMovimentacao: toUTCISOString(dataMovimentacao),
-          dthrConclusao: concluido ? toUTCISOString(dataConclusao) : null,
+          dthrMovimentacao: inputParaUTCISO(dataMovimentacao),
+          dthrConclusao: concluido ? inputParaUTCISO(dataConclusao) : null,
           idsCategoria: categoriasSelecionadas,
         };
 
@@ -144,58 +184,60 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
           setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
         }
       } else {
+        // Se for movimentação virtual (id=0 + idFixo), materializa agora
+        const idMov = await materializarSeNecessario();
+        if (idMov === null) return;
+
+        const dataMovAtualUTC = inputParaUTCISO(dataMovimentacao);
+        const dataConclusaoAtualUTC = inputParaUTCISO(dataConclusao);
+
         const request: MovimentacaoPatch = {
           tipo: concluido ? null : type === "receita" ? 0 : 1,
           valor: movimentacao?.valor !== valor ? valor : null,
           titulo: movimentacao?.titulo !== titulo ? titulo : null,
           observacao: movimentacao?.observacao !== descricao ? descricao : null,
           dthrMovimentacao:
-            movimentacao?.dthrMovimentacao !== dataMovimentacao
-              ? toUTCISOString(dataMovimentacao)
-              : null,
+            dataMovAtualUTC !== dataMovOriginal ? dataMovAtualUTC : null,
           dthrConclusao: movimentacao?.concluido
-            ? movimentacao?.dthrMovimentacao !== toUTCISOString(dataConclusao)
-              ? toUTCISOString(dataConclusao)
+            ? dataConclusaoAtualUTC !== dataConclusaoOriginal
+              ? dataConclusaoAtualUTC
               : null
             : null,
         };
+
         console.log(request);
+
         const resposta = await api<ApiResult<Movimentacao>>(
-          `Contas/Movimentacoes/${movimentacao?.id}/Alterar`,
+          `Contas/Movimentacoes/${idMov}/Alterar`,
           "PATCH",
           request,
         );
 
         if (!resposta.sucesso) {
-          setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
+          setErroMsg(resposta.erro || "Erro ao editar movimentação.");
           return;
         }
 
-        let catMov: number[] = [];
-        movimentacao!.categorias.map((cat) => catMov.push(cat.idCategoria));
+        const catMov = movimentacao!.categorias.map((cat) => cat.idCategoria);
 
-        console.log(
-          JSON.stringify(catMov.sort()) !==
-            JSON.stringify(categoriasSelecionadas.sort()),
-        );
         if (
           JSON.stringify(catMov.sort()) !==
           JSON.stringify(categoriasSelecionadas.sort())
         ) {
-          const resposta = await api<ApiResult<Movimentacao>>(
-            `Contas/Movimentacoes/${movimentacao?.id}/Alterar/Categoria`,
+          const respostaCat = await api<ApiResult<Movimentacao>>(
+            `Contas/Movimentacoes/${idMov}/Alterar/Categoria`,
             "PUT",
-            {
-              categorias: categoriasSelecionadas,
-            },
+            { categorias: categoriasSelecionadas },
           );
 
-          if (resposta.sucesso) {
+          if (respostaCat.sucesso) {
             onClose();
           } else {
-            setErroMsg(resposta.erro || "Erro ao cadastrar movimentação.");
+            setErroMsg(respostaCat.erro || "Erro ao alterar categorias.");
           }
-        } else onClose();
+        } else {
+          onClose();
+        }
       }
     } catch (error: any) {
       setErroMsg(error.message || "Erro inesperado.");
@@ -260,6 +302,7 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
             onChange={setCategoriasSelecionadas}
             label="Categorias"
           />
+
           <InputDate
             label="Data Movimentação"
             text={dataMovimentacao}
@@ -267,14 +310,13 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
           />
 
           {edit && movimentacao && concluido && (
-            <>
-              <InputDate
-                label="Data Conclusão"
-                text={dataConclusao}
-                setText={setDataConclusao}
-              />
-            </>
+            <InputDate
+              label="Data Conclusão"
+              text={dataConclusao}
+              setText={setDataConclusao}
+            />
           )}
+
           {!edit && (
             <>
               <InputCheckBox
@@ -294,6 +336,7 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
           )}
 
           {erroMsg && <ErrorText text={erroMsg} />}
+
           <FncButton
             type={TypeButton.Submit}
             title={
