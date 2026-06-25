@@ -26,18 +26,21 @@ interface PropCadMov {
   edit?: boolean;
 }
 
-// "2026-09-10T01:32:00Z" → "2026-09-10T01:32"
-const utcISOParaInputLocal = (data: string): string =>
-  data.substring(0, 16).replace("Z", "");
+// UTC ISO → "YYYY-MM-DDTHH:mm" no horário local do browser (America/Sao_Paulo)
+const utcISOParaInputLocal = (data: string): string => {
+  const d = new Date(data);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
-// "2026-09-10T01:32" → "2026-09-10T01:32:00.000Z"
-const inputParaUTCISO = (data: string): string =>
-  new Date(data + ":00.000Z").toISOString();
+// "YYYY-MM-DDTHH:mm" (horário local do browser) → UTC ISO global
+const inputParaUTCISO = (data: string): string => new Date(data).toISOString();
 
-const getNowUTC = (): string => {
+// Hora atual no horário local do browser, formato "YYYY-MM-DDTHH:mm"
+const getNowLocal = (): string => {
   const now = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}`;
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
 };
 
 const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
@@ -49,8 +52,8 @@ const CadMov: React.FC<PropCadMov> = ({ onClose, edit = false }) => {
   const [descricao, setDescricao] = useState("");
   const [valorFormatado, setValorFormatado] = useState("");
   const [valor, setValor] = useState(0);
-  const [dataMovimentacao, setDataMovimentacao] = useState(getNowUTC);
-  const [dataConclusao, setDataConclusao] = useState(getNowUTC);
+  const [dataMovimentacao, setDataMovimentacao] = useState(getNowLocal);
+  const [dataConclusao, setDataConclusao] = useState(getNowLocal);
   const [concluido, setConcluido] = useState(false);
   const [categorias, setCategorias] = useState<CategoriaResponse>();
   const [isLoading, setIsLoading] = useState(false);

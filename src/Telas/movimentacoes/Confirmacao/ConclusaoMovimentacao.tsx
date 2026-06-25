@@ -16,9 +16,8 @@ import { MovimentacaoContext } from "../../../contexts/MovimentacaoContext";
 import CadMov from "../CadMov/CadMov";
 import SubtitleText from "../../../props/SubtitleText/SubtitleText";
 
-// Converte "YYYY-MM-DDTHH:mm" (input UTC) ou string ISO para UTC ISO string
-const toUTCISOString = (data: string): string =>
-  new Date(data.length === 16 ? data + ":00.000Z" : data).toISOString();
+// "YYYY-MM-DDTHH:mm" (horário local do browser) → UTC ISO global
+const toUTCISOString = (data: string): string => new Date(data).toISOString();
 
 interface PropAlteraMov {
   onClose: () => void;
@@ -32,14 +31,19 @@ const ConclusaoMovimentacao: React.FC<PropAlteraMov> = ({
   buscaMovimentacoes,
   movimentacaoSelecionada,
 }) => {
-  // Formato "YYYY-MM-DDTHH:mm" em UTC — compatível com input datetime-local
+  // Hora atual no horário local do browser, formato "YYYY-MM-DDTHH:mm"
   const getNow = () => {
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
-    return `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}`;
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   };
 
-  const utcISOParaInput = (data: string) => data.substring(0, 16);
+  // UTC ISO → "YYYY-MM-DDTHH:mm" no horário local do browser
+  const utcISOParaInput = (data: string) => {
+    const d = new Date(data);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
 
   const { setMovimentacao } = useContext(MovimentacaoContext);
   const [usarDataMovimentacao, setUsarDataMovimentacao] = useState(false);

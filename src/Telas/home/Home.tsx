@@ -17,6 +17,7 @@ import Membros from "../Membros/Membros";
 import EditaConta from "../ContasBancarias/EditaConta/EditaConta";
 import MovimentacaoFixa from "../Movimentacoes/Fixas/MovimentacaoFixa";
 import LabelText from "../../props/LabelText/LabelText";
+import APP_VERSION from "../../version";
 import OpcoesUsuario from "../Usuario/OpcoesUsuario";
 
 export const Home: React.FC = () => {
@@ -300,7 +301,7 @@ export const Home: React.FC = () => {
         )}
 
         <div className="fnc-version">
-          <LabelText text="Alpha v1.0.0.0" />
+          <LabelText text={APP_VERSION.toString()} />
         </div>
         <div className="sidebar__footer" title="Deslogar">
           <button className="logout__button" onClick={() => deslogar()}>
